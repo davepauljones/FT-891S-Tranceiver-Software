@@ -41,9 +41,6 @@
     <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
       <HintPath>packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
     </Reference>
-    <Reference Include="FT891.Core, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\FT891.Core.1.2.1\lib\net48\FT891.Core.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -127,7 +124,6 @@
     </Compile>
     <Compile Include="CWDecoder.cs" />
     <Compile Include="FT891S_CatCommands.cs" />
-    <Compile Include="FT891S_DisplayLoop.cs" />
     <Compile Include="Management\FrequencyManagement.cs" />
     <Compile Include="FT891S_SerialPort.cs" />
     <Compile Include="FunctionMenuClass.cs" />

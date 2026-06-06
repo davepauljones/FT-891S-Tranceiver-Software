@@ -27,9 +27,6 @@ using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 using static YAESU_FT_891_Front_End.YAESU_FT_891_CAT_Dictionary;
 
-using FT891.Core;
-using static YAESU_FT_891_Front_End.FT891S_DisplayLoop;
-
 namespace YAESU_FT_891_Front_End
 {
     /// <summary>
@@ -47,9 +44,6 @@ namespace YAESU_FT_891_Front_End
         Point lastMousePos;
 
         double tuningStep = 10; // sensitivity (Hz per pixel)
-
-        public FT891Cat radio;
-        public FT891S_DisplayLoop displayLoop;
 
         public FT891S_SerialPort fT891S_SerialPort;
         public FT891S_CatCommands fT891S_CatCommands;
@@ -86,10 +80,7 @@ namespace YAESU_FT_891_Front_End
 
         void Init_Startup()
         {
-            radio = new FT891Cat("COM8");
- 
-
-            fT891S_SerialPort = new FT891S_SerialPort(this, "COM3");
+            fT891S_SerialPort = new FT891S_SerialPort(this, "COM8");
 
             fT891S_CatCommands = new FT891S_CatCommands(this);
 
@@ -154,33 +145,17 @@ namespace YAESU_FT_891_Front_End
 
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
 
-            fT891S_SerialPort.OpenPort("COM3");
+            fT891S_SerialPort.OpenPort("COM8");
 
-            //fT891S_SerialPort.StartSerialLoop();
+            fT891S_SerialPort.StartSerialLoop();
 
             sprite = new Sprite(this, WaterfallCanvas);
 
             //sprite.GenerateSprite(128, 295, 0, 46, 6);
 
             waterFallSweep = new WaterFallSweep(this, SweepYellowCursorCanvas);
-
-            displayLoop = new FT891S_DisplayLoop(this, frequencyManagement, radio);
         }
 
-        private async void TestNewFT891Cat()
-        {
-            await radio.SetVfoAFrequencyAsync(14_252_500);   // tune VFO‑A to 14.250 MHz
-
-            for (int i = 0; i < 40000; i++)
-            {
-                long l;
-                l = await radio.GetVfoAFrequencyAsync();
-
-                MainFrequencyTextBlock.Text = frequencyManagement.FormatFrequency(l);
-
-                await Task.Delay(5);
-            }
-        }
         private void CatCommandCallback()
         {
             if (ConsoleDebugLevel == ConsoleDebugLevels.All)
@@ -216,8 +191,6 @@ namespace YAESU_FT_891_Front_End
             }
 
             fT891S_SerialPort.StopSerialLoop();
-
-            radio.Disconnect();
         }
         
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -226,10 +199,6 @@ namespace YAESU_FT_891_Front_End
 
             this.Top = this.Top - 190;
             this.Left = this.Left - 120;
-
-            radio.Connect();
-
-            //TestNewFT891Cat();
         }
 
         public void SetRigLEDColor(byte ledRigColor)
@@ -921,7 +890,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                displayLoop.StartDisplayLoop();
+
             });
         }
 

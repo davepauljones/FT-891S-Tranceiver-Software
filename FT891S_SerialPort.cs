@@ -309,12 +309,12 @@ namespace YAESU_FT_891_Front_End
 
         public void StartSerialLoop()
         {
-            //_serialCts = new CancellationTokenSource();
-            //_serialTask = Task.Run(() => SerialLoop(_serialCts.Token));
+            _serialCts = new CancellationTokenSource();
+            _serialTask = Task.Run(() => SerialLoop(_serialCts.Token));
         }
         public void StopSerialLoop()
         {
-            //_serialCts?.Cancel();
+            _serialCts?.Cancel();
         }
 
         private string _buffer = "";
