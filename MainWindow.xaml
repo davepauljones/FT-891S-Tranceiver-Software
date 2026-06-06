@@ -1,0 +1,916 @@
+﻿<controls:MetroWindow x:Class="YAESU_FT_891_Front_End.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+        xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+        xmlns:meter="clr-namespace:HamRadioControls"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
+        ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
+        Title="YAESU FT-891 Front End by David G7UIV" Height="452" Width="1349" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
+    <Window.Resources>
+        <local:HeightToParentConverter x:Key="ListViewConverter"/>
+    </Window.Resources>
+    <Canvas RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
+        <Canvas.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="25" ShadowDepth="9" Direction="-45" Opacity="0.8"/>
+        </Canvas.Effect>
+        <Rectangle x:Name="BacklightRectangle" Canvas.Left="272" Canvas.Top="96" Fill="#444444" Width="646" Height="244"/>
+        <!--Fill="#ebecf5"-->
+        <!--<Rectangle x:Name="LEDRectangle" Canvas.Left="188" Canvas.Top="146" Fill="#dfdfdf" Width="50" Height="184"/>-->
+
+        <Canvas Width="1339" Height="443" VerticalAlignment="Top">
+
+            <Canvas x:Name="RigCanvas" Width="1339" Height="443" VerticalAlignment="Top" MouseDown="RigCanvas_MouseDown" MouseUp="RigCanvas_MouseUp">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/YAESU-FT-891-Skin.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
+                </Canvas.Background>
+            </Canvas>
+
+            <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/SelectionKnob.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
+                </Canvas.Background>
+                <Canvas.Effect>
+                    <BlurEffect x:Name="SelectionKnobCanvasBlurEffect" Radius="4"/>
+                </Canvas.Effect>
+            </Canvas>
+
+            <Canvas x:Name="SelectionKnobAreaCanvas"
+                Width="108"
+                Height="104"
+                Canvas.Left="30"
+                Canvas.Top="318"
+                Background="Transparent"
+                PreviewMouseWheel="SelectionKnobAreaCanvas_PreviewMouseWheel"
+                PreviewMouseDown="SelectionKnobAreaCanvas_PreviewMouseDown"
+                PreviewMouseMove="SelectionKnobAreaCanvas_PreviewMouseMove"
+                PreviewMouseUp="SelectionKnobAreaCanvas_PreviewMouseUp"/>
+
+            <Canvas Width="62" Height="191" Canvas.Left="184" Canvas.Top="144">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/Window.png" Stretch="None" AlignmentY="Top" AlignmentX="Left" Opacity="0.9"/>
+                </Canvas.Background>
+            </Canvas>
+
+            <Canvas Width="28" Height="144" Canvas.Left="202" Canvas.Top="165">
+                <Rectangle x:Name="ClearWindowRectangle" Canvas.Left="0" Canvas.Top="0" Width="28" Height="145">
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="pack://application:,,,/Images/WindowCentreFill.png"/>
+                    </Rectangle.OpacityMask>
+                    <Rectangle.Effect>
+                        <DropShadowEffect x:Name="ClearWindowDropShadowEffect" BlurRadius="20" Direction="-45" ShadowDepth="2" Color="Blue"/>
+                    </Rectangle.Effect>
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop x:Name="ClearWindowRectangleLinearGradientBrushGradientStop1"  Color="Blue" Offset="0"/>
+                            <GradientStop x:Name="ClearWindowRectangleLinearGradientBrushGradientStop2"  Color="Blue" Offset="0.5"/>
+                            <GradientStop x:Name="ClearWindowRectangleLinearGradientBrushGradientStop3" Color="Blue" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Canvas>
+
+            <Canvas x:Name="RigBlurVFOCanvas" Canvas.Left="940" Canvas.Top="57" Width="383" Height="378" VerticalAlignment="Top" IsHitTestVisible="False" Visibility="Hidden">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/VFO.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
+                </Canvas.Background>
+                <Canvas.Effect>
+                    <BlurEffect x:Name="RigBlurVFOCanvasBlurEffect" Radius="4"/>
+                </Canvas.Effect>
+
+                <!-- Only show blur inside circle -->
+                <Canvas.Clip>
+                    <EllipseGeometry Center="198,198" RadiusX="220" RadiusY="220"/>
+                </Canvas.Clip>
+            </Canvas>
+
+            <Image x:Name="FingerIndentImage" Canvas.Left="1138" Canvas.Top="257" Opacity="0.9" Source="pack://application:,,,/Images/YAESU-FT-891-DIal-Finger-Indent.png" Stretch="None">
+                <Image.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="-45" ShadowDepth="3"/>
+                </Image.Effect>
+            </Image>
+
+            <Canvas x:Name="OMBButtonCanvas"
+                Width="92"
+                Height="24"
+                Canvas.Left="230"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="OMB"
+                MouseDown="OMBButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="MVButtonCanvas"
+                Width="92"
+                Height="22"
+                Canvas.Left="338"
+                Canvas.Top="10"
+                Background="Transparent"
+                ToolTip="M>V"
+                MouseDown="MVButtonCanvas_MouseDown"/>
+            
+            <Canvas x:Name="VMButtonCanvas"
+                Width="100"
+                Height="24"
+                Canvas.Left="449"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="V>M"
+                MouseDown="VMButtonCanvas_MouseDown"/>
+            
+            <Canvas x:Name="VMToggleButtonCanvas"
+                Width="100"
+                Height="24"
+                Canvas.Left="565"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="V/M"
+                MouseDown="VMToggleButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="ABButtonCanvas"
+                Width="100"
+                Height="24"
+                Canvas.Left="683"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="A/B"
+                MouseDown="ABButtonCanvas_MouseDown"/>
+            
+            <Canvas x:Name="BandButtonCanvas"
+                Width="82"
+                Height="24"
+                Canvas.Left="803"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="BAND"
+                MouseDown="BandButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="FastButtonCanvas"
+                 Width="78"
+                 Height="24"
+                 Canvas.Left="897"
+                 Canvas.Top="8"
+                 Background="Transparent"
+                 ToolTip="FAST / NORMAL"
+                 MouseDown="FastButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="PowerOffButtonCanvas"
+                Width="124"
+                Height="20"
+                Canvas.Left="1073"
+                Canvas.Top="8"
+                Background="Transparent"
+                ToolTip="POWER OFF"
+                MouseDown="PowerOffButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="VFOKnobAreaCanvas"
+                 Width="382"
+                 Height="376"
+                 Canvas.Left="938"
+                 Canvas.Top="54"
+                 Background="Transparent"
+                 PreviewMouseWheel="VFOKnobAreaCanvas_PreviewMouseWheel"
+                 PreviewMouseDown="VFOKnobAreaCanvas_PreviewMouseDown"
+                 PreviewMouseMove="VFOKnobAreaCanvas_PreviewMouseMove"
+                 PreviewMouseUp="VFOKnobAreaCanvas_PreviewMouseUp"/>
+
+            <Canvas x:Name="FButtonCanvas"
+                Width="90"
+                Height="56"
+                Canvas.Left="294"
+                Canvas.Top="366"
+                Background="Transparent"
+                ToolTip="TOGGLE FUNCTION"
+                MouseDown="FButtonCanvas_MouseDown"/>
+            
+            <Canvas x:Name="AButtonCanvas"
+                Width="113"
+                Height="56"
+                Canvas.Left="426"
+                Canvas.Top="366"
+                Background="Transparent"
+                ToolTip="SCAN 80M"
+                MouseDown="AButtonCanvas_MouseDown"/>
+
+            <Canvas x:Name="BButtonCanvas"
+                Width="103"
+                Height="56"
+                Canvas.Left="556"
+                Canvas.Top="366"
+                Background="Transparent"
+                ToolTip="SCAN 40M"
+                PreviewMouseDown="BButtonCanvas_PreviewMouseDown"/>
+
+            <Canvas x:Name="CButtonCanvas"
+                Width="108"
+                Height="56"
+                Canvas.Left="678"
+                Canvas.Top="366"
+                Background="Transparent"
+                ToolTip="SCAN 20M"
+                PreviewMouseDown="CButtonCanvas_PreviewMouseDown"/>
+
+            <Canvas x:Name="CLARButtonCanvas"
+                Width="80"
+                Height="56"
+                Canvas.Left="828"
+                Canvas.Top="366"
+                Background="Transparent"
+                ToolTip="SCAN 20M"
+                MouseDown="CLARButtonCanvas_MouseDown"/>
+
+            <Border x:Name="TranceiverModeBorder" Canvas.Left="293" Canvas.Top="398" Style="{StaticResource ButtonLabelBorderStyle}">
+                <Label x:Name="TranceiverModeLabel" Content="DISPLAY" Height="38" Style="{StaticResource ButtonLabelLabelStyle}"/>
+            </Border>
+
+            <Border x:Name="AButtonLabelBorder" Canvas.Left="438" Canvas.Top="398" Style="{StaticResource ButtonLabelBorderStyle}">
+                <Label x:Name="AButtonLabelLabel" Content="SCAN 80M" Style="{StaticResource ButtonLabelLabelStyle}"/>
+            </Border>
+
+            <Border x:Name="BButtonLabelBorder" Canvas.Left="563" Canvas.Top="398" Style="{StaticResource ButtonLabelBorderStyle}">
+                <Label x:Name="BButtonLabelLabel" Content="SCAN 40M" Style="{StaticResource ButtonLabelLabelStyle}"/>
+            </Border>
+
+            <Border x:Name="CButtonLabelBorder" Canvas.Left="684" Canvas.Top="398" Style="{StaticResource ButtonLabelBorderStyle}">
+                <Label x:Name="CButtonLabelLabel" Content="SCAN 20M" Style="{StaticResource ButtonLabelLabelStyle}"/>
+            </Border>
+
+            <Border x:Name="CLARButtonLabelBorder" Canvas.Left="823" Canvas.Top="398" Style="{StaticResource ButtonLabelBorderStyle}">
+                <Label x:Name="CLARButtonLabelLabel" Content="CLA" Style="{StaticResource ButtonLabelLabelStyle}"/>
+            </Border>
+
+            <Canvas x:Name="DefaultCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
+                <Viewbox x:Name="AnalogueSignalMeterViewbox" Visibility="Visible" Stretch="Uniform" Canvas.Left="-160" Canvas.Top="-45" Width="500" Height="110">
+                    <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
+                </Viewbox>
+
+                <Border Canvas.Left="170" Canvas.Top="07" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
+                    <Label x:Name="TabControlDescriptionLabel" Content="SIMULATED WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
+                </Border>
+
+                <Border x:Name="FastNormalGrid" Canvas.Left="258" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="40" Background="Beige">
+                    <Label Content="FAST" Style="{StaticResource DisplayThreeCharLabelStyle}" Foreground="Black"/>
+                </Border>
+
+                <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <Border Canvas.Left="570" Canvas.Top="47" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="18">
+                    <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
+                </Border>
+
+                <Border x:Name="MainVFOABLabelBorder" Canvas.Left="308" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
+                    <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
+                </Border>
+
+                <Border x:Name="MainRigModeLabelBorder" Canvas.Left="308" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue">
+                    <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
+                </Border>
+
+                <Border x:Name="SubVFOABLabelBorder" Canvas.Left="375" Canvas.Top="41" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
+                    <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
+                </Border>
+
+                <Border x:Name="SubRigModeLabelBorder" Canvas.Left="375" Canvas.Top="55" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
+                    <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                </Border>
+
+                <Border x:Name="PowerControlLabelBorder" Canvas.Left="308" Canvas.Top="48" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                    <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
+                </Border>
+
+                <TextBlock x:Name="SpeedTextBlock" Canvas.Left="470" Canvas.Top="68" Text="FAST1" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+                <TextBlock Canvas.Left="538" Canvas.Top="68" Text="SPAN" Style="{StaticResource StatusBarTextBlockStyle}"/>
+                <TextBlock x:Name="FrequencySpanTextBlock" Canvas.Left="580" Canvas.Top="68" Text="50kHz" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+
+                <Canvas x:Name="BarGraphSignalMetersCanvas" Canvas.Left="-370" Canvas.Top="-50" Visibility="Hidden">
+
+                    <Label Canvas.Left="396" Canvas.Top="52" Content="1   3   5   7  9  20 40 60 dB" Opacity="0.6" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Right"/>
+
+                    <Grid x:Name="DefaultMeterGrid" Canvas.Left="379" Canvas.Top="68" Style="{StaticResource SignalBargraphLabelGridStyle}">
+                        <Label x:Name="DefaultMeterLabel" Content="S" Style="{StaticResource SignalBargraphLabelLabelStyle}"/>
+                    </Grid>
+
+                    <Rectangle x:Name="BarGraphRectangle" Canvas.Left="402" Canvas.Top="68" Style="{StaticResource SignalBargraphRectangleStyle}"/>
+
+                    <Canvas x:Name="TXMetersCanvas" Canvas.Left="379" Canvas.Top="77" Width="164" Height="36">
+
+                        <Grid x:Name="ALCMeterGrid" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource SignalBargraphLabelGridStyle}">
+                            <Label Content="ALC" Style="{StaticResource SignalBargraphLabelLabelStyle}"/>
+                        </Grid>
+
+                        <Grid x:Name="POMeterGrid" Canvas.Left="0" Canvas.Top="9" Style="{StaticResource SignalBargraphLabelGridStyle}">
+                            <Label Content="PO" Style="{StaticResource SignalBargraphLabelLabelStyle}"/>
+                        </Grid>
+
+                        <Grid x:Name="SWRMeterGrid" Canvas.Left="0" Canvas.Top="18" Style="{StaticResource SignalBargraphLabelGridStyle}">
+                            <Label Content="SWR" Style="{StaticResource SignalBargraphLabelLabelStyle}"/>
+                        </Grid>
+
+                        <Grid x:Name="IDDMeterGrid" Canvas.Left="0" Canvas.Top="27" Style="{StaticResource SignalBargraphLabelGridStyle}">
+                            <Label Content="IDD" Style="{StaticResource SignalBargraphLabelLabelStyle}"/>
+                        </Grid>
+
+                        <Rectangle x:Name="ALCBarGraphRectangle" Canvas.Left="23" Canvas.Top="0" Style="{StaticResource SignalBargraphRectangleStyle}"/>
+
+                        <Rectangle x:Name="POBarGraphRectangle" Canvas.Left="23" Canvas.Top="9" Style="{StaticResource SignalBargraphRectangleStyle}"/>
+
+                        <Rectangle x:Name="SWRBarGraphRectangle" Canvas.Left="23" Canvas.Top="18" Style="{StaticResource SignalBargraphRectangleStyle}"/>
+
+                        <Rectangle x:Name="IDDBarGraphRectangle" Canvas.Left="23" Canvas.Top="27" Style="{StaticResource SignalBargraphRectangleStyle}"/>
+                    </Canvas>
+                </Canvas>
+            </Canvas>
+
+            <Canvas x:Name="FunctioMenuTabCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}" Visibility="Hidden">
+                <Grid x:Name="FunctionMenuGrid" Margin="9,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                        <ColumnDefinition Width="89"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="44"/>
+                        <RowDefinition Height="44"/>
+                        <RowDefinition Height="44"/>
+                        <RowDefinition Height="44"/>
+                        <RowDefinition Height="44"/>
+                    </Grid.RowDefinitions>
+
+                    <Border x:Name="LevelBorder" Tag="0" Grid.Column="0" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="LEVEL" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="LevelFunctionTextBlock" Text="0.0dB" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="PeakBorder" Tag="1" Grid.Column="1" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="PEAK" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="PeakFunctionTextBlock" Text="LV1" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="MarkerBorder" Tag="2" Grid.Column="2" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="MARKER" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="MarkerFunctionTextBlock" Text="ON" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="ColorBorder" Tag="3" Grid.Column="3" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="COLOR" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="ColorFunctionTextBlock" Text="1" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="ContrastBorder" Tag="4" Grid.Column="4" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="CONTRAST" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="ContrastFunctionTextBlock" Text="10" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="DimmerBorder" Tag="5" Grid.Column="5" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="DIMMER" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="DimmerFunctionTextBlock" Text="15" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="MGroupBorder" Tag="6" Grid.Column="6" Grid.Row="0" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="M-GROUP" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border x:Name="MicGainBorder" Tag="7" Grid.Column="0" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="MIC GAIN" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="MicGainFunctionTextBlock" Text="50" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="MicEQBorder" Tag="8" Grid.Column="1" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="MIC EQ" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="MicEQFunctionTextBlock" Text="OFF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="ProcLevelBorder" Tag="9" Grid.Column="2" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="PROC LEVEL" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="ProcLevelFunctionTextBlock" Text="OFF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="AmcLevelBorder" Tag="10" Grid.Column="3" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="AMC LEVEL" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="AmcLevelFunctionTextBlock" Text="100" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="VoxGainBorder" Tag="11" Grid.Column="4" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="VOX GAIN" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="VoxGainFunctionTextBlock" Text="50" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="VoxDelayBorder" Tag="12" Grid.Column="5" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="VOX DELAY" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" FontWeight="Bold"/>
+                            <TextBlock x:Name="VoxDelayFunctionTextBlock" Text="500ms" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="AntiVoxBorder" Tag="13" Grid.Column="6" Grid.Row="1" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="ANTI VOX" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="AntiVoxFunctionTextBlock" Text="50" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="RfPowerBorder" Tag="14" Grid.Column="0" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown" MouseWheel="FunctionMenu_MouseWheel">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="RF POWER" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="RfPowerFunctionTextBlock" Text="100W" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="MoniLevelBorder" Tag="15" Grid.Column="1" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="MONI LEVEL" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="MoniLevelFunctionTextBlock" Text="OFF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="KeyerBorder" Tag="16" Grid.Column="2" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock x:Name="KeyerFunctionTextTextBlock" Text="KEYER" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightGray"/>
+                            <TextBlock x:Name="KeyerFunctionTextBlock" Text="OFF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="BkInBorder" Tag="17" Grid.Column="3" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="BK-IN" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="BkInFunctionTextBlock" Text="OFF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="CwSpeedBorder" Tag="18" Grid.Column="4" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="CW SPEED" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="CwSpeedFunctionTextBlock" Text="20wpm" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="CwPitchBorder" Tag="19" Grid.Column="5" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="CW PITCH" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="CwPitchFunctionTextBlock" Text="700Hz" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="BkDelayBorder" Tag="20" Grid.Column="6" Grid.Row="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="BK-DELAY" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="BkDelayFunctionTextBlock" Text="200ms" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border x:Name="MessageBorder" Tag="21" Grid.Column="0" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="MESSAGE" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="RecordBorder" Tag="22" Grid.Column="1" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock x:Name="RecordTextBlock" Text="RECORD" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="PlayBorder" Tag="23" Grid.Column="2" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="PLAY" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="TXWBorder" Tag="24" Grid.Column="3" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="TXW" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="4" Grid.Row="3" CornerRadius="5" Background="Transparent" Margin="2">
+
+                    </Border>
+
+                    <Border x:Name="AessBorder" Tag="25" Grid.Column="5" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="AESS" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="AessFunctionTextBlock" Text="50%" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="AessCfBorder" Tag="26" Grid.Column="6" Grid.Row="3" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="AESS-CF" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="White"/>
+                            <TextBlock x:Name="AessCfFunctionTextBlock" Text="700Hz" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange"/>
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border x:Name="RadioSettingBorder" Tag="27" Grid.Column="0" Grid.Row="4" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="RADIO SETTING" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightSkyBlue"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="CwSettingBorder" Tag="28" Grid.Column="1" Grid.Row="4" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="CW   SETTING" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightSkyBlue"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="OperationSettingBorder" Tag="29" Grid.Column="2" Grid.Row="4" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="OPERATION SETTING" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightSkyBlue"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="DisplaySettingBorder" Tag="30" Grid.Column="3" Grid.Row="4" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="DISPLAY SETTING" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightSkyBlue"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="ExtensionSettingBorder" Tag="31" Grid.Column="4" Grid.Row="4" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="EXTENSION SETTING" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="LightSkyBlue"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="BackBorder" Tag="32" Grid.Column="5" Grid.Row="4" Grid.ColumnSpan="2" Style="{StaticResource FunctionMenuBorderStyle}" MouseLeftButtonDown="FunctionMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="BACK" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+            </Canvas>
+
+            <Canvas x:Name="TabControlCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
+                <TabControl x:Name="TabControlTabControl" Padding="0" Background="Transparent" SelectionChanged="TabControlTabControl_SelectionChanged">
+                    
+                    <TabControl.Template>
+                        <ControlTemplate TargetType="TabControl">
+                            <Grid>
+                                <!-- We only include the ContentPresenter, leaving out the TabPanel -->
+                                <ContentPresenter ContentSource="SelectedContent" />
+                            </Grid>
+                        </ControlTemplate>
+                    </TabControl.Template>
+
+                    <TabItem Tag="SIMULATED WATERFALL" IsSelected="True" Padding="0">
+
+                        <Canvas x:Name="SimulatedWaterfallTabCanvas" Style="{StaticResource DisplayCanvasStyle}">
+
+                            <Border x:Name="SpanPopupWindowBorder" Canvas.Left="170" Canvas.Top="72" Width="300" Panel.ZIndex="1" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
+                                
+                                <Canvas>
+                                
+                                    <TextBlock Text="SPAN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
+
+                                    <Border x:Name="_1kBorder" Tag="0" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_1kTextBlock" Text="1k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_2kBorder" Tag="1" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_2kTextBlock" Text="2k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_5kBorder" Tag="2" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_5kTextBlock" Text="5k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_10kBorder" Tag="3" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_10kTextBlock" Text="10k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border x:Name="_20kBorder" Tag="4" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_20kTextBlock" Text="20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_50kBorder" Tag="5" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_50kTextBlock" Text="50k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_100kBorder" Tag="6" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_100kTextBlock" Text="100k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_200kBorder" Tag="7" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_200kTextBlock" Text="200k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border x:Name="_500kBorder" Tag="8" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_500kTextBlock" Text="500k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="_1000kBorder" Tag="9" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpanPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="_1000kTextBlock" Text="1000k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                </Canvas>
+                                
+                            </Border>
+
+                            <Border x:Name="SpeedPopupWindowBorder" Canvas.Left="170" Canvas.Top="72" Panel.ZIndex="1" Width="300" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
+
+                                <Canvas>
+
+                                    <TextBlock Text="SPEED" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
+
+                                    <Border x:Name="Slow1Border" Tag="0" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="Slow1TextBlock" Text="SLOW1" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="Slow2Border" Tag="1" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="Slow2TextBlock" Text="SLOW2" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="Fast1Border" Tag="2" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="Fast1TextBlock" Text="FAST1" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="Fast2Border" Tag="3" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="Fast2TextBlock" Text="FAST2" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border x:Name="Fast3Border" Tag="4" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="Fast3TextBlock" Text="FAST3" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border x:Name="StopBorder" Tag="5" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="SpeedPopupWindowCanvas_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="StopTextBlock" Text="STOP" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                </Canvas>
+
+                            </Border>
+
+                            <Canvas x:Name="LeftHandStopIndicatorCanvas" Canvas.Left="028" Canvas.Top="86" Panel.ZIndex="1" Visibility="Collapsed">
+                                <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,8 16,0 16,16 0,8" Stroke="White"/>
+                            </Canvas>
+                            <Canvas x:Name="RightHandStopIndicatorCanvas" Canvas.Left="596" Canvas.Top="86" Panel.ZIndex="1" Visibility="Collapsed">
+                                <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 0,16 16,8 0,0" Stroke="White"/>
+                            </Canvas>
+
+                            <Polygon Canvas.Left="80" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="140" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="200" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="260" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            
+                            <Polygon Canvas.Left="320" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            
+                            <Polygon Canvas.Left="380" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="440" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="500" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="560" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            
+                            <Polygon Canvas.Left="21" Canvas.Top="85" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="90" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="95" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="100" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="105" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="110" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="115" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="120" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="125" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="130" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="135" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+
+                            <Canvas x:Name="WaterfallCanvas" Canvas.Left="24" Canvas.Top="85" Width="600" Height="114">
+                                <!--<Polygon Canvas.Left="295" Canvas.Top="0" Points="0,0 3,0 3,55 0,55" Fill="DodgerBlue"/>
+                                <Polygon Canvas.Left="295" Canvas.Top="0" Points="-23,53 23,53 23,55 -23,55" Fill="DodgerBlue"/>
+                                <Polygon Canvas.Left="295" Canvas.Top="0" Points="-20,47 20,47 20,50 -20,50" Fill="DodgerBlue"/>-->
+                            </Canvas>
+
+                            <Canvas x:Name="SweepYellowCursorCanvas" Canvas.Left="14" Canvas.Top="85">
+                                <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Yellow"/>
+                                <Polygon Canvas.Left="7" Canvas.Top="10" Points="0,0 0,45 1,45 1,0" Fill="Yellow"/>
+                            </Canvas>
+
+                            <!--Red & Green Cursors-->
+                            <Canvas x:Name="GreenCursorCanvas" Canvas.Left="323" Canvas.Top="85">
+                                <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="LimeGreen"/>
+                                <Polygon x:Name="GreenCursorVerticalPolygon" Canvas.Left="7" Canvas.Top="10" Points="0,0 0,45 1,45 1,0" Fill="LimeGreen"/>
+                            </Canvas>
+                            <Canvas x:Name="RedCursorCanvas" Canvas.Left="303" Canvas.Top="95">
+                                <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Red"/>
+                                <Polygon x:Name="RedCursorVerticalPolygon" Canvas.Left="7" Canvas.Top="10" Points="0,0 0,35 1,35 1,0" Fill="Red"/>
+                            </Canvas>
+                            <!--Red & Green Cursors-->
+
+                            <Polygon Name="HorizonLine" Canvas.Left="21" Canvas.Top="140" Points="0,0 600,0 600,1 0,1" Fill="White"/>
+                            
+                            <Polygon Name="SpanFrequencyLine" Canvas.Left="21" Canvas.Top="200" Points="0,0 600,0 600,1 0,1" Fill="White"/>
+  
+                            <Canvas Canvas.Left="21" Canvas.Top="202" Width="600" Height="12">
+                                <TextBlock x:Name="SpanLabel1TextBlock" Canvas.Left="42" Canvas.Top="-1" Padding="0" Text="-20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
+                                <TextBlock x:Name="SpanLabel2TextBlock" Canvas.Left="161" Canvas.Top="-1" Padding="0" Text="-10k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
+                                <TextBlock x:Name="SpanLabel3TextBlock" Canvas.Left="273" Canvas.Top="-1" Padding="0" Text="14.252.000" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
+                                <TextBlock x:Name="SpanLabel4TextBlock" Canvas.Left="414" Canvas.Top="-1" Padding="0" Text="+10k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
+                                <TextBlock x:Name="SpanLabel5TextBlock" Canvas.Left="532" Canvas.Top="-1" Padding="0" Text="+20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
+                            </Canvas>
+
+                            <Border Tag="0" Canvas.Left="20" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock x:Name="CursorModeTextBlock" Text="CENTER" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="1" Canvas.Left="95" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="3DSS" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="2" Canvas.Left="170" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="MULTI" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="3" Canvas.Left="245" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="EXPAND" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="4" Canvas.Left="320" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="SPAN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="5" Canvas.Left="395" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="SPEED" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="6" Canvas.Left="470" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="START" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Tag="7" Canvas.Left="545" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="STOP" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
+
+                        </Canvas>
+
+                    </TabItem>
+                    <TabItem Tag="STATION SCOPE" Padding="0">
+
+                        <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource DisplayCanvasStyle}">
+
+                            <Border Canvas.Left="14" Canvas.Top="85" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                <Canvas x:Name="StationScopeControlsCanvas" Width="264" Height="30" VerticalAlignment="Top">
+                                    <Grid Canvas.Left="2" Canvas.Top="7" Width="29" Height="13" Background="White">
+                                        <Label Content="TH" Height="38" Margin="-2,-5,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                    <controls:NumericUpDown x:Name="StationScopeSignalStrengthThresholdNumericUpDown" Canvas.Left="30" Canvas.Top="0" Width="104" Height="10" Minimum="1" Maximum="60" Value="7" Interval="1"
+                                        StringFormat="N0" UpDownButtonsWidth="30" FontSize="14" BorderThickness="0" Background="Transparent" Foreground="White"
+                                        PreviewMouseUp="StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp">
+                                    </controls:NumericUpDown>
+                                    <Label Content="dB" Canvas.Left="130" Canvas.Top="0" Height="38" Margin="-1,2,0,0" Padding="0" Foreground="White" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
+
+                                    <Label Canvas.Left="78" Canvas.Top="14" Content="1   3   5   7  9  20 40 60 dB" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Right"/>
+                                </Canvas>
+                            </Border>
+                            
+                            <Border Canvas.Left="14" Canvas.Top="116" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                <Canvas x:Name="StationScopeListCanvas" Width="264" Height="102">
+
+                                    <ScrollViewer x:Name="StationScopeListScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="264" Height="94">
+
+                                        <StackPanel Orientation="Vertical" Margin="0,2,0,0">
+
+                                            <ListView x:Name="StationScopeListView" SelectionMode="Single" BorderThickness="0" PreviewMouseLeftButtonDown="StationScopeListView_PreviewMouseLeftButtonDown">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="Height" Value="Auto"/>
+                                                        <Setter Property="Padding" Value="0"/>
+                                                        <Setter Property="Margin" Value="0"/>
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.Template>
+                                                    <ControlTemplate>
+                                                        <ItemsPresenter></ItemsPresenter>
+                                                    </ControlTemplate>
+                                                </ListView.Template>
+                                            </ListView>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                    <Grid x:Name="FoundStationCountGrid" Canvas.Left="202" Canvas.Top="94" Opacity="0.6" Width="62" Height="8" Background="White" Visibility="Visible">
+                                        <Label x:Name="FoundStationCountLabel" Content="1 of 1" Height="38" Margin="-1,-2,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Canvas>
+                            </Border>
+
+                            <Border Canvas.Left="310" Canvas.Top="85" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                <Canvas x:Name="QMBListCanvas" Width="264" Height="133">
+                                    
+                                    <ScrollViewer x:Name="QMBListScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="264" Height="125">
+
+                                        <StackPanel Orientation="Vertical" Margin="0,2,0,0">
+
+                                            <ListView x:Name="QMBListView" SelectionMode="Single" BorderThickness="0" PreviewMouseLeftButtonDown="QMBListView_PreviewMouseLeftButtonDown">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem">
+                                                        <Setter Property="Height" Value="Auto"/>
+                                                        <Setter Property="Padding" Value="0"/>
+                                                        <Setter Property="Margin" Value="0"/>
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.Template>
+                                                    <ControlTemplate>
+                                                        <ItemsPresenter></ItemsPresenter>
+                                                    </ControlTemplate>
+                                                </ListView.Template>
+                                            </ListView>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                    <Grid x:Name="QMBCountGrid" Canvas.Left="202" Canvas.Top="125" Opacity="0.6" Width="62" Height="8" Background="White" Visibility="Visible">
+                                        <Label x:Name="QMBCountLabel" Content="1 of 1" Height="38" Margin="-1,-2,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </Canvas>
+                            </Border>
+                        </Canvas>
+                    </TabItem>
+
+                    <TabItem Tag="DNR &amp; FILTERS">
+                        <Grid>
+                            <Canvas x:Name="FiltersCanvas" Style="{StaticResource DisplayCanvasStyle}">
+                            </Canvas>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Tag="CW DECODER">
+                        <Grid>
+                            <Canvas x:Name="CWDecoderCanvas" Style="{StaticResource DisplayCanvasStyle}">
+                                <StackPanel Orientation="Vertical" Canvas.Left="10" Canvas.Top="70" Margin="0,10,0,0">
+                                    <TextBlock x:Name="CWDecoderPowerTextBlock" Text="0.0" Foreground="Orange" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                    <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="24" TextWrapping="Wrap" Width="610" Margin="0,0,0,0"/>
+                                </StackPanel>
+                            </Canvas>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Canvas>
+        </Canvas>
+    </Canvas>
+    
+</controls:MetroWindow>

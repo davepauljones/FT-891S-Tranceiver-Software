@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.YaesuListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="164"
+             d:DesignWidth="264">
+
+    <Canvas Width="264" Height="164">
+
+        <!-- ================= TOP AREA ================= -->
+        <Border Canvas.Left="0" Canvas.Top="0"
+                BorderThickness="1"
+                BorderBrush="LightGray">
+
+            <Canvas Width="264" Height="30">
+
+                <!-- TOOLBAR SLOT -->
+                <ContentControl x:Name="ToolbarHost"
+                                Canvas.Left="0"
+                                Canvas.Top="0"
+                                Width="264"
+                                Height="28"/>
+
+                <!-- STATIC LABEL -->
+                <Label Canvas.Left="83"
+                       Canvas.Top="19"
+                       Content="1   3   5   7  9  20 40 60 dB"
+                       Padding="0"
+                       FontSize="10"
+                       FontFamily="Consolas"
+                       Opacity="0.6"/>
+
+            </Canvas>
+
+        </Border>
+
+        <!-- ================= LIST AREA ================= -->
+        <Border Canvas.Left="0"
+                Canvas.Top="31"
+                BorderThickness="1"
+                BorderBrush="LightGray">
+
+            <Canvas Width="264" Height="132">
+
+                <ScrollViewer Width="264"
+                              Height="124"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+
+                    <ListView x:Name="ListView"
+                              SelectionMode="Single"
+                              BorderThickness="0">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Height" Value="Auto"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.Template>
+                            <ControlTemplate>
+                                <ItemsPresenter></ItemsPresenter>
+                            </ControlTemplate>
+                        </ListView.Template>
+                    </ListView>
+
+                </ScrollViewer>
+
+                <!-- COUNT LABEL -->
+                <Grid Canvas.Left="202"
+                      Canvas.Top="124"
+                      Width="62"
+                      Height="8"
+                      Background="Black"
+                      Opacity="0.6">
+
+                    <Label x:Name="CountLabel"
+                           Foreground="White"
+                           FontSize="10"
+                           FontFamily="Consolas"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Content="0 items"/>
+                </Grid>
+
+            </Canvas>
+
+        </Border>
+
+    </Canvas>
+</UserControl>

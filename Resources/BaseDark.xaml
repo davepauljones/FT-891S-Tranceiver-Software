@@ -1,0 +1,1027 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                    xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF">
+
+    <Color x:Key="MenuShadowColor">#FFFFFFFF</Color>
+
+    <Color x:Key="HighlightColor">#FF0050EF</Color>
+
+    <Color x:Key="AccentColor">DodgerBlue</Color>
+    <!--60%-->
+    <Color x:Key="AccentColor2">#990050EF</Color>
+    <!--40%-->
+    <Color x:Key="AccentColor3">#660050EF</Color>
+    <!--20%-->
+    <Color x:Key="AccentColor4">#330050EF</Color>
+
+    <Color x:Key="AccentColor5">#FF484848</Color>
+
+    <!-- re-set brushes too -->
+    <SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
+    <SolidColorBrush x:Key="AccentColorBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentColorBrush2" Color="{StaticResource AccentColor2}"/>
+    <SolidColorBrush x:Key="AccentColorBrush3" Color="{StaticResource AccentColor3}"/>
+    <SolidColorBrush x:Key="AccentColorBrush4" Color="{StaticResource AccentColor4}"/>
+
+    <SolidColorBrush x:Key="WindowTitleColorBrush" Color="GhostWhite" />
+
+    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="White" />
+
+    <LinearGradientBrush x:Key="ProgressBrush" EndPoint="0.001,0.5" StartPoint="1.002,0.5">
+        <GradientStop Color="{StaticResource HighlightColor}" Offset="0" />
+        <GradientStop Color="{StaticResource AccentColor3}" Offset="1" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="CheckmarkFill" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="RightArrowFill" Color="{StaticResource AccentColor}" />
+
+    <Color x:Key="IdealForegroundColor">#FF2b5797</Color>
+    <SolidColorBrush x:Key="IdealForegroundColorBrush" Color="{StaticResource IdealForegroundColor}"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+    <Style x:Key="UPASMetroWindowStyle2" TargetType="{x:Type Controls:MetroWindow}" BasedOn="{StaticResource {x:Type Controls:MetroWindow}}" >
+        <Setter Property="SaveWindowPosition" Value="True"/>
+    </Style>
+    <Style x:Key="UPASMetroWindowStyle" TargetType="{x:Type Controls:MetroWindow}">
+        <Setter Property="Icon" Value="pack://application:,,/Images/UPAS.ico"/>
+        <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
+        <Setter Property="WindowTransitionsEnabled" Value="False"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="AllowsTransparency" Value="True"/>
+        <Setter Property="WindowState" Value="Normal"/>
+        <Setter Property="ShowTitleBar" Value="True"/>
+        <Setter Property="TitleForeground" Value="{DynamicResource UC_SolidColorBrush_Title_Foreground}"/>
+        <Setter Property="ShowIconOnTitleBar" Value="True"/>
+        <Setter Property="NonActiveGlowBrush" Value="Transparent"/>
+        <Setter Property="NonActiveWindowTitleBrush" Value="{DynamicResource UC_SolidColorBrush_NonActiveWindowTitleBrush}"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="ShowCloseButton" Value="True"/>
+        <Setter Property="ShowMaxRestoreButton" Value="True"/>
+        <Setter Property="ShowMinButton" Value="True"/>
+
+        <Setter Property="SaveWindowPosition" Value="True"/>
+
+        <Setter Property="NonActiveBorderBrush" Value="Transparent"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+    </Style>
+
+    <Style x:Key="UPASFullScreenMetroWindowStyle" TargetType="{x:Type Controls:MetroWindow}">
+        <Setter Property="Icon" Value="pack://application:,,/Images/UPAS.ico"/>
+        <Setter Property="SizeToContent" Value="Manual"/>
+        <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
+        <Setter Property="WindowTransitionsEnabled" Value="False"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="WindowStyle" Value="SingleBorderWindow"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Red"/>
+        <Setter Property="AllowsTransparency" Value="True"/>
+        <Setter Property="WindowState" Value="Normal"/>
+        <Setter Property="ShowTitleBar" Value="True"/>
+        <Setter Property="WindowTitleBrush" Value="#FF3e4045"/>
+        <Setter Property="IgnoreTaskbarOnMaximize" Value="True"/>
+        <Setter Property="TitleForeground" Value="Gray"/>
+        <Setter Property="ShowIconOnTitleBar" Value="True"/>
+        <Setter Property="NonActiveGlowBrush" Value="Transparent"/>
+        <Setter Property="NonActiveWindowTitleBrush" Value="#FF2e2f33"/>
+
+        <Setter Property="Width" Value="{Binding SystemParameters.WorkArea.Width}"/>
+        <Setter Property="Height" Value="{Binding SystemParameters.WorkArea.Height}"/>
+        <Setter Property="MaxWidth" Value="{Binding SystemParameters.WorkArea.Width}"/>
+        <Setter Property="MaxHeight" Value="{Binding SystemParameters.WorkArea.Height}"/>
+
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="ShowCloseButton" Value="True"/>
+        <Setter Property="ShowMaxRestoreButton" Value="False"/>
+        <Setter Property="ShowMinButton" Value="True"/>
+
+        <Setter Property="SaveWindowPosition" Value="True"/>
+
+        <Setter Property="NonActiveBorderBrush" Value="Transparent"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+    </Style>
+
+    <Style x:Key="CleanWindowButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MetroWindowButtonStyle}">
+        <Setter Property="Foreground" Value="Gray"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#EB2F2F"/>
+                <Setter Property="Foreground" Value="{DynamicResource WhiteBrush}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#7C0000"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="UXstyle" TargetType="{x:Type Controls:MetroWindow}">
+        <Setter Property="Icon" Value="pack://application:,,/Images/UPAS.ico"/>
+        <Setter Property="ResizeMode" Value="CanResize"/>
+        <Setter Property="WindowTransitionsEnabled" Value="False"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="WindowState" Value="Maximized"/>
+        <Setter Property="ShowTitleBar" Value="False"/>
+        <Setter Property="IgnoreTaskbarOnMaximize" Value="True"/>
+        <Setter Property="ShowMaxRestoreButton" Value="False"/>
+        <Setter Property="ShowMinButton" Value="False"/>
+        <Setter Property="ShowCloseButton" Value="False"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+    </Style>
+    <Style x:Key="FilmStripBorderStyle" TargetType="{x:Type Rectangle}">
+        <Setter Property="Fill" Value="White"/>
+        <Setter Property="Stroke" Value="Black"/>
+        <Setter Property="StrokeThickness" Value="2"/>
+        <Setter Property="Margin" Value="0,32,0,0"/>
+        <Setter Property="Width" Value="26"/>
+        <Setter Property="Height" Value="14"/>
+    </Style>
+    <Style x:Key="FilmStripLabelStyle" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="18"/>
+    </Style>
+    <Style x:Key="FilmStripLabelStyle2" TargetType="{x:Type Label}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="Background" Value="#00000000"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="28"/>
+    </Style>
+    <Style x:Key="FilmStripGridStyle" TargetType="{x:Type Grid}">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Margin" Value="15,62,13,0"/>
+        <Setter Property="Width" Value="408"/>
+        <Setter Property="Height" Value="272"/>
+    </Style>
+    <Style x:Key="FilmStripVerticalGridStyle" TargetType="{x:Type Grid}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="Margin" Value="16,8,13,0"/>
+        <Setter Property="MaxWidth" Value="275"/>
+        <Setter Property="Height" Value="335"/>
+    </Style>
+    <Style x:Key="FilmStripVerticalGridStyle2" TargetType="{x:Type Grid}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Black"/>
+        <Setter Property="MaxWidth" Value="272"/>
+        <Setter Property="Height" Value="335"/>
+    </Style>
+    <Style x:Key="FilmStripHorizontalGridStyle" TargetType="{x:Type Grid}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="MaxWidth" Value="190"/>
+        <Setter Property="Height" Value="240"/>
+    </Style>
+    <Style x:Key="FilmStripWindowCloseButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MetroWindowButtonStyle}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="Transparent"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="CustomLabel"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#2FFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+    <Style x:Key="CustomLabel2"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#2FFFFFFF"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+    <Style x:Key="CustomLabelBold"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+
+    </Style>
+    <Style x:Key="CustomLabelBold2"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style x:Key="CustomLabelBold3"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    <Style x:Key="ButtonLabel"
+           TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#33FFFFFF"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,-6,0,0"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+    <Style x:Key="LabelWithBindingStyle" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="{Binding Parent.Children[0].BorderBrush, RelativeSource={RelativeSource Mode=Self}}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,-6,0,-6"/>
+        <Setter Property="Width" Value="60"/>
+    </Style>
+    <Style x:Key="LabelWithoutBindingStyle" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,-2,0,0"/>
+        <Setter Property="Width" Value="90"/>
+    </Style>
+    <Style x:Key="LabelWithoutBindingStyle2" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,-2,0,0"/>
+        <Setter Property="Width" Value="80"/>
+    </Style>
+    <Style x:Key="LabelForEventsHeaderStyle" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#2FFFFFFF"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+    <Style x:Key="RadioButtonStyle" TargetType="{x:Type RadioButton}">
+        <Setter Property="Foreground" Value="#2FFFFFFF"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,0,20,0"/>
+    </Style>
+    <Style x:Key="FaWithBindingStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="pack://application:,,,/fonts/#FontAwesome"/>
+        <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}, AncestorLevel=1}, Path=BorderBrush}"/>
+        <Setter Property="FontSize" Value="32"/>
+    </Style>
+    <Style x:Key="CustomTextBoxBold" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CaretBrush" Value="White"/>
+    </Style>
+    <Style x:Key="MyMetroFlatButtonStyle"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroFlatButton}">
+        <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+        <Setter Property="Width" Value="35"/>
+        <Setter Property="Height" Value="29"/>
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style x:Key="ButtonWithLabelStyle"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style x:Key="ButtonWithStyle"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="#2FFFFFFF"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style x:Key="ButtonWithStyle2"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="#2FFFFFFF"/>
+        <Setter Property="Foreground" Value="#2FFFFFFF"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style x:Key="CustomMetroCircleButtonStyle"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="Margin" Value="0,0,10,0"/>
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style x:Key="CustomMetroCircleButtonStyle2"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style x:Key="CustomMetroCircleButtonStyle3"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style x:Key="CustomMetroCircleButtonStyle4"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <!--<Setter Property="BorderBrush" Value="#1FFFFFFF"/>-->
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style x:Key="CustomMetroCircleButtonStyle5"
+       TargetType="{x:Type Button}"
+       BasedOn="{StaticResource MetroCircleButtonStyle}">
+        <!--<Setter Property="BorderBrush" Value="#A6FFFFFF"/>-->
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    <Style x:Key="FauxLabel" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{x:Null}"/>
+        <Setter Property="BorderThickness" Value="4"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="Foreground" Value="SlateGray"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="ExtraLight"/>
+        <Setter Property="SelectionBrush" Value="Red"/>
+        <Setter Property="SelectionOpacity" Value="0.7"/>
+        <Setter Property="CaretBrush" Value="Red"/>
+    </Style>
+    <Style x:Key="SpinnerTextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="IsHitTestVisible" Value="True"/>
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="SelectionBrush" Value="Transparent"/>
+        <Setter Property="CaretBrush" Value="Transparent"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Margin" Value="0,-2,0,0"/>
+    </Style>
+    <Style x:Key="Spinner2TextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="IsHitTestVisible" Value="True"/>
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="SelectionBrush" Value="Transparent"/>
+        <Setter Property="CaretBrush" Value="Transparent"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border Name="Border" CornerRadius="3" Padding="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Width="20" Height="20">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="-4,-1,0,0" Width="20" Height="20"/>
+                    </Border>
+                    <!--<ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="#EEEEEE"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#EEEEEE"/>
+                            <Setter Property="Foreground" Value="#66FFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#33000000"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Red"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="Spinner3TextBox" TargetType="{x:Type TextBox}">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="IsHitTestVisible" Value="True"/>
+        <Setter Property="Foreground" Value="#AFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="SelectionBrush" Value="Transparent"/>
+        <Setter Property="CaretBrush" Value="Transparent"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="35"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border Name="Border" CornerRadius="3" Padding="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Width="35" Height="20">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="-4,-1,0,0" Width="35" Height="20"/>
+                    </Border>
+                    <!--<ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="#EEEEEE"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#EEEEEE"/>
+                            <Setter Property="Foreground" Value="#66FFFFFF"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#33000000"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Red"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="SpinnerButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Padding" Value="2,0,2,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <ContentPresenter>
+                    </ContentPresenter>
+                    <!--<ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#33000000"/>
+                            <Setter Property="BorderBrush" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--UltraConnect base colors-->
+    <SolidColorBrush x:Key="UC_SolidColorBrush_Window_Background" Color="DarkGray"/>
+    <SolidColorBrush x:Key="UC_SolidColorBrush_Title_Foreground" Color="Black"/>
+    <SolidColorBrush x:Key="UC_SolidColorBrush_NonActiveWindowTitleBrush" Color="Gainsboro"/>
+
+    <RadialGradientBrush x:Key="GrayRadialGraadient" GradientOrigin=".25,.75" RadiusX="1.6" RadiusY=".6" Opacity="1">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FF333333" Offset="0"></GradientStop>
+            <GradientStop Color="Black" Offset="1"></GradientStop>
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="GreenRadialGraadient" GradientOrigin=".25,.75" RadiusX="1.6" RadiusY=".6" Opacity="0.9">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FF333333" Offset="0"></GradientStop>
+            <GradientStop Color="#AF00FF00" Offset="1"></GradientStop>
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="BlueRadialGraadient" GradientOrigin=".25,.75" RadiusX="1.6" RadiusY=".6" Opacity="0.9">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FF555555" Offset="0"></GradientStop>
+            <GradientStop Color="LightSlateGray" Offset="1"></GradientStop>
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="LightGrayRadialGraadient" GradientOrigin=".25,.75" RadiusX="1.6" RadiusY=".6" Opacity="1">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FF888888" Offset="0"></GradientStop>
+            <GradientStop Color="LightGray" Offset="1"></GradientStop>
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+
+    <RadialGradientBrush x:Key="Sample1" GradientOrigin="0.2, 0.2">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FFFFFFFF" Offset="0.1" />
+            <GradientStop Color="#0F0000FF" Offset="1.5" />
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+    <RadialGradientBrush x:Key="Sample2" GradientOrigin="0.5, 0.9">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FFAAAAAA" Offset="0.1" />
+            <GradientStop Color="#FF000000" Offset="1.4" />
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+    <LinearGradientBrush x:Key="Sample3" StartPoint="0,0" EndPoint="0,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Color="#C4CBD8" Offset="0" />
+            <GradientStop Color="#E6EAF5" Offset="0.2" />
+            <GradientStop Color="#CFD7E2" Offset="0.9" />
+            <GradientStop Color="#C4CBD8" Offset="1" />
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Sample4" StartPoint="0,0" EndPoint="0,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="Green" Offset="0" />
+                <GradientStop Color="LightGreen" Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Sample5">
+        <LinearGradientBrush.StartPoint>
+            <Point X="1" Y="0"/>
+        </LinearGradientBrush.StartPoint>
+        <LinearGradientBrush.EndPoint>
+            <Point X="1" Y="1.5"/>
+        </LinearGradientBrush.EndPoint>
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Color="Firebrick" Offset="1.2"/>
+            <GradientStop Color="#FF202020" Offset="0"/>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    <RadialGradientBrush x:Key="Sample6" GradientOrigin="0.5, 0.9">
+        <RadialGradientBrush.GradientStops>
+            <GradientStop Color="#FF3333FF" Offset="0.1" />
+            <GradientStop Color="#FF000000" Offset="1.4" />
+        </RadialGradientBrush.GradientStops>
+    </RadialGradientBrush>
+    <LinearGradientBrush x:Key="Sample7" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="Blue" Offset="0.1" />
+        <GradientStop Color="Orange" Offset="0.25" />
+        <GradientStop Color="Yellow" Offset="0.50" />
+        <GradientStop Color="Green" Offset="0.75" />
+        <GradientStop Color="Red" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Sample8" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="#FF07295C" Offset="0.0"/>
+        <GradientStop Color="#FF27497C" Offset="0.2"/>
+        <GradientStop Color="#FF3A639E" Offset="0.5"/>
+        <GradientStop Color="#FF4D7DC0" Offset="0.9"/>
+        <GradientStop Color="#FF5D7DC0" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!--<Style x:Key="{x:Type ToolTip}" TargetType="ToolTip">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="HasDropShadow" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Grid Margin="10">
+                        <Grid.Effect>
+                            <DropShadowEffect Direction="-45" ShadowDepth="3.3" BlurRadius="4" Color="Black"/>
+                        </Grid.Effect>
+                        <Border Background="DodgerBlue" CornerRadius="10" Padding="7" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
+                            <TextBlock Name="Border" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" MaxWidth="300"
+                                TextAlignment="Center"
+                                Foreground="White" Background="Firebrick" FontFamily="Verdana" FontWeight="ExtraBold" FontSize="18">
+                                <ContentPresenter Margin="14">
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </TextBlock>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+
+    <!--<Style TargetType="{x:Type StackPanel}">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="1000" />
+        <Setter Property="ToolTipService.ShowDuration" Value="2000" />
+        <Setter Property="ToolTipService.BetweenShowDelay" Value="500" />
+    </Style>-->
+
+    <Style x:Key="LvItemStyle" TargetType="ListViewItem">
+        <!--<Setter Property="Margin" Value="0,0,0,1"/>-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="border" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="LightBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="SkyBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="VerticalFilmStripListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Margin" Value="0,5,0,5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="border" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="LightBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="SkyBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="HorizontalFilmStripListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Margin" Value="5,0,5,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="border" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="Selected">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="LightBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused">
+                                    <!--<Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                                              Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                            <EasingColorKeyFrame KeyTime="0" Value="SkyBlue" />
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultListViewTemplate" TargetType="{x:Type ListView}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="False">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="IsSelected" Value="True"/>
+                <Setter Property="Background" Value="Black"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LiveEventsListViewItemStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Margin" Value="0,0,5,0"/>
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#49000000"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#49000000"/>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#29000000"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DefaultListViewStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Height" Value="18"/>
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Red"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red"/>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Black"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--<Style x:Key="WaterMarkTextBox" TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#33FFFFFF"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CaretBrush" Value="White"/>
+        <Style.Resources>
+            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                <VisualBrush.Visual>
+                    <Label x:Name="WaterMarkLabel" Foreground="LightGray" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Null}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
+
+    <!--Control colors.-->
+    <Color x:Key="WindowColor">#FFE8EDF9</Color>
+    <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
+    <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
+
+    <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
+    <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
+    <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+
+    <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
+    <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
+
+    <Color x:Key="ControlLightColor">White</Color>
+    <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+    <Color x:Key="ControlDarkColor">#FF211AA9</Color>
+
+    <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+    <Color x:Key="ControlPressedColor">#FF211AA9</Color>
+
+
+    <Color x:Key="GlyphColor">#FF444444</Color>
+    <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+
+    <!--Border colors-->
+    <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+    <Color x:Key="BorderMediumColor">#FF888888</Color>
+    <Color x:Key="BorderDarkColor">#FF444444</Color>
+
+    <Color x:Key="PressedBorderLightColor">#FF888888</Color>
+    <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
+
+    <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
+    <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+    <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
+
+    <!--Control-specific resources.-->
+    <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
+    <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
+    <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
+
+    <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
+
+    <LinearGradientBrush x:Key="MenuPopupBrush"
+                     EndPoint="0.5,1"
+                     StartPoint="0.5,0">
+        <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="0" />
+        <GradientStop Color="{DynamicResource ControlMediumColor}"
+                Offset="0.5" />
+        <GradientStop Color="{DynamicResource ControlLightColor}"
+                Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
+                     StartPoint="0,0"
+                     EndPoint="1,0">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#000000FF"
+                    Offset="0" />
+                <GradientStop Color="#600000FF"
+                    Offset="0.4" />
+                <GradientStop Color="#600000FF"
+                    Offset="0.6" />
+                <GradientStop Color="#000000FF"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <Style x:Key="DocumentViewerStyle" TargetType="{x:Type DocumentViewer}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DocumentViewer}">
+                    <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Focusable="False">
+                        <Grid KeyboardNavigation.TabNavigation="Local">
+
+                            <Grid.Background>
+                                <SolidColorBrush Color="#FF145883" />
+                            </Grid.Background>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Print Report"
+                                                Command="ApplicationCommands.Print" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="Print" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Print" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Increase Zoom"
+                                                Command="NavigationCommands.IncreaseZoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="Expand" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Zoom In" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Decrease Zoom"
+                                                Command="NavigationCommands.DecreaseZoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="Compress" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Zoom Out" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Actual Size"
+                                                Command="NavigationCommands.Zoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="100.0">
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="FileOutline" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Zoom Actual" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Fit to Width"
+                                                Command="DocumentViewer.FitToWidthCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="FileOutline" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Zoom Width" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Whole Page"
+                                                Command="DocumentViewer.FitToMaxPagesAcrossCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="1" >
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="FileOutline" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="Whole Page" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                                <StackPanel Style="{DynamicResource ArduVerticalButtonStackPanel}">
+                                    <Button Style="{DynamicResource ArduButton}" ToolTip="Two Pages"
+                                                Command="DocumentViewer.FitToMaxPagesAcrossCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="2" >
+                                        <StackPanel Style="{DynamicResource ArduButtonIconStackPanel}">
+                                            <fa:FontAwesome Icon="Copy" Style="{DynamicResource ArduButtonIcon}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Label Content="2 Pages" Style="{DynamicResource ArduButtonLabel}"/>
+                                </StackPanel>
+
+                            </StackPanel>
+
+                            <!--<Button Command="ApplicationCommands.Print" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Print" />-->
+                            <!--<ToolBar ToolBarTray.IsLocked="True" KeyboardNavigation.TabNavigation="Continue">
+                                -->
+                            <!--<Button Command="ApplicationCommands.Print" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Print" />-->
+                            <!--
+
+                                
+
+                                <Button Command="ApplicationCommands.Copy" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Copy" />
+                                <Separator />
+                                <Button Command="NavigationCommands.IncreaseZoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Zoom In" />
+                                <Button Command="NavigationCommands.DecreaseZoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Zoom Out" />
+                                <Separator />
+                                <Button Command="NavigationCommands.Zoom" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="100.0" Content="Actual Size" />
+                                <Button Command="DocumentViewer.FitToWidthCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" Content="Fit to Width" />
+                                <Button Command="DocumentViewer.FitToMaxPagesAcrossCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="1" Content="Whole Page" />
+                                <Button Command="DocumentViewer.FitToMaxPagesAcrossCommand" CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" CommandParameter="2" Content="Two Pages" />
+                            </ToolBar>-->
+
+                            <ScrollViewer Grid.Row="1" CanContentScroll="true" HorizontalScrollBarVisibility="Auto" x:Name="PART_ContentHost" IsTabStop="true" Margin="10,-20,10,10">
+                                <!--<ScrollViewer.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="{DynamicResource ControlLightColor}" Offset="0" />
+                                        <GradientStop Color="{DynamicResource ControlMediumColor}" Offset="1" />
+                                    </LinearGradientBrush>
+                                </ScrollViewer.Background>-->
+                            </ScrollViewer>
+
+                            <ContentControl Grid.Row="2" x:Name="PART_FindToolBarHost"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

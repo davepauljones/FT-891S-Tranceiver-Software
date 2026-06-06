@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.StationScope"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+             xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="8" d:DesignWidth="264" MinWidth="264" MaxWidth="264">
+    <Grid x:Name="BackgroundGrid" Height="8" Background="#01AAAAAA">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="24" MaxWidth="24"/>
+            <ColumnDefinition Width="Auto" MinWidth="56" MaxWidth="56"/>
+            <ColumnDefinition Width="Auto" MinWidth="160" MaxWidth="160"/>
+            <ColumnDefinition Width="Auto" MinWidth="26" MaxWidth="26"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="StationIDTextBlock" Grid.Column="0" Text="00000" Foreground="White" FontSize="9" Margin="2,0,0,0" Padding="0" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+        <TextBlock x:Name="StationFrequencyTextBlock" Grid.Column="1" Text="14.150.500" Foreground="White" FontSize="9" MaxWidth="50" MinWidth="50" Margin="0,0,2,0" TextAlignment="Right" VerticalAlignment="Center"/>
+
+        <Grid Grid.Column="2" Margin="2,0,0,0" Background="Transparent">
+            <Grid>
+                <Rectangle x:Name="SignalStrengthBarGraphRectangle" Margin="0,0,0,0" Opacity="0.9" Fill="Orange" Width="140" Height="8" HorizontalAlignment="Left"/>
+                <Border Width="{Binding ElementName=SignalStrengthBarGraphRectangle, Path=ActualWidth}"
+                        HorizontalAlignment="Left" Background="Transparent">
+
+                    <TextBlock x:Name="BarGraphTextBlock" Text="9 dB"
+                       Margin="4,-2,0,0"
+                       Opacity="0.6"
+                       Foreground="Black"
+                       FontFamily="Consolas"
+                       FontSize="9"
+                       TextAlignment="Center"/>
+                </Border>
+                <!--<Label x:Name="BarGraphLabel" Content="9 dB" Margin="4,-2,0,0" Width="{Binding ElementName=SignalStrengthBarGraphRectangle, Path=ActualWidth}" Opacity="0.6" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="9" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="0"/>-->
+            </Grid>
+        </Grid>
+
+    </Grid>
+</UserControl>

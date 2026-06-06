@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.UpDownValue"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="264">
+    <Canvas Width="264" Height="30" VerticalAlignment="Top">
+        <Grid Canvas.Left="2" Canvas.Top="7" Opacity="0.6" Width="29" Height="13" Background="Black">
+            <Label Content="TH" Height="38" Margin="-2,-5,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" Foreground="White" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
+        </Grid>
+        <controls:NumericUpDown x:Name="NumericUpDown" Canvas.Left="30" Canvas.Top="0" Width="104" Height="10" Minimum="1" Maximum="60" Value="7" Interval="1" Opacity="0.6"
+            StringFormat="N0" UpDownButtonsWidth="30" FontSize="14" BorderThickness="0" Background="Transparent"/>
+        <Label Content="dB" Canvas.Left="130" Canvas.Top="0" Height="38" Margin="-1,2,0,0" Padding="0" Opacity="0.6" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
+    </Canvas>
+</UserControl>

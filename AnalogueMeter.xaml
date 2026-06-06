@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="HamRadioControls.AnalogMeter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="400" Height="280">
+
+    <Grid Width="400" Height="280">
+
+        <Grid>
+
+            <!-- STATIC LAYER -->
+            <Canvas x:Name="StaticCanvas">
+
+                <Path Stroke="White" StrokeThickness="2" Data="M 70,180 A 140,140 0 0 1 330,180" Canvas.Top="35"/>
+
+                <Path Stroke="DodgerBlue" StrokeThickness="4" Data="M 260,105 A 140,140 0 0 1 330,180" Canvas.Top="35"/>
+
+                <TextBlock x:Name="MeterTitleText" Text="SIGNAL" TextAlignment="Center" Canvas.Left="128" Canvas.Top="150" Width="140" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                
+            </Canvas>
+
+            <!-- SCALE LAYER -->
+            <Canvas x:Name="ScaleCanvas"/>
+
+            <!-- NEEDLE LAYER -->
+            <Canvas>
+
+                <Polygon Points="199,250 201,250 200,45" Fill="Red">
+                    <Polygon.RenderTransform>
+                        <RotateTransform x:Name="NeedleRotation" CenterX="200" CenterY="250" Angle="-60"/>
+                    </Polygon.RenderTransform>
+                </Polygon>
+
+                <!--<Ellipse Width="30" Height="30" Fill="#222" Canvas.Left="185" Canvas.Top="235"/>-->
+                
+            </Canvas>
+            
+        </Grid>
+    </Grid>
+</UserControl>
