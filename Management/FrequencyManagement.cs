@@ -93,7 +93,8 @@ namespace YAESU_FT_891_Front_End
                 }
 
                 //added temp to get functions working in the intrim
-                mainWindow.yAESU_FT_891_CAT_Dictionary.SetFrequency(frequency);
+                SetFrequency(frequency);
+                
 
                 if (memorySlotIndex == MemorySlots.VFO_A) UpdateVFODialPosition(frequency);
             }
@@ -115,6 +116,25 @@ namespace YAESU_FT_891_Front_End
             }
 
             lastRigState.RXFrequencyHz = frequency;
+        }
+
+        private void SetFrequency(long hz)
+        {
+            if (hz <= 0)
+                return;
+
+            // FT-891 valid range (safe guard)
+            if (hz < 1000) hz = 1000;
+            if (hz > 60000000) hz = 60000000;
+
+            string cmd = $"FA{hz:000000000};";
+
+            mainWindow.fT891S_SerialPort.SendCAT(mainWindow.fT891S_SerialPort._port, cmd);
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.WriteLine("SetFrequency = " + cmd);
+            }
         }
 
         private void UpdateVFODialPosition(long freq)

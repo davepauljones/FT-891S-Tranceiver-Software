@@ -8,8 +8,8 @@ using System.Diagnostics.Eventing.Reader;
 using System.IO.Ports;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -47,6 +47,7 @@ namespace YAESU_FT_891_Front_End
 
         public FT891S_SerialPort fT891S_SerialPort;
         public FT891S_CatCommands fT891S_CatCommands;
+
         public YAESU_FT_891_CAT_Dictionary yAESU_FT_891_CAT_Dictionary;
         public FrequencyManagement frequencyManagement;
 
