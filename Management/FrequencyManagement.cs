@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace YAESU_FT_891_Front_End
     {
         MainWindow mainWindow;
 
-        public RigState lastRigState = new RigState();
+        public RadioState lastRadioState = new RadioState();
 
         public FrequencyManagement(MainWindow mainWindow)
         {
@@ -26,17 +27,17 @@ namespace YAESU_FT_891_Front_End
         {
             long returnFrequency = 0;
 
-            RigState memorySlotToGet;
+            RadioState memorySlotToGet;
 
             if (mainWindow.memorySlot.MemorySlotDictionary.TryGetValue((int)memorySlotIndex, out memorySlotToGet))
             {
                 switch (frequencyLocation)
                 {
                     case FrequencyLocations.RXFrequencyHz:
-                        returnFrequency = memorySlotToGet.RXFrequencyHz;
+                        returnFrequency = memorySlotToGet.VfoAFrequency;
                         break;
                     case FrequencyLocations.TXFrequencyHz:
-                        returnFrequency = memorySlotToGet.TXFrequencyHz;
+                        returnFrequency = memorySlotToGet.VfoBFrequency;
                         break;
                     default:
                         returnFrequency = 0;
@@ -67,23 +68,23 @@ namespace YAESU_FT_891_Front_End
                 Console.WriteLine(returnFrequency);
             }
 
-            lastRigState.RXFrequencyHz = returnFrequency;
+            lastRadioState.VfoAFrequency = returnFrequency;
 
             return returnFrequency;
         }
         public void SetFrequency(Int32 memorySlotIndex, byte frequencyLocation, long frequency, TextBlock textBlock = null)
         {
-            RigState memorySlotToSet;
+            RadioState memorySlotToSet;
 
             if (mainWindow.memorySlot.MemorySlotDictionary.TryGetValue((int)memorySlotIndex, out memorySlotToSet))
             {
                 switch (frequencyLocation)
                 {
                     case FrequencyLocations.RXFrequencyHz:
-                        memorySlotToSet.RXFrequencyHz = frequency;
+                        memorySlotToSet.VfoAFrequency = frequency;
                         break;
                     case FrequencyLocations.TXFrequencyHz:
-                        memorySlotToSet.TXFrequencyHz = frequency;
+                        memorySlotToSet.VfoBFrequency = frequency;
                         break;
                 }
 
@@ -115,7 +116,54 @@ namespace YAESU_FT_891_Front_End
                 Console.WriteLine(frequency);
             }
 
-            lastRigState.RXFrequencyHz = frequency;
+            lastRadioState.VfoAFrequency = frequency;
+        }
+
+        public void SetFrequencyUI(Int32 memorySlotIndex, byte frequencyLocation, long frequency, TextBlock textBlock = null)
+        {
+            RadioState memorySlotToSet;
+
+            if (mainWindow.memorySlot.MemorySlotDictionary.TryGetValue((int)memorySlotIndex, out memorySlotToSet))
+            {
+                switch (frequencyLocation)
+                {
+                    case FrequencyLocations.RXFrequencyHz:
+                        memorySlotToSet.VfoAFrequency = frequency;
+                        break;
+                    case FrequencyLocations.TXFrequencyHz:
+                        memorySlotToSet.VfoBFrequency = frequency;
+                        break;
+                }
+
+                if (textBlock != null)
+                {
+                    textBlock.Text = FormatFrequency(frequency);
+                }
+
+                //added temp to get functions working in the intrim
+                //SetFrequency(frequency);
+
+
+                if (memorySlotIndex == MemorySlots.VFO_A) UpdateVFODialPosition(frequency);
+            }
+            else
+            {
+                Console.WriteLine("FrequencyManagement.SetFrequency");
+                Console.WriteLine("memorySlotDictionary.TryGetValue Error!");
+            }
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.WriteLine("FrequencyManagement.SetFrequency");
+                Console.Write("memorySlotIndex set to ");
+                Console.WriteLine(memorySlotIndex);
+                Console.Write("frequencyLocation set to ");
+                Console.WriteLine(frequencyLocation);
+                Console.Write("Frequencey set to ");
+                Console.WriteLine(frequency);
+            }
+
+            lastRadioState.VfoAFrequency = frequency;
         }
 
         private void SetFrequency(long hz)
@@ -139,11 +187,11 @@ namespace YAESU_FT_891_Front_End
 
         private void UpdateVFODialPosition(long freq)
         {
-            if (freq != lastRigState.RXFrequencyHz)
+            if (freq != lastRadioState.VfoAFrequency)
             {
-                if (freq > lastRigState.RXFrequencyHz)
+                if (freq > lastRadioState.VfoAFrequency)
                     mainWindow.SpinDial(MyStructs.DialDirection.Clockwise);
-                else if (freq < lastRigState.RXFrequencyHz)
+                else if (freq < lastRadioState.VfoAFrequency)
                     mainWindow.SpinDial(MyStructs.DialDirection.AntiClockwise);
             }
         }

@@ -1,4 +1,5 @@
-﻿using HamRadioControls;
+﻿using FT891S_CatControl;
+using HamRadioControls;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -153,159 +154,159 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        private void HandleCAT(string msg)
-        {
-            try
-            {
-                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                {
-                    Console.WriteLine("HandleCAT RX: " + msg);
-                }
+        //private void HandleCAT(string msg)
+        //{
+        //    try
+        //    {
+        //        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //        {
+        //            Console.WriteLine("HandleCAT RX: " + msg);
+        //        }
 
-                if (string.IsNullOrWhiteSpace(msg))
-                    return;
+        //        if (string.IsNullOrWhiteSpace(msg))
+        //            return;
 
-                msg = msg.Trim();
+        //        msg = msg.Trim();
 
-                if (msg.StartsWith("FA"))
-                {
-                    string digits = msg.Substring(2).TrimEnd(';');
+        //        if (msg.StartsWith("FA"))
+        //        {
+        //            string digits = msg.Substring(2).TrimEnd(';');
 
-                    if (long.TryParse(digits, out long freq))
-                    {
-                        //if (frequencyManagement != null)
-                        mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, freq, mainWindow.MainFrequencyTextBlock);
-                    }
-                    else
-                    {
-                        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                        {
-                            Console.WriteLine("**** Invalid FA format: " + msg);
-                        }
-                    }
-                }
-                else if (msg.StartsWith("RM"))
-                {
-                    string digits = msg.Substring(3, 3).TrimEnd(';');
-                    byte meterToUpdate = Convert.ToByte(msg.Substring(2, 1).TrimEnd(';'));
+        //            if (long.TryParse(digits, out long freq))
+        //            {
+        //                //if (frequencyManagement != null)
+        //                mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, freq, mainWindow.MainFrequencyTextBlock);
+        //            }
+        //            else
+        //            {
+        //                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //                {
+        //                    Console.WriteLine("**** Invalid FA format: " + msg);
+        //                }
+        //            }
+        //        }
+        //        else if (msg.StartsWith("RM"))
+        //        {
+        //            string digits = msg.Substring(3, 3).TrimEnd(';');
+        //            byte meterToUpdate = Convert.ToByte(msg.Substring(2, 1).TrimEnd(';'));
 
-                    if (int.TryParse(digits, out int meterReading))
-                    {
-                        switch (meterToUpdate)
-                        {
-                            case SMeters.S:
-                                mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, meterReading);
-                                mainWindow.stationSeek.LastSMeterRawReading = meterReading;
-                                mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(meterReading);
+        //            if (int.TryParse(digits, out int meterReading))
+        //            {
+        //                switch (meterToUpdate)
+        //                {
+        //                    case SMeters.S:
+        //                        mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, meterReading);
+        //                        mainWindow.stationSeek.LastSMeterRawReading = meterReading;
+        //                        mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(meterReading);
 
-                                mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(meterReading));
+        //                        mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(meterReading));
 
-                                byte spriteWidth = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(meterReading)));
-                                mainWindow.sprite.GenerateSprite(spriteWidth, 295, 2);
+        //                        byte spriteWidth = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(meterReading)));
+        //                        mainWindow.sprite.GenerateSprite(spriteWidth, 295, 2);
 
-                                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                                {
-                                    Console.WriteLine("meterReading = " + meterReading);
-                                }
+        //                        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //                        {
+        //                            Console.WriteLine("meterReading = " + meterReading);
+        //                        }
 
-                                break;
-                            case SMeters.COMP:
-                                mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, meterReading);
-                                break;
-                            case SMeters.ALC:
-                                mainWindow.UpdateMeter(mainWindow.ALCBarGraphRectangle, meterReading);
-                                break;
-                            case SMeters.PO:
-                                mainWindow.UpdateMeter(mainWindow.POBarGraphRectangle, meterReading);
-                                if (meterReading > 0)
-                                    mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOn);
-                                else
-                                    mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
+        //                        break;
+        //                    case SMeters.COMP:
+        //                        mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, meterReading);
+        //                        break;
+        //                    case SMeters.ALC:
+        //                        mainWindow.UpdateMeter(mainWindow.ALCBarGraphRectangle, meterReading);
+        //                        break;
+        //                    case SMeters.PO:
+        //                        mainWindow.UpdateMeter(mainWindow.POBarGraphRectangle, meterReading);
+        //                        if (meterReading > 0)
+        //                            mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOn);
+        //                        else
+        //                            mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
 
-                                //change to correct meter some day
-                                mainWindow.SignalMeter.Value = meterReading;
+        //                        //change to correct meter some day
+        //                        mainWindow.SignalMeter.Value = meterReading;
 
-                                break;
-                            case SMeters.SWR:
-                                mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, meterReading);
+        //                        break;
+        //                    case SMeters.SWR:
+        //                        mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, meterReading);
 
-                                //change to correct meter some day
-                                mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(meterReading);
+        //                        //change to correct meter some day
+        //                        mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(meterReading);
 
-                                break;
-                            case SMeters.IDD:
-                                mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, meterReading);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                        {
-                            Console.WriteLine("*** Invalid RM format: " + msg);
-                        }
-                    }
-                }
-                else if (msg.StartsWith("MD0"))
-                {
-                    string modeChar = msg.Substring(3, 1);
+        //                        break;
+        //                    case SMeters.IDD:
+        //                        mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, meterReading);
+        //                        break;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //                {
+        //                    Console.WriteLine("*** Invalid RM format: " + msg);
+        //                }
+        //            }
+        //        }
+        //        else if (msg.StartsWith("MD0"))
+        //        {
+        //            string modeChar = msg.Substring(3, 1);
 
-                    if (int.TryParse(modeChar, System.Globalization.NumberStyles.HexNumber,
-                                     null, out int rigMode))
-                    {
-                        UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, rigMode);
+        //            if (int.TryParse(modeChar, System.Globalization.NumberStyles.HexNumber,
+        //                             null, out int rigMode))
+        //            {
+        //                UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, rigMode);
 
-                        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                        {
-                            Console.WriteLine("rigMode = " + rigMode); // Will now correctly print '5'
-                            Console.WriteLine("modeChar = " + modeChar);
-                            Console.WriteLine("msg = " + msg);
-                            Console.WriteLine("DateTime Now = " + DateTime.Now.ToString("ss"));
-                        }
-                    }
-                }
-                else if (msg.StartsWith("BY"))
-                {
-                    byte busyMode = Convert.ToByte(msg.Substring(2, 1).TrimEnd(';'));
+        //                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //                {
+        //                    Console.WriteLine("rigMode = " + rigMode); // Will now correctly print '5'
+        //                    Console.WriteLine("modeChar = " + modeChar);
+        //                    Console.WriteLine("msg = " + msg);
+        //                    Console.WriteLine("DateTime Now = " + DateTime.Now.ToString("ss"));
+        //                }
+        //            }
+        //        }
+        //        else if (msg.StartsWith("BY"))
+        //        {
+        //            byte busyMode = Convert.ToByte(msg.Substring(2, 1).TrimEnd(';'));
 
-                    if (RigMode == RigModes.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
-                    {
-                        if (busyMode == 0)
-                            mainWindow.SetRigLEDColor(RigLEDColors.LightGray);
-                        else if (busyMode == 1)
-                            mainWindow.SetRigLEDColor(RigLEDColors.Green);
-                    }
-                }
-                else if (msg.StartsWith("PC"))
-                {
-                    string digits = msg.Substring(2).TrimEnd(';');
+        //            if (RigMode == RigModes.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+        //            {
+        //                if (busyMode == 0)
+        //                    mainWindow.SetRigLEDColor(RigLEDColors.LightGray);
+        //                else if (busyMode == 1)
+        //                    mainWindow.SetRigLEDColor(RigLEDColors.Green);
+        //            }
+        //        }
+        //        else if (msg.StartsWith("PC"))
+        //        {
+        //            string digits = msg.Substring(2).TrimEnd(';');
 
-                    if (long.TryParse(digits, out long power))
-                    {
-                        mainWindow.PowerControlLabel.Content = power.ToString() + "W";
-                        mainWindow.RfPowerFunctionTextBlock.Text = power.ToString() + "W";
-                    }
-                    else
-                    {
-                        if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                        {
-                            Console.WriteLine("**** Invalid FA format: " + msg);
-                        }
-                    }
-                }
-                else
-                {
-                    if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                    {
-                        Console.WriteLine("*** Error None: ");
-                    }
-                }
-             }
-            catch
-            {
-                Console.WriteLine("*** Error Bad CAT Returned: ");
-            }
-        }
+        //            if (long.TryParse(digits, out long power))
+        //            {
+        //                mainWindow.PowerControlLabel.Content = power.ToString() + "W";
+        //                mainWindow.RfPowerFunctionTextBlock.Text = power.ToString() + "W";
+        //            }
+        //            else
+        //            {
+        //                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //                {
+        //                    Console.WriteLine("**** Invalid FA format: " + msg);
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //            {
+        //                Console.WriteLine("*** Error None: ");
+        //            }
+        //        }
+        //     }
+        //    catch
+        //    {
+        //        Console.WriteLine("*** Error Bad CAT Returned: ");
+        //    }
+        //}
 
         public void StartSerialLoop()
         {
@@ -319,7 +320,7 @@ namespace YAESU_FT_891_Front_End
 
         private string _buffer = "";
         private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
+        {      
             try
             {
                 string incoming = _port.ReadExisting();
@@ -337,7 +338,11 @@ namespace YAESU_FT_891_Front_End
                         // If HandleCAT throws an error, it bubbles up right into this internal catch block.
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            HandleCAT(message);
+                            mainWindow._catManager.HandleIncomingData(message);
+
+                            Console.Write("FT891S_CatManager.currentRadioState.VfoAFrequency = ");
+                            Console.WriteLine(FT891S_CatManager.currentRadioState.VfoAFrequency);
+                            //HandleCAT(message);
                         });
                     }
                     catch (Exception uiEx)

@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="CWDecoder.cs" />
     <Compile Include="FT891S_CatCommands.cs" />
+    <Compile Include="FT891S_CatControl.cs" />
     <Compile Include="Management\FrequencyManagement.cs" />
     <Compile Include="FT891S_SerialPort.cs" />
     <Compile Include="FunctionMenuClass.cs" />

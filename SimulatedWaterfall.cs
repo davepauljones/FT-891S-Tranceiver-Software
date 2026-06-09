@@ -707,7 +707,7 @@ namespace YAESU_FT_891_Front_End
             if(currentCursorMode == CursorModes.Center)
                 mainWindow.SpanLabel3TextBlock.Text = frequencyManagement.FormatFrequency(centerFrequency);
 
-            if (frequencyManagement.lastRigState.RXFrequencyHz != frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null))
+            if (frequencyManagement.lastRadioState.VfoAFrequency != frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null))
                 AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 60);
         }
 

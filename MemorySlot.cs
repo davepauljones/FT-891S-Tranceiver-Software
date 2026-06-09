@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,13 +32,13 @@ namespace YAESU_FT_891_Front_End
 
         //MemorySlotDictionary index 0 and 1 are read write
         //MemorySlotDictionary index > 1 are readonly
-        public Dictionary<Int32, RigState> MemorySlotDictionary = new Dictionary<Int32, RigState> { };
+        public Dictionary<Int32, RadioState> MemorySlotDictionary = new Dictionary<Int32, RadioState> { };
 
         public byte CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
         public byte CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
 
-        public RigState MainRigState = new RigState();
-        public RigState SubRigState = new RigState();
+        public RadioState MainRigState = new RadioState();
+        public RadioState SubRigState = new RadioState();
 
         MainWindow mainWindow;
         public MemorySlot(MainWindow mainWindow)
@@ -49,37 +50,37 @@ namespace YAESU_FT_891_Front_End
 
         private void SetUpVFOs()
         {
-            RigState rs = new RigState();
-            rs.RXFrequencyHz = 14200000;
-            rs.TXFrequencyHz = 14200000;
-            rs.Mode = RigModes.FM;
+            RadioState rs = new RadioState();
+            rs.VfoAFrequency = 14200000;
+            rs.VfoBFrequency = 14200000;
+            rs.OperatingMode = RadioMode.FM;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_A, rs);//main is the contents of VFO A
 
-            rs = new RigState();
-            rs.RXFrequencyHz = 7150000;
-            rs.TXFrequencyHz = 7150000;
-            rs.Mode = RigModes.AM;
+            rs = new RadioState();
+            rs.VfoAFrequency = 7150000;
+            rs.VfoBFrequency = 7150000;
+            rs.OperatingMode = RadioMode.AM;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_B, rs);//sub is the contents of VFO B
 
-            foreach (KeyValuePair<int, RigState> item in MemorySlotDictionary)
+            foreach (KeyValuePair<int, RadioState> item in MemorySlotDictionary)
             {
                 int key = item.Key;
-                RigState value = item.Value;
+                RadioState value = item.Value;
 
-                Console.Write($"{key} -> {value.RXFrequencyHz}");
-                Console.WriteLine($"{key} -> {value.Mode}");
+                Console.Write($"{key} -> {value.VfoAFrequency}");
+                Console.WriteLine($"{key} -> {value.OperatingMode}");
             }
 
-            RigState main;
+            RadioState main;
 
             if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
             {
                 MainRigState = main;
             }
 
-            RigState sub;
+            RadioState sub;
 
             if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
             {
@@ -89,7 +90,7 @@ namespace YAESU_FT_891_Front_End
 
         public void InitVFOs()
         {
-            RigState main;
+            RadioState main;
 
             if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
             {
@@ -97,7 +98,7 @@ namespace YAESU_FT_891_Front_End
                 CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
             }
 
-            RigState sub;
+            RadioState sub;
 
             if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
             {
@@ -110,13 +111,13 @@ namespace YAESU_FT_891_Front_End
 
             //mainWindow.MainVFOABLabel.Content = SubRigState.Mode;
 
-            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.Mode);
+            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
 
             mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
             mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
             mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
-            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.Mode);
+            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
 
             mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
             mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
@@ -127,7 +128,7 @@ namespace YAESU_FT_891_Front_End
         {
             if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
             {
-                RigState sub;
+                RadioState sub;
 
                 if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
                 {
@@ -135,7 +136,7 @@ namespace YAESU_FT_891_Front_End
                     CurrentOccupierOfMainRigState = MemorySlots.VFO_B;
                 }
 
-                RigState main;
+                RadioState main;
 
                 if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
                 {
@@ -145,7 +146,7 @@ namespace YAESU_FT_891_Front_End
             }
             else if (CurrentOccupierOfMainRigState == MemorySlots.VFO_B)
             {
-                RigState main;
+                RadioState main;
 
                 if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
                 {
@@ -153,7 +154,7 @@ namespace YAESU_FT_891_Front_End
                     CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
                 }
 
-                RigState sub;
+                RadioState sub;
 
                 if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
                 {
@@ -176,13 +177,13 @@ namespace YAESU_FT_891_Front_End
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, mainWindow.MainFrequencyTextBlock);
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, mainWindow.SubFrequencyTextBlock);
 
-            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.Mode);
+            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
 
             mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
             mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
             mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
-            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.Mode);
+            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
 
             mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
             mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
@@ -192,17 +193,17 @@ namespace YAESU_FT_891_Front_End
 
             //Main
 
-            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, MainRigState.Mode);
+            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, MainRigState.OperatingMode);
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(MainRigState.Mode);
+            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(MainRigState.OperatingMode);
 
 
             //Sub
             mainWindow.yAESU_FT_891_CAT_Dictionary.SwapSubWithMain();
 
-            UpdateUIRigMode(mainWindow.SubRigModeLabelBorder, mainWindow.SubRigModeLabel, SubRigState.Mode);
+            UpdateUIRigMode(mainWindow.SubRigModeLabelBorder, mainWindow.SubRigModeLabel, SubRigState.OperatingMode);
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(SubRigState.Mode);
+            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(SubRigState.OperatingMode);
 
             mainWindow.yAESU_FT_891_CAT_Dictionary.SwapMainWithSub();
         }

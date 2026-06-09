@@ -8,8 +8,15 @@ using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
 {
+    public class FT891S_CatStates
+    {
+        public String Set;
+        public String Read;
+        public String Answer;
+    }
     public struct FT891S_CatCommandTypes
     {
+        //Name the cat command like the cat pdf FA_FREQUENCY_VFO_A_P1P1P1P1P1P1P1P1P1 & GT_AGC_FUNCTION_P1_P2
         public const byte FA = 0;
         public const byte FB = 1;
         public const byte BY = 2;

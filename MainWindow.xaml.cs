@@ -1,4 +1,5 @@
 ﻿using CWDecoder;
+using FT891S_CatControl;
 using HamRadioControls;
 using MahApps.Metro.Controls;
 using System;
@@ -58,7 +59,7 @@ namespace YAESU_FT_891_Front_End
         public byte ConsoleDebugLevel = ConsoleDebugLevels.CurrentDebug;
         public byte DevelopmentStatus = Development.InProgress;
 
-        public RigState currentRigState;
+        public static RigState currentRigState;
         public MemorySlot memorySlot;
 
         public QMBRigStates qMBRigStates;
@@ -71,13 +72,16 @@ namespace YAESU_FT_891_Front_End
         public Sprite sprite;
         public WaterFallSweep waterFallSweep;
 
+        public FT891S_CatManager _catManager;
+
         public MainWindow()
         {
             InitializeComponent();
 
             EnableDrag = true;
-            this.AllowsTransparency = true;
+            this.AllowsTransparency = true; 
         }
+
 
         void Init_Startup()
         {
@@ -86,9 +90,9 @@ namespace YAESU_FT_891_Front_End
             fT891S_CatCommands = new FT891S_CatCommands(this);
 
 
-            fT891S_CatCommands.FT891S_DoCatCommand(FT891S_CatCommandTypes.FA, YaesuCatCommandReadWriteStatus.ReadOnly, CatCommandCallback);
+            //fT891S_CatCommands.FT891S_DoCatCommand(FT891S_CatCommandTypes.FA, YaesuCatCommandReadWriteStatus.ReadOnly, CatCommandCallback);
 
-            fT891S_CatCommands.FT891S_DoCatCommand(FT891S_CatCommandTypes.FA, YaesuCatCommandReadWriteStatus.WriteOnly, CatCommandCallback);
+            //fT891S_CatCommands.FT891S_DoCatCommand(FT891S_CatCommandTypes.FA, YaesuCatCommandReadWriteStatus.WriteOnly, CatCommandCallback);
 
             
             yAESU_FT_891_CAT_Dictionary = new YAESU_FT_891_CAT_Dictionary(this);
@@ -106,12 +110,12 @@ namespace YAESU_FT_891_Front_End
             centerX = Canvas.GetLeft(FingerIndentImage);
             centerY = Canvas.GetTop(FingerIndentImage);
 
-            frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, MainFrequencyTextBlock);
-            frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, SubFrequencyTextBlock);
+            //frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, MainFrequencyTextBlock);
+            //frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, SubFrequencyTextBlock);
 
             FastNormalGrid.Visibility = Visibility.Hidden;
 
-            yAESU_FT_891_CAT_Dictionary.FreqA(fT891S_SerialPort._port, 0);
+            //yAESU_FT_891_CAT_Dictionary.FreqA(fT891S_SerialPort._port, 0);
 
             //SetRfGain(_port, 10);
 
@@ -148,13 +152,18 @@ namespace YAESU_FT_891_Front_End
 
             fT891S_SerialPort.OpenPort("COM8");
 
-            fT891S_SerialPort.StartSerialLoop();
+            //fT891S_SerialPort.StartSerialLoop();
 
             sprite = new Sprite(this, WaterfallCanvas);
 
             //sprite.GenerateSprite(128, 295, 0, 46, 6);
 
             waterFallSweep = new WaterFallSweep(this, SweepYellowCursorCanvas);
+
+            // Instantiate the manager and pass your WPF window UI context
+            _catManager = new FT891S_CatManager(this, this.Dispatcher);
+
+            _catManager.StartOutgoingDataLoop();
         }
 
         private void CatCommandCallback()
@@ -192,6 +201,7 @@ namespace YAESU_FT_891_Front_End
             }
 
             fT891S_SerialPort.StopSerialLoop();
+            _catManager.StopOutgoingDataLoop();
         }
         
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)

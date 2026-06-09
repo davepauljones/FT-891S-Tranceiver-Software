@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.IO.Ports;
@@ -86,9 +87,9 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        public void SetMode(byte rigMode)
+        public void SetMode(RadioMode radioMode)
         {
-            byte modeValue = (byte)rigMode;
+            byte modeValue = (byte)radioMode;
 
             if (modeValue > 0x0F)
                 return;

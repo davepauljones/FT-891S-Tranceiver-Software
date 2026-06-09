@@ -88,7 +88,7 @@ namespace YAESU_FT_891_Front_End
 
         public string Band { get; set; } = "20m";
 
-        public byte Mode { get; set; } = RigModes.SSB1;
+        public int Mode { get; set; } = RigModes.SSB1;
 
         public VFOSelection ActiveVFO { get; set; } = VFOSelection.A;
 
