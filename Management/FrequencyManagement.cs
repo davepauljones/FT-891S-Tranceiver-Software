@@ -166,7 +166,7 @@ namespace YAESU_FT_891_Front_End
             lastRadioState.VfoAFrequency = frequency;
         }
 
-        private void SetFrequency(long hz)
+        public void SetFrequency(long hz)
         {
             if (hz <= 0)
                 return;

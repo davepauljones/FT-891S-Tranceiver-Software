@@ -442,18 +442,21 @@ namespace FT891S_CatControl
                     break;
             }
 
-            Console.Write("currentRadioState.VfoAFrequency = ");
-            Console.WriteLine(currentRadioState.VfoAFrequency);
-            Console.Write("currentRadioState.OperatingMode = ");
-            Console.WriteLine(currentRadioState.OperatingMode);
-            Console.Write("currentRadioState.ActiveMeterType = ");
-            Console.WriteLine(currentRadioState.ActiveMeterType);
-            Console.Write("currentRadioState.CurrentMeterReading = ");
-            Console.WriteLine(currentRadioState.CurrentMeterReading);
-            Console.Write("currentRadioState.BusyMode = ");
-            Console.WriteLine(currentRadioState.BusyMode);
-            Console.Write("currentRadioState.TXPowerWatts = ");
-            Console.WriteLine(currentRadioState.TXPowerWatts);
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.Write("currentRadioState.VfoAFrequency = ");
+                Console.WriteLine(currentRadioState.VfoAFrequency);
+                Console.Write("currentRadioState.OperatingMode = ");
+                Console.WriteLine(currentRadioState.OperatingMode);
+                Console.Write("currentRadioState.ActiveMeterType = ");
+                Console.WriteLine(currentRadioState.ActiveMeterType);
+                Console.Write("currentRadioState.CurrentMeterReading = ");
+                Console.WriteLine(currentRadioState.CurrentMeterReading);
+                Console.Write("currentRadioState.BusyMode = ");
+                Console.WriteLine(currentRadioState.BusyMode);
+                Console.Write("currentRadioState.TXPowerWatts = ");
+                Console.WriteLine(currentRadioState.TXPowerWatts);
+            }
         }
 
         public void StartOutgoingDataLoop()

@@ -426,16 +426,13 @@ namespace YAESU_FT_891_Front_End
             double speed = Math.Abs(deltaY) / dt;
             _lastBlurSpeed = (_lastBlurSpeed * 0.8) + (speed * 0.2);
 
-            // Apply tracking adjustments
-            long _currentFrequency = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, MainFrequencyTextBlock);
-            
-            _currentFrequency += (long)(deltaY * tuningStep);
+            FT891S_CatManager.currentRadioState.VfoAFrequency += (long)(deltaY * tuningStep);
 
             // FIXED: Traditional clamping math for backwards compatibility (.NET Framework)
-            if (_currentFrequency < MinFrequency) _currentFrequency = MinFrequency;
-            if (_currentFrequency > MaxFrequency) _currentFrequency = MaxFrequency;
+            if (FT891S_CatManager.currentRadioState.VfoAFrequency < MinFrequency) FT891S_CatManager.currentRadioState.VfoAFrequency = MinFrequency;
+            if (FT891S_CatManager.currentRadioState.VfoAFrequency > MaxFrequency) FT891S_CatManager.currentRadioState.VfoAFrequency = MaxFrequency;
 
-            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, _currentFrequency, MainFrequencyTextBlock);
+            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, MainFrequencyTextBlock);
 
             _lastMoveTime = now;
         }

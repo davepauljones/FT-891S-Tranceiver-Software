@@ -1,14 +1,16 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using static YAESU_FT_891_Front_End.MyStructs;
+using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.YAESU_FT_891_CAT_Dictionary;
-using System.Windows.Controls;
-using System.Windows;
 
 namespace YAESU_FT_891_Front_End
 { 
@@ -56,7 +58,8 @@ namespace YAESU_FT_891_Front_End
             StationSeekActiveList.Clear();
             mainWindow.StationScopeListView.Items.Clear();
 
-            mainWindow.fT891S_SerialPort.StopSerialLoop();
+            //mainWindow.fT891S_SerialPort.StopSerialLoop();
+            mainWindow._catManager.StopOutgoingDataLoop();
 
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
             await Task.Delay(20);
@@ -65,27 +68,39 @@ namespace YAESU_FT_891_Front_End
 
             for (long freq = startFrequency; freq <= endFrequency; freq += freqStep)
             {
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
-                await Task.Delay(10);
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
+                //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                mainWindow.frequencyManagement.SetFrequency(freq);
+                await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
 
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-                await Task.Delay(10);
+                mainWindow._catManager.SendReadQuery("FA");
+                await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
+                //await Task.Delay(10);
 
-                mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
-                await Task.Delay(20);
+                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                {
+                    mainWindow._catManager.SendReadQuery("RM0");
+                    await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                }
+
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
+                //await Task.Delay(20);
 
                 window.RigBlurVFOCanvas.Visibility = Visibility.Visible;
                 window.RigBlurVFOCanvasBlurEffect.Radius = 4;
 
-                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
                 {
-                    Console.Write("LastSMeterReading is ");
-                    Console.WriteLine(LastSMeterReading);
+                    Console.Write("FT891S_CatManager.currentRadioState.CurrentMeterReading is ");
+                    Console.WriteLine(FT891S_CatManager.currentRadioState.CurrentMeterReading);
+                    Console.Write("signalStrengthThreshold is ");
+                    Console.WriteLine(signalStrengthThreshold);
                 }
 
-                if (LastSMeterReading >= signalStrengthThreshold)
+                if (MainWindow.GetSMeterInteger(FT891S_CatManager.currentRadioState.CurrentMeterReading) >= signalStrengthThreshold)
                 {
-                    StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = freq, NumTimesEmpty = 0, SignalStrength = LastSMeterRawReading };
+                    StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = freq, NumTimesEmpty = 0, SignalStrength = FT891S_CatManager.currentRadioState.CurrentMeterReading };
                     AddActiveStation(station);
                     UpdateFoundStationCountLabel(FoundStationCountLabel, StationSeekActiveList.Count.ToString());
                     mainWindow.StationScopeListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
@@ -138,7 +153,8 @@ namespace YAESU_FT_891_Front_End
 
             //ScanFoundStations(_port);
 
-            mainWindow.fT891S_SerialPort.StartSerialLoop();
+            //mainWindow.fT891S_SerialPort.StartSerialLoop();
+            mainWindow._catManager.StartOutgoingDataLoop();
         }
 
         public void UpdateFoundStationCountLabel(Label FoundStationCountLabel, string foundStationCountLabel)
