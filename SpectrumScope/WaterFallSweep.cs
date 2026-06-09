@@ -26,7 +26,7 @@ namespace YAESU_FT_891_Front_End
 
         public async void Sweep(long startFreq, long endFreq, long step, int levelThreshold)
         {
-            mainWindow.fT891S_SerialPort.StopSerialLoop();
+            mainWindow._catManager.StopOutgoingDataLoop();
 
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(mainWindow.fT891S_SerialPort._port, 30);
             await Task.Delay(20);
@@ -74,7 +74,7 @@ namespace YAESU_FT_891_Front_End
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(mainWindow.fT891S_SerialPort._port, 0);
             await Task.Delay(20);
 
-            mainWindow.fT891S_SerialPort.StartSerialLoop();
+            mainWindow._catManager.StartOutgoingDataLoop();
 
             if (RigMode != RigModes.FM)
                 mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(mainWindow.fT891S_SerialPort._port, 0);

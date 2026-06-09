@@ -118,36 +118,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConverterFunctions.cs" />
-    <Compile Include="AnalogueMeter.xaml.cs">
+    <Compile Include="MiscFunctions\ConverterFunctions.cs" />
+    <Compile Include="UserControls\AnalogueMeter.xaml.cs">
       <DependentUpon>AnalogueMeter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CWDecoder.cs" />
-    <Compile Include="FT891S_CatCommands.cs" />
-    <Compile Include="FT891S_CatControl.cs" />
+    <Compile Include="CWDecoder\CWDecoder.cs" />
+    <Compile Include="CatControl\FT891S_CatControl.cs" />
     <Compile Include="Management\FrequencyManagement.cs" />
-    <Compile Include="FT891S_SerialPort.cs" />
-    <Compile Include="FunctionMenuClass.cs" />
-    <Compile Include="MemorySlot.cs" />
-    <Compile Include="QMBRigStates.cs" />
+    <Compile Include="Serial\FT891S_SerialPort.cs" />
+    <Compile Include="FunctionMenu\FunctionMenuClass.cs" />
+    <Compile Include="Memory\MemorySlot.cs" />
+    <Compile Include="StationSeek\QMBRigStates.cs" />
     <Compile Include="RigState.cs" />
     <Compile Include="RigStateChanges.cs" />
-    <Compile Include="SimulatedWaterfall.cs" />
-    <Compile Include="Sprite.cs" />
-    <Compile Include="StationScope.xaml.cs">
+    <Compile Include="SpectrumScope\SimulatedWaterfall.cs" />
+    <Compile Include="SpectrumScope\Sprite.cs" />
+    <Compile Include="UserControls\StationScope.xaml.cs">
       <DependentUpon>StationScope.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StationSeek.cs" />
+    <Compile Include="StationSeek\StationSeek.cs" />
     <Compile Include="TranceiverDisplayModes.cs" />
-    <Compile Include="UpDownValue.xaml.cs">
+    <Compile Include="UserControls\UpDownValue.xaml.cs">
       <DependentUpon>UpDownValue.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WaterFallSweep.cs" />
+    <Compile Include="SpectrumScope\WaterFallSweep.cs" />
     <Compile Include="YAESU FT-891 CAT Dictionary.cs" />
-    <Compile Include="YaesuListView.xaml.cs">
+    <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
-    <Page Include="AnalogueMeter.xaml">
+    <Page Include="UserControls\AnalogueMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -171,15 +170,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StationScope.xaml">
+    <Page Include="UserControls\StationScope.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UpDownValue.xaml">
+    <Page Include="UserControls\UpDownValue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="YaesuListView.xaml">
+    <Page Include="UserControls\YaesuListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

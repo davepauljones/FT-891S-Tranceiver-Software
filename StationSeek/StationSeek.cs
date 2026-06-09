@@ -58,7 +58,6 @@ namespace YAESU_FT_891_Front_End
             StationSeekActiveList.Clear();
             mainWindow.StationScopeListView.Items.Clear();
 
-            //mainWindow.fT891S_SerialPort.StopSerialLoop();
             mainWindow._catManager.StopOutgoingDataLoop();
 
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
@@ -68,15 +67,15 @@ namespace YAESU_FT_891_Front_End
 
             for (long freq = startFrequency; freq <= endFrequency; freq += freqStep)
             {
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
+                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
                 //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-                mainWindow.frequencyManagement.SetFrequency(freq);
+                //mainWindow.frequencyManagement.SetFrequency(freq);
                 await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
 
-                mainWindow._catManager.SendReadQuery("FA");
-                await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-                //await Task.Delay(10);
+                //mainWindow._catManager.SendReadQuery("FA");
+                //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
+                await Task.Delay(10);
 
                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                 {
@@ -112,7 +111,7 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
                     await Task.Delay(20);
 
-                    mainWindow.fT891S_SerialPort.StartSerialLoop();
+                    mainWindow._catManager.StartOutgoingDataLoop();
 
                     window.RigBlurVFOCanvas.Visibility = Visibility.Hidden;
 
@@ -153,7 +152,6 @@ namespace YAESU_FT_891_Front_End
 
             //ScanFoundStations(_port);
 
-            //mainWindow.fT891S_SerialPort.StartSerialLoop();
             mainWindow._catManager.StartOutgoingDataLoop();
         }
 
@@ -168,7 +166,7 @@ namespace YAESU_FT_891_Front_End
 
             IsScanning = true;
 
-            mainWindow.fT891S_SerialPort.StopSerialLoop();
+            mainWindow._catManager.StopOutgoingDataLoop();
 
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
             await Task.Delay(20);
@@ -190,7 +188,7 @@ namespace YAESU_FT_891_Front_End
             mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
             await Task.Delay(20);
 
-            mainWindow.fT891S_SerialPort.StartSerialLoop();
+            mainWindow._catManager.StartOutgoingDataLoop();
 
             IsScanning = false;
         }

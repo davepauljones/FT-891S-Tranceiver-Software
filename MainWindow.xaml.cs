@@ -20,7 +20,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using static YAESU_FT_891_Front_End.FT891S_CatCommand;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
@@ -47,7 +46,7 @@ namespace YAESU_FT_891_Front_End
         double tuningStep = 10; // sensitivity (Hz per pixel)
 
         public FT891S_SerialPort fT891S_SerialPort;
-        public FT891S_CatCommands fT891S_CatCommands;
+        //public FT891S_CatCommands fT891S_CatCommands;
 
         public YAESU_FT_891_CAT_Dictionary yAESU_FT_891_CAT_Dictionary;
         public FrequencyManagement frequencyManagement;
@@ -87,7 +86,7 @@ namespace YAESU_FT_891_Front_End
         {
             fT891S_SerialPort = new FT891S_SerialPort(this, "COM8");
 
-            fT891S_CatCommands = new FT891S_CatCommands(this);
+            //fT891S_CatCommands = new FT891S_CatCommands(this);
 
 
             //fT891S_CatCommands.FT891S_DoCatCommand(FT891S_CatCommandTypes.FA, YaesuCatCommandReadWriteStatus.ReadOnly, CatCommandCallback);
@@ -200,7 +199,6 @@ namespace YAESU_FT_891_Front_End
                 decoder.Dispose();
             }
 
-            fT891S_SerialPort.StopSerialLoop();
             _catManager.StopOutgoingDataLoop();
         }
         
@@ -771,7 +769,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                fT891S_SerialPort.StopSerialLoop();
+                _catManager.StopOutgoingDataLoop();
                 Application.Current.Shutdown();
             });
         }

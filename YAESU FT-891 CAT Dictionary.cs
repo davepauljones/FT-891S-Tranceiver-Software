@@ -17,23 +17,7 @@ namespace YAESU_FT_891_Front_End
         {
             this.mainWindow = mainWindow;
         }
-        public void TXRXState(SerialPort _port)
-        {
-            if (FT891CommandSet.TryGetValue("Tx", out CatCommand cmd))
-            {
-                string fullCommand = string.Empty;
-
-                fullCommand = cmd.Format();
-
-                mainWindow.fT891S_SerialPort.SendCAT(_port, fullCommand);
-
-                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                {
-                    Console.Write("TXRXState = ");
-                    Console.WriteLine(fullCommand);
-                }
-            }
-        }
+       
 
         public void SMeter(SerialPort _port, int meterToRead)
         {
