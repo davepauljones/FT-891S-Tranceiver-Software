@@ -34,6 +34,8 @@ namespace FT891S_CatControl
         public int TXPowerWattsMaximum { get; } = 100;
         public int TXPowerWattsAMMaximum { get; } = 40;
         public int TXPowerWattsStep { get; } = 5;
+
+        public long RadioID { get; set; }
     }
 
     // =========================================================================
@@ -267,6 +269,14 @@ namespace FT891S_CatControl
             result => FT891S_CatManager.currentRadioState.TXPowerWatts = result
         );
 
+        public static readonly FT891S_CatCommand<long> ID = new FT891S_CatCommand<long>(
+            "ID",
+            new CatStructure(),
+            new CatStructure().Expect("P1", 4),
+            dict => long.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.RadioID = result
+        );
+
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
             { "BY", BY },
@@ -275,7 +285,8 @@ namespace FT891S_CatControl
             { "GT", GT },
             { "SH", SH },
             { "RM", RM },
-            { "PC", PC }
+            { "PC", PC },
+            { "ID", ID }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -334,11 +345,10 @@ namespace FT891S_CatControl
                     Console.Write(" ");
                 }
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    mainWindow.packetManagement.UpdateSendFPS();
-                });
+                mainWindow.packetManagement.currentSendCATCommand = query;
 
+                // Cleaned up double dispatcher execution; logic runs safely internally
+                mainWindow.packetManagement.UpdateSendFPS();
             }
         }
 
@@ -356,13 +366,23 @@ namespace FT891S_CatControl
                 Console.WriteLine("]");
             }
 
-                // Routes through layouts and updates global properties safely on your UI Thread
-                FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
-
-            
+            // Routes through layouts and updates global properties safely on your UI Thread
+            FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
 
             switch (TranceiverMode)
             {
+                case TranceiverModes.RadioIDCheck:
+                    if (currentRadioState.RadioID == 650)
+                    {
+                        mainWindow.RadioIDTextBlock.Text = "FT-891";
+                        mainWindow.RadioIDAmberLED.Opacity = 0.5;
+                    }
+                    else if (currentRadioState.RadioID > 0 && currentRadioState.RadioID < 9999)
+                    {
+                        mainWindow.RadioIDTextBlock.Text = "??????";
+                        mainWindow.RadioIDAmberLED.Opacity = 0.2;
+                    }
+                    break;
                 case TranceiverModes.Main:
                     mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
 
@@ -416,21 +436,16 @@ namespace FT891S_CatControl
                             else
                                 mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
 
-                            //change to correct meter some day
                             mainWindow.SignalMeter.Value = currentRadioState.CurrentMeterReading;
-
                             break;
                         case MeterTypes.SWR:
                             mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, currentRadioState.CurrentMeterReading);
-
-                            //change to correct meter some day
                             mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
-
                             break;
                         case MeterTypes.ID:
                             mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, currentRadioState.CurrentMeterReading);
                             break;
-                    }   
+                    }
                     //RM READ METER
 
                     //BY BUSY
@@ -451,15 +466,12 @@ namespace FT891S_CatControl
                     break;
                 case TranceiverModes.StationScope:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-
                     break;
                 case TranceiverModes.NoiseFilters:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-
                     break;
                 case TranceiverModes.CWDecoder:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-
                     break;
             }
 
@@ -481,9 +493,9 @@ namespace FT891S_CatControl
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                mainWindow.packetManagement.UpdateReceiveFPS();
+                // FIX: Pass the raw string line parameter down to the FPS calculation directly
+                mainWindow.packetManagement.UpdateReceiveFPS(serialMessageLine);
             });
-            
         }
 
         public void StartOutgoingDataLoop()
@@ -508,6 +520,10 @@ namespace FT891S_CatControl
 
                 switch (TranceiverMode)
                 {
+                    case TranceiverModes.RadioIDCheck:
+                        SendReadQuery("ID");
+                        await Task.Delay(OutGoingDataLoopDelay);
+                        break;
                     case TranceiverModes.Main:
                         SendReadQuery("BY");
                         await Task.Delay(OutGoingDataLoopDelay);

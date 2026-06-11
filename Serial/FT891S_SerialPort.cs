@@ -46,6 +46,22 @@ namespace YAESU_FT_891_Front_End
                 _port.DataReceived += OnDataReceived;
                 _port.Open();
 
+                if (_port != null)
+                {
+                    mainWindow.ComportTextBlock.Text = _port.PortName;
+
+                    if(_port.IsOpen)
+                        mainWindow.ComportGreenRectangle.Opacity = 0.5;
+                    else
+                        mainWindow.ComportGreenRectangle.Opacity = 0.2;
+                }
+                else
+                {
+                    mainWindow.ComportTextBlock.Text = "NONE";
+                    mainWindow.ComportGreenRectangle.Opacity = 0.2;
+                }
+                
+
                 if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
                 {
                     Console.WriteLine("Connected to FT-891");

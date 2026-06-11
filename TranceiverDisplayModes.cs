@@ -16,11 +16,12 @@ namespace YAESU_FT_891_Front_End
         public const byte CWDecoder = 3;
         public const byte Test = 4;
         public const byte FunctionMenu = 99;
+        public const byte RadioIDCheck = 100;
     }
     public class TranceiverDisplayModes
     {
-        public static int TranceiverMode = TranceiverModes.Main;
-        public static int LastTranceiverMode = TranceiverModes.Main;
+        public static int TranceiverMode = TranceiverModes.RadioIDCheck;
+        public static int LastTranceiverMode = TranceiverModes.RadioIDCheck;
 
         public TranceiverDisplayModes()
         {
@@ -28,7 +29,11 @@ namespace YAESU_FT_891_Front_End
 
         public static void ChangeDisplayMode(TabControl tabControl, Label tranceiverModeLabel, int displayMode)
         {
-            if (TranceiverMode == TranceiverModes.Main)
+            if (TranceiverMode == TranceiverModes.RadioIDCheck)
+            {
+                TranceiverMode = TranceiverModes.Main;
+            }
+            else if (TranceiverMode == TranceiverModes.Main)
             {
                 TranceiverMode = TranceiverModes.StationScope;
             }

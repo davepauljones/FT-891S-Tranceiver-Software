@@ -30,13 +30,24 @@
                 </Canvas.Background>
             </Canvas>
 
-            <Canvas Canvas.Left="716" Canvas.Top="60" Width="200" Height="10" IsHitTestVisible="False">
-                <TextBlock Canvas.Left="26" Canvas.Top="-2" Text="RECEIVE" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
-                <Rectangle x:Name="ReceiveGreenLEDRectangle" Canvas.Left="68" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
-                <TextBlock Canvas.Left="100" Canvas.Top="-3" Text="SEND" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
-                <Rectangle x:Name="SendRedLEDRectangle" Canvas.Left="130" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="IndianRed" Opacity="0.2"/>
-                <TextBlock Canvas.Left="164" Canvas.Top="-3" Text="FPS" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
-                <TextBlock x:Name="FPSTextBlock" Canvas.Left="186" Canvas.Top="-3" Text="20" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
+            <Canvas Canvas.Left="264" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
+                <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="COM PORT" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="ComportTextBlock" Canvas.Left="68" Canvas.Top="-3" Text="COM8" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
+                <Rectangle x:Name="ComportGreenRectangle" Canvas.Left="104" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
+                <TextBlock Canvas.Left="142" Canvas.Top="-3" Text="RADIO ID" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="RadioIDTextBlock" Canvas.Left="192" Canvas.Top="-3" Text="??????" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
+                <Rectangle x:Name="RadioIDAmberLED" Canvas.Left="234" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="Orange" Opacity="0.2"/>
+            </Canvas>
+
+            <Canvas Canvas.Left="686" Canvas.Top="61" Width="230" Height="10" IsHitTestVisible="False">
+                <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <Rectangle x:Name="SendRedLEDRectangle" Canvas.Left="44" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="IndianRed" Opacity="0.2"/>
+                <TextBlock Canvas.Left="72" Canvas.Top="-3" Text="RECEIVE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <Rectangle x:Name="ReceiveGreenLEDRectangle" Canvas.Left="116" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
+                <TextBlock Canvas.Left="144" Canvas.Top="-3" Text="FPS" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="FPSTextBlock" Canvas.Left="166" Canvas.Top="-3" Text="20" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
+                <TextBlock Canvas.Left="184" Canvas.Top="-3" Text="PDR" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
             </Canvas>
 
             <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
