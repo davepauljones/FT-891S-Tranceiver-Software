@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -44,7 +45,10 @@ namespace YAESU_FT_891_Front_End
             // 5. Move down for the next signal sweep
             ypos += LineHeight;
 
-            Console.WriteLine($"SignalStrength = {signalStrength} at Y = {ypos}");
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.WriteLine($"SignalStrength = {signalStrength} at Y = {ypos}");
+            }
         }
 
         private Polygon GeneratePolygon(byte signalStrength, double widthMultiplier)

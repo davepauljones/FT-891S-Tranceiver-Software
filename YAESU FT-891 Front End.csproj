@@ -119,6 +119,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="MiscFunctions\ConverterFunctions.cs" />
+    <Compile Include="Management\PacketManagement.cs" />
     <Compile Include="UserControls\AnalogueMeter.xaml.cs">
       <DependentUpon>AnalogueMeter.xaml</DependentUpon>
     </Compile>

@@ -73,6 +73,8 @@ namespace YAESU_FT_891_Front_End
 
         public FT891S_CatManager _catManager;
 
+        public PacketManagement packetManagement;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -148,6 +150,8 @@ namespace YAESU_FT_891_Front_End
             decoder.SignalPowerUpdated += Decoder_SignalPowerUpdated;
 
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
+
+            packetManagement = new PacketManagement(this);
 
             fT891S_SerialPort.OpenPort("COM8");
 

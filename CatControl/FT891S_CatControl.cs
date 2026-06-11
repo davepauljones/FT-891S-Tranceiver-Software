@@ -11,6 +11,7 @@ using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 using HamRadioControls;
 using static YAESU_FT_891_Front_End.MyStructs;
+using System.Windows;
 
 namespace FT891S_CatControl
 {
@@ -325,6 +326,19 @@ namespace FT891S_CatControl
                 // Enforce the Yaesu standard format: OpCode + Semicolon
                 string query = opCode.Trim().ToUpper() + ";";
                 mainWindow.fT891S_SerialPort._port.Write(query);
+
+                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+                {
+                    Console.Write("[");
+                    Console.Write(query);
+                    Console.Write(" ");
+                }
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    mainWindow.packetManagement.UpdateSendFPS();
+                });
+
             }
         }
 
@@ -335,8 +349,15 @@ namespace FT891S_CatControl
         {
             if (string.IsNullOrEmpty(serialMessageLine)) return;
 
-            // Routes through layouts and updates global properties safely on your UI Thread
-            FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+            {
+                Console.Write("");
+                Console.Write(serialMessageLine);
+                Console.WriteLine("]");
+            }
+
+                // Routes through layouts and updates global properties safely on your UI Thread
+                FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
 
             
 
@@ -457,6 +478,12 @@ namespace FT891S_CatControl
                 Console.Write("currentRadioState.TXPowerWatts = ");
                 Console.WriteLine(currentRadioState.TXPowerWatts);
             }
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                mainWindow.packetManagement.UpdateReceiveFPS();
+            });
+            
         }
 
         public void StartOutgoingDataLoop()

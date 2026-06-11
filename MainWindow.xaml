@@ -30,6 +30,15 @@
                 </Canvas.Background>
             </Canvas>
 
+            <Canvas Canvas.Left="716" Canvas.Top="60" Width="200" Height="10" IsHitTestVisible="False">
+                <TextBlock Canvas.Left="26" Canvas.Top="-2" Text="RECEIVE" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
+                <Rectangle x:Name="ReceiveGreenLEDRectangle" Canvas.Left="68" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
+                <TextBlock Canvas.Left="100" Canvas.Top="-3" Text="SEND" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
+                <Rectangle x:Name="SendRedLEDRectangle" Canvas.Left="130" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="IndianRed" Opacity="0.2"/>
+                <TextBlock Canvas.Left="164" Canvas.Top="-3" Text="FPS" FontSize="10" Foreground="Goldenrod" Opacity="0.6"/>
+                <TextBlock x:Name="FPSTextBlock" Canvas.Left="186" Canvas.Top="-3" Text="20" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
+            </Canvas>
+
             <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
                 <Canvas.Background>
                     <ImageBrush ImageSource="pack://application:,,,/Images/SelectionKnob.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
