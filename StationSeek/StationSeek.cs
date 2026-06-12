@@ -67,20 +67,23 @@ namespace YAESU_FT_891_Front_End
 
             for (long freq = startFrequency; freq <= endFrequency; freq += freqStep)
             {
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
+                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
                 //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
                 //mainWindow.frequencyManagement.SetFrequency(freq);
-                await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
 
+                mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, freq, mainWindow.MainFrequencyTextBlock);
+
+                //await mainWindow._catManager.SendCatCommandAsync("FA", mainWindow._catManager.OutGoingDataLoopDelay);
                 //mainWindow._catManager.SendReadQuery("FA");
                 //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-                await Task.Delay(10);
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
+                //await Task.Delay(10);
 
                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                 {
-                    mainWindow._catManager.SendReadQuery("RM0");
-                    await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                    await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
                 }
 
                 //mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);

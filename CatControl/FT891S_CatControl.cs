@@ -1,17 +1,18 @@
-﻿using System;
+﻿using HamRadioControls;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using YAESU_FT_891_Front_End; // NOTE: Ensure "WindowsBase" is in your Project References!
+using static FT891S_CatControl.CatStructure;
+using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
-using HamRadioControls;
-using static YAESU_FT_891_Front_End.MyStructs;
-using System.Windows;
 
 namespace FT891S_CatControl
 {
@@ -22,6 +23,7 @@ namespace FT891S_CatControl
     {
         public long VfoAFrequency { get; set; }
         public long VfoBFrequency { get; set; }
+        public int MainRX { get; set; }
         public RadioMode OperatingMode { get; set; }
         public int AgcBandSelection { get; set; }
         public AgcMode CurrentAgcMode { get; set; }
@@ -68,6 +70,12 @@ namespace FT891S_CatControl
             return this;
         }
 
+        public interface ICatCommandDefinition
+        {
+            string OpCode { get; }
+            CatStructure SetStructure { get; }
+        }
+
         public Dictionary<string, string> Parse(string rawRadioData, string opCode)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -96,7 +104,7 @@ namespace FT891S_CatControl
         void ParseAndApplyToGlobalState(string rawRadioData, Dispatcher wpfDispatcher);
     }
 
-    public class FT891S_CatCommand<T> : ICatCommand
+    public class FT891S_CatCommand<T> : ICatCommand, ICatCommandDefinition
     {
         public string OpCode { get; }
         public CatStructure SetStructure { get; }
@@ -104,7 +112,12 @@ namespace FT891S_CatControl
         public Func<Dictionary<string, string>, T> Parser { get; }
         private readonly Action<T> _stateUpdater;
 
-        public FT891S_CatCommand(string opCode, CatStructure setStructure, CatStructure answerStructure, Func<Dictionary<string, string>, T> parser, Action<T> stateUpdater)
+        public FT891S_CatCommand(
+            string opCode,
+            CatStructure setStructure,
+            CatStructure answerStructure,
+            Func<Dictionary<string, string>, T> parser,
+            Action<T> stateUpdater)
         {
             OpCode = opCode;
             SetStructure = setStructure;
@@ -119,13 +132,9 @@ namespace FT891S_CatControl
             T typedResult = Parser(rawDictionary);
 
             if (wpfDispatcher != null)
-            {
-                wpfDispatcher.Invoke(new Action(() => _stateUpdater(typedResult)));
-            }
+                wpfDispatcher.Invoke(() => _stateUpdater(typedResult));
             else
-            {
                 _stateUpdater(typedResult);
-            }
         }
     }
 
@@ -195,6 +204,12 @@ namespace FT891S_CatControl
         public int ReadingValue { get; set; }
     }
 
+    public class ModeResult
+    {
+        public int MainRX { get; set; }
+        public RadioMode Mode { get; set; }
+    }
+
     // =========================================================================
     // 4. THE YAESU CONFIGURATION REGISTRY WITH GLOBAL ROUTER
     // =========================================================================
@@ -216,12 +231,20 @@ namespace FT891S_CatControl
             result => FT891S_CatManager.currentRadioState.VfoAFrequency = result
         );
 
-        public static readonly FT891S_CatCommand<RadioMode> MD = new FT891S_CatCommand<RadioMode>(
+        public static readonly FT891S_CatCommand<ModeResult> MD = new FT891S_CatCommand<ModeResult>(
             "MD",
-            new CatStructure().Expect("P1", 2),
-            new CatStructure().Expect("P1", 2),
-            dict => (RadioMode)int.Parse(dict["P1"]),
-            result => FT891S_CatManager.currentRadioState.OperatingMode = result
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            dict => new ModeResult
+            {
+                MainRX = int.Parse(dict["P1"]),
+                Mode = (RadioMode)int.Parse(dict["P2"])
+            },
+            result =>
+            {
+                FT891S_CatManager.currentRadioState.MainRX = result.MainRX;
+                FT891S_CatManager.currentRadioState.OperatingMode = result.Mode;
+            }
         );
 
         public static readonly FT891S_CatCommand<AgcResult> GT = new FT891S_CatCommand<AgcResult>(
@@ -245,14 +268,15 @@ namespace FT891S_CatControl
 
         public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
             "RM",
-            new CatStructure(), // SetStructure is empty ("RM0;")
-            new CatStructure().Expect("P1", 1).Expect("P2", 3), // P1 is meter type, P2 is 3-digit value
+            // 1. Tell it to expect a 1-digit parameter when building the outbound command string
+            new CatStructure().Expect("P1", 1),
+        
+            // 2. This remains the same for parsing the incoming response
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+        
             dict => new MeterResult
             {
-                // Parse P1 directly into your enum (e.g., "1" becomes MeterTypes.S)
                 MeterType = (MeterTypes)int.Parse(dict["P1"]),
-        
-                // Parse P2 directly into an integer value (e.g., "045" becomes 45)
                 ReadingValue = int.Parse(dict["P2"])
             },
             result => {
@@ -326,30 +350,79 @@ namespace FT891S_CatControl
             _uiDispatcher = currentDispatcher;
         }
 
-        // ---> ADD THE NEW METHOD HERE <---
-        /// <summary>
-        /// Sends a direct status read request to the radio (e.g., "FA;" or "MD;")
-        /// </summary>
-        public void SendReadQuery(string opCode)
+        public async Task SendCatCommandAsync(string opCode, int delayMs = 0)
         {
-            if (mainWindow.fT891S_SerialPort._port != null && mainWindow.fT891S_SerialPort._port.IsOpen)
+            if (!FT891S_CatCommandTypes.ParsersByOpCode.TryGetValue(opCode, out ICatCommand cmd))
+                throw new ArgumentException($"Unknown CAT command: {opCode}");
+
+            var definition = cmd as ICatCommandDefinition;
+
+            if (definition == null)
+                throw new InvalidOperationException($"Command {opCode} has no definition.");
+
+            CatStructure structure = definition.SetStructure;
+
+            string catString = opCode.Trim().ToUpper() + ";";
+
+            if (mainWindow.fT891S_SerialPort._port != null &&
+                mainWindow.fT891S_SerialPort._port.IsOpen)
             {
-                // Enforce the Yaesu standard format: OpCode + Semicolon
-                string query = opCode.Trim().ToUpper() + ";";
-                mainWindow.fT891S_SerialPort._port.Write(query);
-
-                if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
-                {
-                    Console.Write("[");
-                    Console.Write(query);
-                    Console.Write(" ");
-                }
-
-                mainWindow.packetManagement.currentSendCATCommand = query;
-
-                // Cleaned up double dispatcher execution; logic runs safely internally
-                mainWindow.packetManagement.UpdateSendFPS();
+                mainWindow.fT891S_SerialPort._port.Write(catString);
             }
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+            {
+                Console.Write("[");
+                Console.Write(catString);
+                Console.Write(" ");
+            }
+
+            mainWindow.packetManagement.currentSendCATCommand = catString;
+            mainWindow.packetManagement.UpdateSendFPS();
+
+            if (delayMs > 0)
+                await Task.Delay(delayMs);
+        }
+        public async Task SendCatCommandAsync(string opCode, object[] values, int delayMs = 0)
+        {
+            if (!FT891S_CatCommandTypes.ParsersByOpCode.TryGetValue(opCode, out ICatCommand cmd))
+                throw new ArgumentException($"Unknown CAT command: {opCode}");
+
+            var definition = (ICatCommandDefinition)cmd;
+
+            CatStructure structure = definition.SetStructure;
+
+            var builder = structure.Prepare(opCode);
+
+            if (structure.Parameters.Count != values.Length)
+                throw new ArgumentException(
+                    $"CAT {opCode} expects {structure.Parameters.Count} values, got {values.Length}");
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                builder.With(structure.Parameters[i].Name, values[i]);
+            }
+
+            string catString = builder.Build();
+
+            if (mainWindow.fT891S_SerialPort._port != null &&
+                mainWindow.fT891S_SerialPort._port.IsOpen)
+            {
+                mainWindow.fT891S_SerialPort._port.Write(catString);
+            }
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+            {
+                Console.Write("[");
+                Console.Write(catString);
+                Console.Write(" ");
+            }
+
+            mainWindow.packetManagement.currentSendCATCommand = catString;
+            mainWindow.packetManagement.UpdateSendFPS();
+
+            if (delayMs > 0)
+                await Task.Delay(delayMs);
         }
 
         /// <summary>
@@ -465,7 +538,7 @@ namespace FT891S_CatControl
 
                     break;
                 case TranceiverModes.StationScope:
-                    mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    //mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
                     break;
                 case TranceiverModes.NoiseFilters:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
@@ -508,6 +581,8 @@ namespace FT891S_CatControl
             _serialCts?.Cancel();
         }
 
+        TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(1);
+
         public int OutGoingDataLoopDelay = 5;
         public async Task OutgoingDataLoop(CancellationToken token)
         {
@@ -521,29 +596,29 @@ namespace FT891S_CatControl
                 switch (TranceiverMode)
                 {
                     case TranceiverModes.RadioIDCheck:
-                        SendReadQuery("ID");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        //SendReadQuery("ID");
+                        await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
                         break;
                     case TranceiverModes.Main:
-                        SendReadQuery("BY");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
 
-                        SendReadQuery("FA");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
-                        SendReadQuery("MD0");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("MD", new object[] { 0, 2 }, OutGoingDataLoopDelay);
+                        //await SendCatCommandAsync("MD", new object[] { (int)RadioMode.USB }, OutGoingDataLoopDelay);
+                        //await SendCatCommandAsync("MD", new object[] { 0 }, OutGoingDataLoopDelay);
+                        //await SendCatCommandAsync("MD0", 5);
 
-                        SendReadQuery("PC");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
 
-                        SendReadQuery("RM5");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+
 
                         if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                         {
-                            SendReadQuery("RM0");
-                            await Task.Delay(OutGoingDataLoopDelay);
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
+                            //await SendCatCommandAsync("RM0", 0, OutGoingDataLoopDelay);
                         }
 
                         switch (packet)
@@ -551,60 +626,60 @@ namespace FT891S_CatControl
                             case 0:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM2");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
+                                    //await SendCatCommandAsync("RM2", OutGoingDataLoopDelay);
                                 }
                                 break;
                             case 1:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM3");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
+                                    //await SendCatCommandAsync("RM3", OutGoingDataLoopDelay);
                                 }
                                 break;
                             case 2:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM4");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
+                                    //await SendCatCommandAsync("RM4", OutGoingDataLoopDelay);
                                 }
                                 break;
                             case 3:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM5");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+                                    //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
                                 }
                                 break;
                             case 4:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM6");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
+                                    //await SendCatCommandAsync("RM6", OutGoingDataLoopDelay);
                                 }
                                 break;
                             case 5:
                                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                 {
-                                    SendReadQuery("RM7");
-                                    await Task.Delay(OutGoingDataLoopDelay);
+                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
+                                    //await SendCatCommandAsync("RM7", OutGoingDataLoopDelay);
                                 }
                                 break;
                         }
                         break;
                     case TranceiverModes.StationScope:
-                        SendReadQuery("FA");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        if (!(mainWindow.stationSeek.IsScanning))
+                        {
+                            await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
+                        }
 
                         break;
                     case TranceiverModes.NoiseFilters:
-                        SendReadQuery("FA");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
                         break;
                     case TranceiverModes.CWDecoder:
-                        SendReadQuery("FA");
-                        await Task.Delay(OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
                         break;
                 }
