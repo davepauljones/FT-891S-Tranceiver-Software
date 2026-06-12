@@ -118,6 +118,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CATCommandLog.cs" />
     <Compile Include="MiscFunctions\ConverterFunctions.cs" />
     <Compile Include="Management\PacketManagement.cs" />
     <Compile Include="UserControls\AnalogueMeter.xaml.cs">

@@ -17,6 +17,7 @@ namespace YAESU_FT_891_Front_End
         public const byte Test = 4;
         public const byte FunctionMenu = 99;
         public const byte RadioIDCheck = 100;
+        public const byte CatCommandLog = 101;
     }
     public class TranceiverDisplayModes
     {
@@ -27,6 +28,33 @@ namespace YAESU_FT_891_Front_End
         {
         }
 
+        public static void SwitchToTabByTag(TabControl tabControl, string tag)
+        {
+            foreach (TabItem tab in tabControl.Items)
+            {
+                if (tab.Tag?.ToString() == tag)
+                {
+                    tabControl.SelectedItem = tab;
+                    return;
+                }
+            }
+        }
+        public static void SwitchToADisplayMode(TabControl tabControl, byte tranceiverMode, Label tranceiverModeLabel)
+        {
+            tabControl.SelectedIndex = Convert.ToInt16(tranceiverMode);
+
+            TranceiverMode = Convert.ToInt16(tranceiverMode);
+
+            if (tabControl.SelectedItem is TabItem currentTab)
+            {
+                string tagValue = currentTab.Tag?.ToString();
+
+                tranceiverModeLabel.Content = tagValue;
+
+                Console.Write("SwitchToADisplayMode = ");
+                Console.WriteLine(tagValue);
+            }
+        }
         public static void ChangeDisplayMode(TabControl tabControl, Label tranceiverModeLabel, int displayMode)
         {
             if (TranceiverMode == TranceiverModes.RadioIDCheck)

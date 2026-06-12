@@ -75,6 +75,8 @@ namespace YAESU_FT_891_Front_End
 
         public PacketManagement packetManagement;
 
+        public CATCommandLog cATCommandLog;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -152,6 +154,8 @@ namespace YAESU_FT_891_Front_End
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
 
             packetManagement = new PacketManagement(this);
+
+            cATCommandLog = new CATCommandLog(this);
 
             fT891S_SerialPort.OpenPort("COM8");
 
@@ -1212,5 +1216,9 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        private void CATCommandLogListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

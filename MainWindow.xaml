@@ -928,6 +928,61 @@
                             </Canvas>
                         </Grid>
                     </TabItem>
+                    <TabItem Tag="CAT Command Log">
+                        <Grid>
+                            <Canvas x:Name="CATCommandLogCanvas" Style="{StaticResource DisplayCanvasStyle}" Height="133" Margin="0,84,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Created" Foreground="LightGray" Width="110"/>
+                                    <Label Content="Sent CAT" Foreground="LightGray"/>
+                                    <Label Content="Received CAT" Foreground="LightGray" Width="100"/>
+                                    <Label Content="Send Freq" Foreground="LightGray" Width="100"/>
+                                    <Label Content="Receive Freq" Foreground="LightGray" Width="100"/>
+                                    <Label Content="Mode" Foreground="LightGray"/>
+                                    <Label Content="Power" Foreground="LightGray"/>
+                                    <Label Content="Call Sign" Foreground="LightGray"/>
+                                </StackPanel>
+                                
+                                <ScrollViewer x:Name="CATCommandLogListScrollViewer" Margin="0,20,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="642" Height="113">
+
+                                    <StackPanel Orientation="Vertical" Margin="0,2,0,0">
+
+                                        <ListView x:Name="CATCommandLogListView" SelectionMode="Single" BorderThickness="0" Width="642" Height="133" PreviewMouseLeftButtonDown="CATCommandLogListView_PreviewMouseLeftButtonDown">
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="Height" Value="Auto"/>
+                                                    <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="Margin" Value="0"/>
+                                                </Style>
+                                            </ListView.ItemContainerStyle>
+
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="5">
+                                                        <TextBlock Text="{Binding Created, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" Width="110" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding SentCAT}" Width="60" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding ReceivedCAT}" Width="100" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding SendFreq}" Width="100" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding ReceiveFreq}" Width="100" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding Mode}" Width="40" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding Power}" Width="40" Foreground="LightGray"/>
+                                                        <TextBlock Text="{Binding CallSign}" Width="80" Foreground="LightGray"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.Template>
+                                                <ControlTemplate>
+                                                    <ItemsPresenter></ItemsPresenter>
+                                                </ControlTemplate>
+                                            </ListView.Template>
+                                        </ListView>
+                                    </StackPanel>
+                                </ScrollViewer>
+                                <Grid x:Name="CATCommandLogCountGrid" Canvas.Left="566" Canvas.Top="125" Opacity="0.6" Width="62" Height="8" Background="White" Visibility="Visible">
+                                    <Label x:Name="CATCommandLogCountLabel" Content="1 of 1" Height="38" Margin="-1,-2,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Center"/>
+                                </Grid>
+                            </Canvas>
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </Canvas>
         </Canvas>
