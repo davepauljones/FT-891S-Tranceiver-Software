@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using static YAESU_FT_891_Front_End.MainWindow;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -37,12 +38,13 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.FPSTextBlock.Text = currentFPS.ToString();
                     currentFPS = 0;
 
-                    mainWindow.SendRedLEDRectangle.Opacity = 0.5;
+                    mainWindow.SwitchSendRedLEDRectangle(true);
+
                     lastSendFlashTime = now;
                 }
                 else if (now > lastSendFlashTime + TimeSpan.FromMilliseconds(200))
                 {
-                    mainWindow.SendRedLEDRectangle.Opacity = 0.2;
+                    mainWindow.SwitchSendRedLEDRectangle(false);
                 }
 
                 UpdatePDR();

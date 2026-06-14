@@ -161,11 +161,11 @@ namespace YAESU_FT_891_Front_End
 
             //fT891S_SerialPort.StartSerialLoop();
 
-            sprite = new Sprite(this, WaterfallCanvas);
+            sprite = new Sprite(this, WaterfallCanvas, BandScopeCanvas);
 
             //sprite.GenerateSprite(128, 295, 0, 46, 6);
 
-            waterFallSweep = new WaterFallSweep(this, SweepYellowCursorCanvas);
+            waterFallSweep = new WaterFallSweep(this, BandScopeCanvas, SweepYellowCursorCanvas);
 
             // Instantiate the manager and pass your WPF window UI context
             _catManager = new FT891S_CatManager(this, this.Dispatcher);
@@ -319,6 +319,29 @@ namespace YAESU_FT_891_Front_End
                 // Clamp to 60 to prevent overflow from stray CAT bytes
                 return Math.Min(60, dbOver);
             }
+        }
+        public static int GetSMeterIntegerForBandScope(int rawValue)
+        {
+            int baseValue;
+
+            // 1. Range 0 to 105 maps to S0 through S9
+            if (rawValue <= 105)
+            {
+                // Ensure we don't drop below 0 for unexpected negative raw values
+                int clampedRaw = Math.Max(0, rawValue);
+                baseValue = (int)Math.Round(clampedRaw / 11.6);
+            }
+            // 2. Range 106 to 195 maps to 10dB through 60dB over
+            else
+            {
+                int dbOver = (int)Math.Round((rawValue - 105) / 1.5);
+                // Clamp to 60 to prevent overflow from stray CAT bytes
+                baseValue = Math.Min(60, dbOver);
+            }
+
+            // 3. Scale the final result across 50 (Original Max was 60)
+            // Multiplying by 50.0 / 60.0 ensures accurate floating-point math before rounding
+            return (int)Math.Round(baseValue * (50.0 / 60.0));
         }
 
         public void UpdateTranceiverTXRXState(int state)
@@ -895,7 +918,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                waterFallSweep.Sweep(14252500, 14380000, 1000, 6);
+                waterFallSweep.Sweep(14252500, 14380000, 500, 6);
             });
         }
 
@@ -1220,5 +1243,22 @@ namespace YAESU_FT_891_Front_End
         {
 
         }
+
+        private void SendOnOffCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_catManager.OutGoingDataLoop_IsRunning)
+                _catManager.StopOutgoingDataLoop();
+            else
+                _catManager.StartOutgoingDataLoop();
+        }
+
+        public void SwitchSendRedLEDRectangle(bool state)
+        {
+            if (state)
+                SendRedLEDRectangle.Opacity = 0.5;
+            else
+                SendRedLEDRectangle.Opacity = 0.2;
+        }
+
     }
 }

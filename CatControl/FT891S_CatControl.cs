@@ -6,9 +6,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using YAESU_FT_891_Front_End; // NOTE: Ensure "WindowsBase" is in your Project References!
 using static FT891S_CatControl.CatStructure;
+using static YAESU_FT_891_Front_End.MainWindow;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
@@ -22,6 +25,7 @@ namespace FT891S_CatControl
     public class RadioState
     {
         public long VfoAFrequency { get; set; }
+        public long VfoALastFrequency { get; set; }
         public long VfoBFrequency { get; set; }
         public int MainRX { get; set; }
         public RadioMode OperatingMode { get; set; }
@@ -36,6 +40,7 @@ namespace FT891S_CatControl
         public int TXPowerWattsMaximum { get; } = 100;
         public int TXPowerWattsAMMaximum { get; } = 40;
         public int TXPowerWattsStep { get; } = 5;
+        public int RFGain { get; set; } = 0;
 
         public long RadioID { get; set; }
     }
@@ -301,6 +306,14 @@ namespace FT891S_CatControl
             result => FT891S_CatManager.currentRadioState.RadioID = result
         );
 
+        public static readonly FT891S_CatCommand<int> RG = new FT891S_CatCommand<int>(
+            "RG",
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.RFGain = result
+        );
+
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
             { "BY", BY },
@@ -310,7 +323,8 @@ namespace FT891S_CatControl
             { "SH", SH },
             { "RM", RM },
             { "PC", PC },
-            { "ID", ID }
+            { "ID", ID },
+            { "RG", RG }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -350,6 +364,38 @@ namespace FT891S_CatControl
             _uiDispatcher = currentDispatcher;
         }
 
+        public async Task SendCatCommandAsync(string opCode, string manualParameters, int delayMs = 0)
+        {
+            // 1. Validation: Ensure the OpCode is actually registered in your dictionary
+            if (!FT891S_CatCommandTypes.ParsersByOpCode.TryGetValue(opCode, out ICatCommand cmd))
+                throw new ArgumentException($"Unknown CAT command: {opCode}");
+
+            // 2. Formatting: Construct the string without manual string concatenation in your logic
+            // We trim any existing semicolons from the parameters to ensure we only have one at the end.
+            string paramsClean = (manualParameters ?? "").Replace(";", "").Trim();
+            string catString = $"{opCode.ToUpper()}{paramsClean};";
+
+            // 3. Serial Port Communication
+            if (mainWindow.fT891S_SerialPort._port != null &&
+                mainWindow.fT891S_SerialPort._port.IsOpen)
+            {
+                mainWindow.fT891S_SerialPort._port.Write(catString);
+            }
+
+            // 4. Maintenance & UI Counters (Matching your pattern)
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+            {
+                Console.Write(">");
+                Console.WriteLine(catString);
+            }
+
+            mainWindow.packetManagement.currentSendCATCommand = catString;
+            mainWindow.packetManagement.UpdateSendFPS();
+
+            if (delayMs > 0)
+                await Task.Delay(delayMs);
+        }
+
         public async Task SendCatCommandAsync(string opCode, int delayMs = 0)
         {
             if (!FT891S_CatCommandTypes.ParsersByOpCode.TryGetValue(opCode, out ICatCommand cmd))
@@ -372,9 +418,8 @@ namespace FT891S_CatControl
 
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
             {
-                Console.Write("[");
-                Console.Write(catString);
-                Console.Write(" ");
+                Console.Write(">");
+                Console.WriteLine(catString);
             }
 
             mainWindow.packetManagement.currentSendCATCommand = catString;
@@ -413,9 +458,8 @@ namespace FT891S_CatControl
 
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
             {
-                Console.Write("[");
-                Console.Write(catString);
-                Console.Write(" ");
+                Console.Write(">");
+                Console.WriteLine(catString);
             }
 
             mainWindow.packetManagement.currentSendCATCommand = catString;
@@ -423,6 +467,90 @@ namespace FT891S_CatControl
 
             if (delayMs > 0)
                 await Task.Delay(delayMs);
+        }
+
+        private void DoTranceiverMode_Main()
+        {
+            mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+
+            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);
+
+            //RM READ METER
+            switch (currentRadioState.ActiveMeterType)
+            {
+                case MeterTypes.DependsOnFrontPanelMETER:
+                    mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
+                    mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
+
+                    mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+
+                    byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 1);
+                    mainWindow.sprite.GenerateHistorySprite(signalStrength, 299, 2);
+
+                    if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+                    {
+                        Console.WriteLine("meterReading = " + currentRadioState.CurrentMeterReading);
+                    }
+
+                    break;
+                case MeterTypes.S:
+                    mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
+                    mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
+
+                    mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+
+                    signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    mainWindow.sprite.GenerateBandScopeSprite(signalStrength, 295, 2);
+                    mainWindow.sprite.GenerateHistorySprite(signalStrength, 295, 2);
+
+                    if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+                    {
+                        Console.WriteLine("meterReading = " + currentRadioState.CurrentMeterReading);
+                    }
+
+                    break;
+                case MeterTypes.COMP:
+                    mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    break;
+                case MeterTypes.ALC:
+                    mainWindow.UpdateMeter(mainWindow.ALCBarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    break;
+                case MeterTypes.PO:
+                    mainWindow.UpdateMeter(mainWindow.POBarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    if (currentRadioState.CurrentMeterReading > 0)
+                        mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOn);
+                    else
+                        mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
+
+                    mainWindow.SignalMeter.Value = currentRadioState.CurrentMeterReading;
+                    break;
+                case MeterTypes.SWR:
+                    mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
+                    break;
+                case MeterTypes.ID:
+                    mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, currentRadioState.CurrentMeterReading);
+                    break;
+            }
+            //RM READ METER
+
+            //BY BUSY
+            if (currentRadioState.OperatingMode == RadioMode.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+            {
+                if (currentRadioState.BusyMode == 0)
+                    mainWindow.SetRigLEDColor(RigLEDColors.LightGray);
+                else if (currentRadioState.BusyMode == 1)
+                    mainWindow.SetRigLEDColor(RigLEDColors.Green);
+            }
+            //BY BUSY
+
+            //PC POWER CONTROL
+            mainWindow.PowerControlLabel.Content = currentRadioState.TXPowerWatts.ToString() + "W";
+            mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.TXPowerWatts.ToString() + "W";
+            //PC POWER CONTROL
         }
 
         /// <summary>
@@ -434,9 +562,8 @@ namespace FT891S_CatControl
 
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
             {
-                Console.Write("");
-                Console.Write(serialMessageLine);
-                Console.WriteLine("]");
+                Console.Write("<");
+                Console.WriteLine(serialMessageLine);
             }
 
             // Routes through layouts and updates global properties safely on your UI Thread
@@ -457,88 +584,13 @@ namespace FT891S_CatControl
                     }
                     break;
                 case TranceiverModes.Main:
-                    mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-
-                    UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);
-
-                    //RM READ METER
-                    switch (currentRadioState.ActiveMeterType)
-                    {
-                        case MeterTypes.DependsOnFrontPanelMETER:
-                            mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
-                            mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
-
-                            mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
-
-                            byte spriteWidth = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
-                            mainWindow.sprite.GenerateSprite(spriteWidth, 295, 2);
-
-                            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                            {
-                                Console.WriteLine("meterReading = " + currentRadioState.CurrentMeterReading);
-                            }
-
-                            break;
-                        case MeterTypes.S:
-                            mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
-                            mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
-
-                            mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
-
-                            byte spriteWidth2 = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
-                            mainWindow.sprite.GenerateSprite(spriteWidth2, 295, 2);
-
-                            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-                            {
-                                Console.WriteLine("meterReading = " + currentRadioState.CurrentMeterReading);
-                            }
-
-                            break;
-                        case MeterTypes.COMP:
-                            mainWindow.UpdateMeter(mainWindow.BarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            break;
-                        case MeterTypes.ALC:
-                            mainWindow.UpdateMeter(mainWindow.ALCBarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            break;
-                        case MeterTypes.PO:
-                            mainWindow.UpdateMeter(mainWindow.POBarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            if (currentRadioState.CurrentMeterReading > 0)
-                                mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOn);
-                            else
-                                mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
-
-                            mainWindow.SignalMeter.Value = currentRadioState.CurrentMeterReading;
-                            break;
-                        case MeterTypes.SWR:
-                            mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
-                            break;
-                        case MeterTypes.ID:
-                            mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, currentRadioState.CurrentMeterReading);
-                            break;
-                    }
-                    //RM READ METER
-
-                    //BY BUSY
-                    if (currentRadioState.OperatingMode == RadioMode.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
-                    {
-                        if (currentRadioState.BusyMode == 0)
-                            mainWindow.SetRigLEDColor(RigLEDColors.LightGray);
-                        else if (currentRadioState.BusyMode == 1)
-                            mainWindow.SetRigLEDColor(RigLEDColors.Green);
-                    }
-                    //BY BUSY
-
-                    //PC POWER CONTROL
-                    mainWindow.PowerControlLabel.Content = currentRadioState.TXPowerWatts.ToString() + "W";
-                    mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.TXPowerWatts.ToString() + "W";
-                    //PC POWER CONTROL
-
+                    DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.StationScope:
-                    //mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    if (!(mainWindow.stationSeek.IsScanning))
+                    {
+                        mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    }
                     break;
                 case TranceiverModes.NoiseFilters:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
@@ -571,14 +623,27 @@ namespace FT891S_CatControl
             });
         }
 
+        public bool OutGoingDataLoop_IsRunning = false;
         public void StartOutgoingDataLoop()
         {
+            if (OutGoingDataLoop_IsRunning) return;
+
+            mainWindow.SendOnOffTextBlock.Text = "ON";
+
+            OutGoingDataLoop_IsRunning = true;
+            
             _serialCts = new CancellationTokenSource();
             _serialTask = Task.Run(() => OutgoingDataLoop(_serialCts.Token));
         }
         public void StopOutgoingDataLoop()
         {
-            _serialCts?.Cancel();
+            if (!(OutGoingDataLoop_IsRunning)) return;
+
+            mainWindow.SendOnOffTextBlock.Text = "OFF";
+
+            OutGoingDataLoop_IsRunning = false;
+
+            _serialCts?.Cancel();   
         }
 
         TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(1);
@@ -586,6 +651,8 @@ namespace FT891S_CatControl
         public int OutGoingDataLoopDelay = 5;
         public async Task OutgoingDataLoop(CancellationToken token)
         {
+            if (!(OutGoingDataLoop_IsRunning)) return;
+
             int packet = 0;
 
             while (!token.IsCancellationRequested)
@@ -600,71 +667,75 @@ namespace FT891S_CatControl
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
                         break;
                     case TranceiverModes.Main:
-                        await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
-
-                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
-
-                        await SendCatCommandAsync("MD", new object[] { 0, 2 }, OutGoingDataLoopDelay);
-                        //await SendCatCommandAsync("MD", new object[] { (int)RadioMode.USB }, OutGoingDataLoopDelay);
-                        //await SendCatCommandAsync("MD", new object[] { 0 }, OutGoingDataLoopDelay);
-                        //await SendCatCommandAsync("MD0", 5);
-
-                        await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
-
-                        //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
-                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
-
-
-                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        if (!(mainWindow.waterFallSweep.SweepActive))
                         {
-                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
-                            //await SendCatCommandAsync("RM0", 0, OutGoingDataLoopDelay);
-                        }
+                            await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
 
-                        switch (packet)
-                        {
-                            case 0:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
-                                    //await SendCatCommandAsync("RM2", OutGoingDataLoopDelay);
-                                }
-                                break;
-                            case 1:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
-                                    //await SendCatCommandAsync("RM3", OutGoingDataLoopDelay);
-                                }
-                                break;
-                            case 2:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
-                                    //await SendCatCommandAsync("RM4", OutGoingDataLoopDelay);
-                                }
-                                break;
-                            case 3:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
-                                    //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
-                                }
-                                break;
-                            case 4:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
-                                    //await SendCatCommandAsync("RM6", OutGoingDataLoopDelay);
-                                }
-                                break;
-                            case 5:
-                                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                {
-                                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
-                                    //await SendCatCommandAsync("RM7", OutGoingDataLoopDelay);
-                                }
-                                break;
+                            await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
+
+                            //await SendCatCommandAsync("MD", new object[] { 0, 2 }, OutGoingDataLoopDelay);
+                            await SendCatCommandAsync("MD", "0", OutGoingDataLoopDelay);
+                            //await SendCatCommandAsync("MD", new object[] { (int)RadioMode.USB }, OutGoingDataLoopDelay);
+                            //await SendCatCommandAsync("MD", new object[] { 0 }, OutGoingDataLoopDelay);
+                            //await SendCatCommandAsync("MD0", 5);
+
+                            await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
+
+                            //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+
+
+                            if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                            {
+                                await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
+                                //await SendCatCommandAsync("RM0", 0, OutGoingDataLoopDelay);
+                            }
+
+                            switch (packet)
+                            {
+                                case 0:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
+                                        //await SendCatCommandAsync("RM2", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                                case 1:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
+                                        //await SendCatCommandAsync("RM3", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                                case 2:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
+                                        //await SendCatCommandAsync("RM4", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                                case 3:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+                                        //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                                case 4:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
+                                        //await SendCatCommandAsync("RM6", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                                case 5:
+                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                                    {
+                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
+                                        //await SendCatCommandAsync("RM7", OutGoingDataLoopDelay);
+                                    }
+                                    break;
+                            }
                         }
                         break;
                     case TranceiverModes.StationScope:

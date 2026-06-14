@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,28 +11,53 @@ namespace YAESU_FT_891_Front_End
     public class Sprite
     {
         private MainWindow mainWindow;
-        private Canvas canvas;
+        private Canvas historyCanvas;
+        private Canvas bandScopeCanvas;
         private double ypos = 0;
         private const double LineHeight = 1; // Height of each waterfall step
-        private const double MaxHeight = 114; // Wrap-around point
+        private double MaxHeight = 54; // Wrap-around point
 
-        public Sprite(MainWindow mainWindow, Canvas canvas)
+        public Sprite(MainWindow mainWindow, Canvas historyCanvas, Canvas bandScopeCanvas)
         {
             this.mainWindow = mainWindow;
-            this.canvas = canvas;
+            this.historyCanvas = historyCanvas;
+            this.bandScopeCanvas = bandScopeCanvas;
+
+            MaxHeight = mainWindow.WaterfallCanvas.Height;
         }
 
-        public void GenerateSprite(byte signalStrength, double xCenter, double widthMultiplier)
+        public void GenerateBandScopeSprite(byte signalStrength, double xCenter, double heightMultiplier)
+        {
+            ClearWaterfallArea(bandScopeCanvas);
+            
+            // 2. Generate the single line segment
+            Polygon lineSegment = GenerateCurrentFrequencyPolygon(Convert.ToByte(MainWindow.GetSMeterIntegerForBandScope(signalStrength)), heightMultiplier);
+
+            // 3. Position the segment on the MAIN canvas
+            // We position X so that the center of the line aligns with xCenter
+            //double actualWidth = signalStrength * heightMultiplier;
+            Canvas.SetLeft(lineSegment, xCenter - (6 / 2));
+            Canvas.SetBottom(lineSegment, 0);
+
+            // 4. Add to view
+            bandScopeCanvas.Children.Add(lineSegment);
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.WriteLine($"SignalStrength = {signalStrength} at Y = {ypos}");
+            }
+        }
+        public void GenerateHistorySprite(byte signalStrength, double xCenter, double widthMultiplier)
         {
             // 1. Wrap around if we hit the bottom of the waterfall area
             if (ypos >= MaxHeight)
             {
-                ClearWaterfallArea();
+                ClearWaterfallArea(historyCanvas);
                 ypos = 0;
             }
 
             // 2. Generate the single line segment
-            Polygon lineSegment = GeneratePolygon(signalStrength, widthMultiplier);
+            Polygon lineSegment = GenerateHistoryPolygon(signalStrength, widthMultiplier);
 
             // 3. Position the segment on the MAIN canvas
             // We position X so that the center of the line aligns with xCenter
@@ -40,7 +66,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(lineSegment, ypos);
 
             // 4. Add to view
-            canvas.Children.Add(lineSegment);
+            historyCanvas.Children.Add(lineSegment);
 
             // 5. Move down for the next signal sweep
             ypos += LineHeight;
@@ -51,7 +77,7 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        private Polygon GeneratePolygon(byte signalStrength, double widthMultiplier)
+        private Polygon GenerateHistoryPolygon(byte signalStrength, double widthMultiplier)
         {
             Polygon polygon = new Polygon();
 
@@ -74,8 +100,31 @@ namespace YAESU_FT_891_Front_End
 
             return polygon;
         }
+        private Polygon GenerateCurrentFrequencyPolygon(byte signalStrength, double heightMultiplier)
+        {
+            Polygon polygon = new Polygon();
 
-        private void ClearWaterfallArea()
+            // Map signal strength to actual rendering width
+            double calculatedHeight = signalStrength * heightMultiplier;
+
+            polygon.Fill = new SolidColorBrush(Colors.DodgerBlue);
+
+            // Optional: Uncomment this if you want stronger signals to be brighter
+            polygon.Opacity = ByteToOpacity(signalStrength);
+
+            // Simple rectangle definition starting from (0,0) locally
+            polygon.Points = new PointCollection
+            {
+                new Point(0, 0),
+                new Point(0, calculatedHeight),
+                new Point(6 ,calculatedHeight),
+                new Point(6, 0)
+            };
+
+            return polygon;
+        }
+
+        private void ClearWaterfallArea(Canvas canvas)
         {
             // Clears only the Polygons added by this visualizer, leaving other UI elements intact
             for (int i = canvas.Children.Count - 1; i >= 0; i--)

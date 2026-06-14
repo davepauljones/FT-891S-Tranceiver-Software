@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static YAESU_FT_891_Front_End.RigState;
+using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -67,6 +68,9 @@ namespace YAESU_FT_891_Front_End
         }
 
         public static byte currentFrequencySpan = FrequencySpans._50K;
+        public static long currentFrequencySpanHz = 50000;
+        public static Double currentFrequencySpanRectangleWidth = 3;
+
         public static byte currentSpeed = Speeds.Fast1;
         public static byte currentCursorMode = CursorModes.Center;
         public const Double GreenCursorCenterPosition = 313;
@@ -399,66 +403,88 @@ namespace YAESU_FT_891_Front_End
             {
                 case FrequencySpans._1K:
                     currentFrequencySpan = FrequencySpans._1K;
+                    currentFrequencySpanHz = 1000;
+                    currentFrequencySpanRectangleWidth = 276;
                     mainWindow._1kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._1kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "1kHz";
                     break;
                 case FrequencySpans._2K:
                     currentFrequencySpan = FrequencySpans._2K;
+                    currentFrequencySpanHz = 2000;
+                    currentFrequencySpanRectangleWidth = 138;
                     mainWindow._2kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._2kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "2kHz";
                     break;
                 case FrequencySpans._5K:
                     currentFrequencySpan = FrequencySpans._5K;
+                    currentFrequencySpanHz = 5000;
+                    currentFrequencySpanRectangleWidth = 56;
                     mainWindow._5kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._5kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "5kHz";
                     break;
                 case FrequencySpans._10K:
                     currentFrequencySpan = FrequencySpans._10K;
+                    currentFrequencySpanHz = 10000;
+                    currentFrequencySpanRectangleWidth = 28;
                     mainWindow._10kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._10kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "10kHz";
                     break;
                 case FrequencySpans._20K:
                     currentFrequencySpan = FrequencySpans._20K;
+                    currentFrequencySpanHz = 20000;
+                    currentFrequencySpanRectangleWidth = 15;
                     mainWindow._20kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._20kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "20kHz";
                     break;
                 case FrequencySpans._50K:
                     currentFrequencySpan = FrequencySpans._50K;
+                    currentFrequencySpanHz = 50000;
+                    currentFrequencySpanRectangleWidth = 6;
                     mainWindow._50kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._50kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "50kHz";
                     break;
                 case FrequencySpans._100K:
                     currentFrequencySpan = FrequencySpans._100K;
+                    currentFrequencySpanHz = 100000;
+                    currentFrequencySpanRectangleWidth = 3;
                     mainWindow._100kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._100kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "100kHz";
                     break;
                 case FrequencySpans._200K:
                     currentFrequencySpan = FrequencySpans._200K;
+                    currentFrequencySpanHz = 200000;
+                    currentFrequencySpanRectangleWidth = 2;
                     mainWindow._200kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._200kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "200kHz";
                     break;
                 case FrequencySpans._500K:
                     currentFrequencySpan = FrequencySpans._500K;
+                    currentFrequencySpanHz = 500000;
+                    currentFrequencySpanRectangleWidth = 0.8;
                     mainWindow._500kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._500kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "500kHz";
                     break;
                 case FrequencySpans._1000K:
                     currentFrequencySpan = FrequencySpans._1000K;
+                    currentFrequencySpanHz = 1000000;
+                    currentFrequencySpanRectangleWidth = 0.4;
                     mainWindow._1000kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._1000kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "1000kHz";
                     break;
                 default:
                     currentFrequencySpan = FrequencySpans._50K;
+                    currentFrequencySpanHz = 50000;
+                    currentFrequencySpanRectangleWidth = 6;
                     mainWindow._50kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._50kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "50kHz";

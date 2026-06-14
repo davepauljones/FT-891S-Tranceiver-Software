@@ -50,6 +50,11 @@
                 <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
             </Canvas>
 
+            <Canvas Canvas.Left="626" Canvas.Top="61" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
+                <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+            </Canvas>
+
             <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
                 <Canvas.Background>
                     <ImageBrush ImageSource="pack://application:,,,/Images/SelectionKnob.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
@@ -755,7 +760,9 @@
                             <Polygon Canvas.Left="21" Canvas.Top="130" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
                             <Polygon Canvas.Left="21" Canvas.Top="135" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
 
-                            <Canvas x:Name="WaterfallCanvas" Canvas.Left="24" Canvas.Top="85" Width="600" Height="114">
+                            <Canvas x:Name="BandScopeCanvas" Canvas.Left="21" Canvas.Top="85" Width="600" Height="56"/>
+
+                            <Canvas x:Name="WaterfallCanvas" Canvas.Left="21" Canvas.Top="140" Width="600" Height="60">
                                 <!--<Polygon Canvas.Left="295" Canvas.Top="0" Points="0,0 3,0 3,55 0,55" Fill="DodgerBlue"/>
                                 <Polygon Canvas.Left="295" Canvas.Top="0" Points="-23,53 23,53 23,55 -23,55" Fill="DodgerBlue"/>
                                 <Polygon Canvas.Left="295" Canvas.Top="0" Points="-20,47 20,47 20,50 -20,50" Fill="DodgerBlue"/>-->

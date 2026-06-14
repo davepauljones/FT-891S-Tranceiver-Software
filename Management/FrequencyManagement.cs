@@ -119,6 +119,18 @@ namespace YAESU_FT_891_Front_End
             lastRadioState.VfoAFrequency = frequency;
         }
 
+        public void SetFrequencyUIForBandScope(long frequency, TextBlock textBlock = null)
+        {
+            if (textBlock != null)
+            {
+                textBlock.Text = FormatFrequency(frequency);
+            }
+
+            FT891S_CatManager.currentRadioState.VfoAFrequency = frequency;
+
+            UpdateVFODialPosition(frequency);
+        }
+
         public void SetFrequencyUI(Int32 memorySlotIndex, byte frequencyLocation, long frequency, TextBlock textBlock = null)
         {
             RadioState memorySlotToSet;
