@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using YAESU_FT_891_Front_End; // NOTE: Ensure "WindowsBase" is in your Project References!
@@ -646,7 +648,8 @@ namespace FT891S_CatControl
             _serialCts?.Cancel();   
         }
 
-        TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(1);
+        DateTime lowPriorityDateTime = DateTime.Now;
+        TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(15);
 
         public int OutGoingDataLoopDelay = 5;
         public async Task OutgoingDataLoop(CancellationToken token)
@@ -673,22 +676,16 @@ namespace FT891S_CatControl
 
                             await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
-                            //await SendCatCommandAsync("MD", new object[] { 0, 2 }, OutGoingDataLoopDelay);
                             await SendCatCommandAsync("MD", "0", OutGoingDataLoopDelay);
-                            //await SendCatCommandAsync("MD", new object[] { (int)RadioMode.USB }, OutGoingDataLoopDelay);
-                            //await SendCatCommandAsync("MD", new object[] { 0 }, OutGoingDataLoopDelay);
-                            //await SendCatCommandAsync("MD0", 5);
 
                             await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
 
-                            //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
                             await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
 
 
                             if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                             {
                                 await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
-                                //await SendCatCommandAsync("RM0", 0, OutGoingDataLoopDelay);
                             }
 
                             switch (packet)
@@ -697,44 +694,57 @@ namespace FT891S_CatControl
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
-                                        //await SendCatCommandAsync("RM2", OutGoingDataLoopDelay);
                                     }
                                     break;
                                 case 1:
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
-                                        //await SendCatCommandAsync("RM3", OutGoingDataLoopDelay);
                                     }
                                     break;
                                 case 2:
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
-                                        //await SendCatCommandAsync("RM4", OutGoingDataLoopDelay);
                                     }
                                     break;
                                 case 3:
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
-                                        //await SendCatCommandAsync("RM5", OutGoingDataLoopDelay);
                                     }
                                     break;
                                 case 4:
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
-                                        //await SendCatCommandAsync("RM6", OutGoingDataLoopDelay);
                                     }
                                     break;
                                 case 5:
                                     if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
                                     {
                                         await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
-                                        //await SendCatCommandAsync("RM7", OutGoingDataLoopDelay);
                                     }
                                     break;
+                            }
+
+                            if (mainWindow.waterFallSweep.ScopeOnOff == true)
+                            {
+                                if (DateTime.Now > lowPriorityDateTime + lowPriorityCATCommandsTimeSpan)
+                                {
+                                    if (mainWindow.Dispatcher.CheckAccess())
+                                    {
+                                        // We are already on the UI thread! Run it directly.
+                                        mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6);
+                                    }
+                                    else
+                                    {
+                                        // We are on a background thread. Marshal it over.
+                                        await mainWindow.Dispatcher.BeginInvoke(new Action(() => mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6)));
+                                    }
+
+                                    lowPriorityDateTime = DateTime.Now;
+                                }
                             }
                         }
                         break;

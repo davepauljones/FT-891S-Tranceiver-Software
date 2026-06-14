@@ -1260,5 +1260,9 @@ namespace YAESU_FT_891_Front_End
                 SendRedLEDRectangle.Opacity = 0.2;
         }
 
+        private void ScopeOnOffCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            waterFallSweep.ToggleSweepOnOff();
+        }
     }
 }

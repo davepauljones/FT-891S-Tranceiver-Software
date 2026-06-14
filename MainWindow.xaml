@@ -50,6 +50,11 @@
                 <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
             </Canvas>
 
+            <Canvas Canvas.Left="550" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="ScopeOnOffCanvas_MouseLeftButtonDown">
+                <TextBlock Canvas.Top="-3" Text="SCOPE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                <TextBlock x:Name="ScopeOnOffTextBlock" Canvas.Left="36" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+            </Canvas>
+
             <Canvas Canvas.Left="626" Canvas.Top="61" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
                 <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                 <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>

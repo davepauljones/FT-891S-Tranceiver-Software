@@ -26,6 +26,7 @@ namespace YAESU_FT_891_Front_End
         Double canvasFullRightPos = 613;
 
         public bool SweepActive = false;
+        public bool ScopeOnOff = false;
         public WaterFallSweep(MainWindow mainWindow, Canvas bandScopeCanvas, Canvas canvas)
         {
             this.mainWindow = mainWindow;
@@ -33,8 +34,24 @@ namespace YAESU_FT_891_Front_End
             this.bandScopeCanvas = bandScopeCanvas;
         }
 
+        public void ToggleSweepOnOff()
+        {
+            if (ScopeOnOff)
+            {
+                ScopeOnOff = false;
+                mainWindow.ScopeOnOffTextBlock.Text = "OFF";
+            }
+            else
+            {
+                ScopeOnOff = true;
+                mainWindow.ScopeOnOffTextBlock.Text = "ON";
+                Sweep(14252500, 14380000, 500, 6);
+            }
+        }
         public async void Sweep(long startFreq, long endFreq, long step, int levelThreshold)
         {
+            if (SweepActive) return;
+
             SweepActive = true;
 
             FT891S_CatManager.currentRadioState.VfoALastFrequency = FT891S_CatManager.currentRadioState.VfoAFrequency;
