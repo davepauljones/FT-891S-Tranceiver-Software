@@ -58,7 +58,7 @@ namespace YAESU_FT_891_Front_End
 
             long vfoAFreq = FT891S_CatManager.currentRadioState.VfoAFrequency;
 
-            startFreq = vfoAFreq - (SimulatedWaterfall.currentFrequencySpanHz/2);
+            startFreq = vfoAFreq - (SimulatedWaterfall.currentFrequencySpanHz / 2);
 
             endFreq = vfoAFreq + (SimulatedWaterfall.currentFrequencySpanHz / 2);
 
@@ -71,6 +71,10 @@ namespace YAESU_FT_891_Front_End
             }
 
             mainWindow._catManager.StopOutgoingDataLoop();
+
+            await mainWindow._catManager.SendCatCommandAsync("AG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+
+            await mainWindow._catManager.SendCatCommandAsync("AG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
             await mainWindow._catManager.SendCatCommandAsync("RG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
 
@@ -131,7 +135,7 @@ namespace YAESU_FT_891_Front_End
                         break; // Stop if we physically run out of canvas space
                     }
                 }
-                
+
                 if (freq == endFreq)
                 {
                     Canvas.SetLeft(canvas, canvasCurrentPosition);
@@ -141,14 +145,18 @@ namespace YAESU_FT_891_Front_End
             await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { FT891S_CatManager.currentRadioState.VfoALastFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
 
             await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
-            //await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+            await mainWindow._catManager.SendCatCommandAsync("AG", new object[] { 0, FT891S_CatManager.currentRadioState.AFGain }, mainWindow._catManager.OutGoingDataLoopDelay);
 
             mainWindow._catManager.StartOutgoingDataLoop();
 
             SweepActive = false;
 
             if (RigMode != RigModes.FM)
+            {
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("AG", new object[] { 0, FT891S_CatManager.currentRadioState.AFGain }, mainWindow._catManager.OutGoingDataLoopDelay);
+            }
             else
                 mainWindow.fT891S_SerialPort.SendCAT(mainWindow.fT891S_SerialPort._port, "SQ015");
 

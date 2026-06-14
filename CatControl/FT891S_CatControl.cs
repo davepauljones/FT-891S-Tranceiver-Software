@@ -43,7 +43,7 @@ namespace FT891S_CatControl
         public int TXPowerWattsAMMaximum { get; } = 40;
         public int TXPowerWattsStep { get; } = 5;
         public int RFGain { get; set; } = 0;
-
+        public int AFGain { get; set; } = 0;
         public long RadioID { get; set; }
     }
 
@@ -315,6 +315,13 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"] + dict["P2"]),
             result => FT891S_CatManager.currentRadioState.RFGain = result
         );
+        public static readonly FT891S_CatCommand<int> AG = new FT891S_CatCommand<int>(
+            "AG",
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.AFGain = result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -326,7 +333,8 @@ namespace FT891S_CatControl
             { "RM", RM },
             { "PC", PC },
             { "ID", ID },
-            { "RG", RG }
+            { "RG", RG },
+            { "AG", AG }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)

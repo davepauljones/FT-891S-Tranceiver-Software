@@ -36,7 +36,7 @@ namespace YAESU_FT_891_Front_End
             // 3. Position the segment on the MAIN canvas
             // We position X so that the center of the line aligns with xCenter
             //double actualWidth = signalStrength * heightMultiplier;
-            Canvas.SetLeft(lineSegment, xCenter - (6 / 2));
+            Canvas.SetLeft(lineSegment, xCenter - (SimulatedWaterfall.currentBandScopeSpriteRectangleWidth / 2));
             Canvas.SetBottom(lineSegment, 0);
 
             // 4. Add to view
@@ -117,8 +117,8 @@ namespace YAESU_FT_891_Front_End
             {
                 new Point(0, 0),
                 new Point(0, calculatedHeight),
-                new Point(6 ,calculatedHeight),
-                new Point(6, 0)
+                new Point(SimulatedWaterfall.currentBandScopeSpriteRectangleWidth ,calculatedHeight),
+                new Point(SimulatedWaterfall.currentBandScopeSpriteRectangleWidth, 0)
             };
 
             return polygon;

@@ -70,6 +70,7 @@ namespace YAESU_FT_891_Front_End
         public static byte currentFrequencySpan = FrequencySpans._50K;
         public static long currentFrequencySpanHz = 50000;
         public static Double currentFrequencySpanRectangleWidth = 3;
+        public static Double currentBandScopeSpriteRectangleWidth = 10;
 
         public static byte currentSpeed = Speeds.Fast1;
         public static byte currentCursorMode = CursorModes.Center;
@@ -405,6 +406,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._1K;
                     currentFrequencySpanHz = 1000;
                     currentFrequencySpanRectangleWidth = 276;
+                    currentBandScopeSpriteRectangleWidth = 800;
                     mainWindow._1kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._1kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "1kHz";
@@ -413,6 +415,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._2K;
                     currentFrequencySpanHz = 2000;
                     currentFrequencySpanRectangleWidth = 138;
+                    currentBandScopeSpriteRectangleWidth = 700;
                     mainWindow._2kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._2kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "2kHz";
@@ -421,6 +424,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._5K;
                     currentFrequencySpanHz = 5000;
                     currentFrequencySpanRectangleWidth = 56;
+                    currentBandScopeSpriteRectangleWidth = 600;
                     mainWindow._5kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._5kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "5kHz";
@@ -429,6 +433,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._10K;
                     currentFrequencySpanHz = 10000;
                     currentFrequencySpanRectangleWidth = 28;
+                    currentBandScopeSpriteRectangleWidth =300;
                     mainWindow._10kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._10kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "10kHz";
@@ -437,6 +442,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._20K;
                     currentFrequencySpanHz = 20000;
                     currentFrequencySpanRectangleWidth = 15;
+                    currentBandScopeSpriteRectangleWidth = 150;
                     mainWindow._20kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._20kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "20kHz";
@@ -445,6 +451,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._50K;
                     currentFrequencySpanHz = 50000;
                     currentFrequencySpanRectangleWidth = 6;
+                    currentBandScopeSpriteRectangleWidth = 70;
                     mainWindow._50kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._50kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "50kHz";
@@ -453,6 +460,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._100K;
                     currentFrequencySpanHz = 100000;
                     currentFrequencySpanRectangleWidth = 3;
+                    currentBandScopeSpriteRectangleWidth = 35;
                     mainWindow._100kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._100kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "100kHz";
@@ -461,6 +469,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._200K;
                     currentFrequencySpanHz = 200000;
                     currentFrequencySpanRectangleWidth = 2;
+                    currentBandScopeSpriteRectangleWidth = 18;
                     mainWindow._200kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._200kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "200kHz";
@@ -469,6 +478,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._500K;
                     currentFrequencySpanHz = 500000;
                     currentFrequencySpanRectangleWidth = 0.8;
+                    currentBandScopeSpriteRectangleWidth = 9;
                     mainWindow._500kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._500kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "500kHz";
@@ -477,6 +487,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._1000K;
                     currentFrequencySpanHz = 1000000;
                     currentFrequencySpanRectangleWidth = 0.4;
+                    currentBandScopeSpriteRectangleWidth = 4.5;
                     mainWindow._1000kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._1000kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "1000kHz";
@@ -485,6 +496,7 @@ namespace YAESU_FT_891_Front_End
                     currentFrequencySpan = FrequencySpans._50K;
                     currentFrequencySpanHz = 50000;
                     currentFrequencySpanRectangleWidth = 6;
+                    currentBandScopeSpriteRectangleWidth = 70;
                     mainWindow._50kBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     mainWindow._50kTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     mainWindow.FrequencySpanTextBlock.Text = "50kHz";
