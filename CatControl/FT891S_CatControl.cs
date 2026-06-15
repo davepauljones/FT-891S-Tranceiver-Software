@@ -18,6 +18,8 @@ using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
+using static YAESU_FT_891_Front_End.Animations;
+using static YAESU_FT_891_Front_End.HelperFunctions;
 
 namespace FT891S_CatControl
 {
@@ -30,6 +32,7 @@ namespace FT891S_CatControl
         public long VfoALastFrequency { get; set; }
         public long VfoBFrequency { get; set; }
         public int MainRX { get; set; }
+        public int currentBand { get; set; }
         public RadioMode OperatingMode { get; set; }
         public int AgcBandSelection { get; set; }
         public AgcMode CurrentAgcMode { get; set; }
@@ -322,6 +325,13 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"] + dict["P2"]),
             result => FT891S_CatManager.currentRadioState.AFGain = result
         );
+        public static readonly FT891S_CatCommand<int> BS = new FT891S_CatCommand<int>(
+            "BS",
+            new CatStructure().Expect("P1", 2),
+            new CatStructure(),
+            dict => int.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.currentBand = result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -334,7 +344,8 @@ namespace FT891S_CatControl
             { "PC", PC },
             { "ID", ID },
             { "RG", RG },
-            { "AG", AG }
+            { "AG", AG },
+            { "BS", BS }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -551,9 +562,9 @@ namespace FT891S_CatControl
             if (currentRadioState.OperatingMode == RadioMode.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
             {
                 if (currentRadioState.BusyMode == 0)
-                    mainWindow.SetRigLEDColor(RigLEDColors.LightGray);
+                    SetRigLEDColor(mainWindow, RigLEDColors.LightGray);
                 else if (currentRadioState.BusyMode == 1)
-                    mainWindow.SetRigLEDColor(RigLEDColors.Green);
+                    SetRigLEDColor(mainWindow, RigLEDColors.Green);
             }
             //BY BUSY
 

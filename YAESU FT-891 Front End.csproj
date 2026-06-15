@@ -118,7 +118,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Animations.cs" />
+    <Compile Include="BandUserControl.xaml.cs">
+      <DependentUpon>BandUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CATCommandLog.cs" />
+    <Compile Include="HelperFunctions.cs" />
     <Compile Include="MiscFunctions\ConverterFunctions.cs" />
     <Compile Include="Management\PacketManagement.cs" />
     <Compile Include="UserControls\AnalogueMeter.xaml.cs">
@@ -148,6 +153,10 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
+    <Page Include="BandUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\AnalogueMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -237,7 +246,10 @@
   <ItemGroup>
     <Resource Include="Images\YAESU-FT-891-Skin.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\AFKnob.png" />
+    <Resource Include="Images\RFKnob.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

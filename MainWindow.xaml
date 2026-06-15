@@ -7,6 +7,7 @@
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:meter="clr-namespace:HamRadioControls"
+        xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
         ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
@@ -24,7 +25,7 @@
 
         <Canvas Width="1339" Height="443" VerticalAlignment="Top">
 
-            <Canvas x:Name="RigCanvas" Width="1339" Height="443" VerticalAlignment="Top" MouseDown="RigCanvas_MouseDown" MouseUp="RigCanvas_MouseUp">
+            <Canvas x:Name="RigCanvas" Width="1339" Height="443" VerticalAlignment="Top" MouseDown="RigCanvas_MouseDown">
                 <Canvas.Background>
                     <ImageBrush ImageSource="pack://application:,,,/Images/YAESU-FT-891-Skin.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
                 </Canvas.Background>
@@ -58,6 +59,46 @@
             <Canvas Canvas.Left="626" Canvas.Top="61" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
                 <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                 <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+            </Canvas>
+
+            <Canvas x:Name="RFGainKnobAreaCanvas"
+                Width="161"
+                Height="170"
+                Canvas.Left="12"
+                Canvas.Top="74"
+                Background="Transparent"
+                PreviewMouseWheel="RFGainKnobAreaCanvas_PreviewMouseWheel"
+                PreviewMouseDown="RFGainKnobAreaCanvas_PreviewMouseDown"
+                PreviewMouseMove="RFGainKnobAreaCanvas_PreviewMouseMove"
+                PreviewMouseUp="RFGainKnobAreaCanvas_PreviewMouseUp"/>
+
+            <Canvas x:Name="RFGainKnobBrurCanvas" Canvas.Left="13" Canvas.Top="73" Visibility="Hidden" Width="161" Height="170" VerticalAlignment="Top" IsHitTestVisible="False">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/RFKnob.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
+                </Canvas.Background>
+                <Canvas.Effect>
+                    <BlurEffect x:Name="RFGainKnobCanvasBlurEffect" Radius="4"/>
+                </Canvas.Effect>
+            </Canvas>
+
+            <Canvas x:Name="AFGainKnobAreaCanvas"
+                Width="74"
+                Height="74"
+                Canvas.Left="37"
+                Canvas.Top="135"
+                Background="Transparent"
+                PreviewMouseWheel="AFGainKnobAreaCanvas_PreviewMouseWheel"
+                PreviewMouseDown="AFGainKnobAreaCanvas_PreviewMouseDown"
+                PreviewMouseMove="AFGainKnobAreaCanvas_PreviewMouseMove"
+                PreviewMouseUp="AFGainKnobAreaCanvas_PreviewMouseUp"/>
+
+            <Canvas x:Name="AFGainKnobBrurCanvas" Canvas.Left="23" Canvas.Top="112" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Images/AFKnob.png" Stretch="None" AlignmentY="Top" AlignmentX="Left"/>
+                </Canvas.Background>
+                <Canvas.Effect>
+                    <BlurEffect x:Name="AFGainKnobCanvasBlurEffect" Radius="4"/>
+                </Canvas.Effect>
             </Canvas>
 
             <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
@@ -614,7 +655,7 @@
             </Canvas>
 
             <Canvas x:Name="TabControlCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
-                <TabControl x:Name="TabControlTabControl" Padding="0" Background="Transparent" SelectionChanged="TabControlTabControl_SelectionChanged">
+                <TabControl x:Name="TabControlTabControl" Padding="0" Background="Transparent">
                     
                     <TabControl.Template>
                         <ControlTemplate TargetType="TabControl">
@@ -958,7 +999,7 @@
 
                                     <StackPanel Orientation="Vertical" Margin="0,2,0,0">
 
-                                        <ListView x:Name="CATCommandLogListView" SelectionMode="Single" BorderThickness="0" Width="642" Height="133" PreviewMouseLeftButtonDown="CATCommandLogListView_PreviewMouseLeftButtonDown">
+                                        <ListView x:Name="CATCommandLogListView" SelectionMode="Single" BorderThickness="0" Width="642" Height="133">
                                             <ListView.ItemContainerStyle>
                                                 <Style TargetType="ListViewItem">
                                                     <Setter Property="Height" Value="Auto"/>
@@ -996,6 +1037,9 @@
                         </Grid>
                     </TabItem>
                 </TabControl>
+
+                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="72" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
+
             </Canvas>
         </Canvas>
     </Canvas>
