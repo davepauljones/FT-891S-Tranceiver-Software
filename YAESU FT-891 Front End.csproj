@@ -119,7 +119,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Animations.cs" />
-    <Compile Include="BandUserControl.xaml.cs">
+    <Compile Include="UserControls\ModeUserControl.xaml.cs">
+      <DependentUpon>ModeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\BandUserControl.xaml.cs">
       <DependentUpon>BandUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CATCommandLog.cs" />
@@ -153,7 +156,11 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
-    <Page Include="BandUserControl.xaml">
+    <Page Include="UserControls\ModeUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\BandUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

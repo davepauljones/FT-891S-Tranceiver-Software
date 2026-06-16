@@ -70,7 +70,7 @@
         <Setter Property="Margin" Value="2"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
-    
+
     <Style x:Key="DisplayThreeCharLabelStyle" TargetType="{x:Type Label}">
         <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource AncestorType=Border}}"/>
         <Setter Property="Foreground" Value="White"/>
@@ -126,6 +126,11 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Width" Value="643"/>
         <Setter Property="Height" Value="242"/>
+    </Style>
+    <Style x:Key="TabCanvasStyle" TargetType="{x:Type Canvas}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="643"/>
+        <Setter Property="Height" Value="142"/>
     </Style>
 
     <Style x:Key="SignalBargraphRectangleStyle" TargetType="{x:Type Rectangle}">

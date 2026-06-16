@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:meter="clr-namespace:HamRadioControls"
         xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
+        xmlns:modeUserControl="clr-namespace:YAESU_FT_891_Front_End"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
         ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
@@ -346,7 +347,7 @@
                     <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
                 </Border>
 
-                <Border x:Name="MainRigModeLabelBorder" Canvas.Left="308" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue">
+                <Border x:Name="MainRigModeLabelBorder" Canvas.Left="308" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
                     <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                 </Border>
 
@@ -654,7 +655,7 @@
                 </Grid>
             </Canvas>
 
-            <Canvas x:Name="TabControlCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
+            <Canvas x:Name="TabControlCanvas" Canvas.Left="274" Canvas.Top="182" Style="{StaticResource TabCanvasStyle}">
                 <TabControl x:Name="TabControlTabControl" Padding="0" Background="Transparent">
                     
                     <TabControl.Template>
@@ -668,7 +669,7 @@
 
                     <TabItem Tag="SIMULATED WATERFALL" IsSelected="True" Padding="0">
 
-                        <Canvas x:Name="SimulatedWaterfallTabCanvas" Style="{StaticResource DisplayCanvasStyle}">
+                        <Canvas x:Name="SimulatedWaterfallTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
                             <Border x:Name="SpanPopupWindowBorder" Canvas.Left="170" Canvas.Top="72" Width="300" Panel.ZIndex="1" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
                                 
@@ -782,59 +783,59 @@
                                 <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 0,16 16,8 0,0" Stroke="White"/>
                             </Canvas>
 
-                            <Polygon Canvas.Left="80" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="140" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="200" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="260" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="80" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="140" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="200" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="260" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
                             
-                            <Polygon Canvas.Left="320" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="320" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
                             
-                            <Polygon Canvas.Left="380" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="440" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="500" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="560" Canvas.Top="85" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="380" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="440" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="500" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="560" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
                             
-                            <Polygon Canvas.Left="21" Canvas.Top="85" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="90" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="95" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="100" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="105" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="110" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="115" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="120" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="125" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="130" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
-                            <Polygon Canvas.Left="21" Canvas.Top="135" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="0" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="5" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="10" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="15" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="20" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="25" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="30" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="35" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="40" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="45" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
+                            <Polygon Canvas.Left="21" Canvas.Top="50" Points="0,0 600,0 600,1 0,1" Fill="Gray"/>
 
-                            <Canvas x:Name="BandScopeCanvas" Canvas.Left="21" Canvas.Top="85" Width="600" Height="56"/>
+                            <Canvas x:Name="BandScopeCanvas" Canvas.Left="21" Canvas.Top="0" Width="600" Height="56"/>
 
-                            <Canvas x:Name="WaterfallCanvas" Canvas.Left="21" Canvas.Top="140" Width="600" Height="60">
+                            <Canvas x:Name="WaterfallCanvas" Canvas.Left="21" Canvas.Top="55" Width="600" Height="60">
                                 <!--<Polygon Canvas.Left="295" Canvas.Top="0" Points="0,0 3,0 3,55 0,55" Fill="DodgerBlue"/>
                                 <Polygon Canvas.Left="295" Canvas.Top="0" Points="-23,53 23,53 23,55 -23,55" Fill="DodgerBlue"/>
                                 <Polygon Canvas.Left="295" Canvas.Top="0" Points="-20,47 20,47 20,50 -20,50" Fill="DodgerBlue"/>-->
                             </Canvas>
 
-                            <Canvas x:Name="SweepYellowCursorCanvas" Canvas.Left="14" Canvas.Top="85">
+                            <Canvas x:Name="SweepYellowCursorCanvas" Canvas.Left="14" Canvas.Top="0">
                                 <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Yellow"/>
                                 <Polygon Canvas.Left="7" Canvas.Top="10" Points="0,0 0,45 1,45 1,0" Fill="Yellow"/>
                             </Canvas>
 
                             <!--Red & Green Cursors-->
-                            <Canvas x:Name="GreenCursorCanvas" Canvas.Left="323" Canvas.Top="85">
+                            <Canvas x:Name="GreenCursorCanvas" Canvas.Left="323" Canvas.Top="0">
                                 <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="LimeGreen"/>
                                 <Polygon x:Name="GreenCursorVerticalPolygon" Canvas.Left="7" Canvas.Top="10" Points="0,0 0,45 1,45 1,0" Fill="LimeGreen"/>
                             </Canvas>
-                            <Canvas x:Name="RedCursorCanvas" Canvas.Left="303" Canvas.Top="95">
+                            <Canvas x:Name="RedCursorCanvas" Canvas.Left="303" Canvas.Top="10">
                                 <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Red"/>
                                 <Polygon x:Name="RedCursorVerticalPolygon" Canvas.Left="7" Canvas.Top="10" Points="0,0 0,35 1,35 1,0" Fill="Red"/>
                             </Canvas>
                             <!--Red & Green Cursors-->
 
-                            <Polygon Name="HorizonLine" Canvas.Left="21" Canvas.Top="140" Points="0,0 600,0 600,1 0,1" Fill="White"/>
+                            <Polygon Name="HorizonLine" Canvas.Left="21" Canvas.Top="55" Points="0,0 600,0 600,1 0,1" Fill="White"/>
                             
-                            <Polygon Name="SpanFrequencyLine" Canvas.Left="21" Canvas.Top="200" Points="0,0 600,0 600,1 0,1" Fill="White"/>
+                            <Polygon Name="SpanFrequencyLine" Canvas.Left="21" Canvas.Top="115" Points="0,0 600,0 600,1 0,1" Fill="White"/>
   
-                            <Canvas Canvas.Left="21" Canvas.Top="202" Width="600" Height="12">
+                            <Canvas Canvas.Left="21" Canvas.Top="117" Width="600" Height="12">
                                 <TextBlock x:Name="SpanLabel1TextBlock" Canvas.Left="42" Canvas.Top="-1" Padding="0" Text="-20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
                                 <TextBlock x:Name="SpanLabel2TextBlock" Canvas.Left="161" Canvas.Top="-1" Padding="0" Text="-10k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
                                 <TextBlock x:Name="SpanLabel3TextBlock" Canvas.Left="273" Canvas.Top="-1" Padding="0" Text="14.252.000" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
@@ -842,42 +843,42 @@
                                 <TextBlock x:Name="SpanLabel5TextBlock" Canvas.Left="532" Canvas.Top="-1" Padding="0" Text="+20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
                             </Canvas>
 
-                            <Border Tag="0" Canvas.Left="20" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="0" Canvas.Left="20" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock x:Name="CursorModeTextBlock" Text="CENTER" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="1" Canvas.Left="95" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="1" Canvas.Left="95" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="3DSS" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="2" Canvas.Left="170" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="2" Canvas.Left="170" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="MULTI" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="3" Canvas.Left="245" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="3" Canvas.Left="245" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="EXPAND" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="4" Canvas.Left="320" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="4" Canvas.Left="320" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="SPAN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="5" Canvas.Left="395" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="5" Canvas.Left="395" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="SPEED" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="6" Canvas.Left="470" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="6" Canvas.Left="470" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="START" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
                             </Border>
-                            <Border Tag="7" Canvas.Left="545" Canvas.Top="214" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
+                            <Border Tag="7" Canvas.Left="545" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="STOP" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                 </StackPanel>
@@ -888,9 +889,9 @@
                     </TabItem>
                     <TabItem Tag="STATION SCOPE" Padding="0">
 
-                        <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource DisplayCanvasStyle}">
+                        <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
-                            <Border Canvas.Left="14" Canvas.Top="85" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                            <Border Canvas.Left="14" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                 <Canvas x:Name="StationScopeControlsCanvas" Width="264" Height="30" VerticalAlignment="Top">
                                     <Grid Canvas.Left="2" Canvas.Top="7" Width="29" Height="13" Background="White">
                                         <Label Content="TH" Height="38" Margin="-2,-5,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
@@ -905,7 +906,7 @@
                                 </Canvas>
                             </Border>
                             
-                            <Border Canvas.Left="14" Canvas.Top="116" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                            <Border Canvas.Left="14" Canvas.Top="31" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                 <Canvas x:Name="StationScopeListCanvas" Width="264" Height="102">
 
                                     <ScrollViewer x:Name="StationScopeListScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="264" Height="94">
@@ -934,7 +935,7 @@
                                 </Canvas>
                             </Border>
 
-                            <Border Canvas.Left="310" Canvas.Top="85" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                            <Border Canvas.Left="310" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                 <Canvas x:Name="QMBListCanvas" Width="264" Height="133">
                                     
                                     <ScrollViewer x:Name="QMBListScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="264" Height="125">
@@ -967,14 +968,14 @@
 
                     <TabItem Tag="DNR &amp; FILTERS">
                         <Grid>
-                            <Canvas x:Name="FiltersCanvas" Style="{StaticResource DisplayCanvasStyle}">
+                            <Canvas x:Name="FiltersCanvas" Style="{StaticResource TabCanvasStyle}">
                             </Canvas>
                         </Grid>
                     </TabItem>
                     <TabItem Tag="CW DECODER">
                         <Grid>
-                            <Canvas x:Name="CWDecoderCanvas" Style="{StaticResource DisplayCanvasStyle}">
-                                <StackPanel Orientation="Vertical" Canvas.Left="10" Canvas.Top="70" Margin="0,10,0,0">
+                            <Canvas x:Name="CWDecoderCanvas" Style="{StaticResource TabCanvasStyle}">
+                                <StackPanel Orientation="Vertical" Canvas.Left="10" Canvas.Top="0" Margin="0,10,0,0">
                                     <TextBlock x:Name="CWDecoderPowerTextBlock" Text="0.0" Foreground="Orange" TextWrapping="Wrap" Margin="0,6,0,0"/>
                                     <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="24" TextWrapping="Wrap" Width="610" Margin="0,0,0,0"/>
                                 </StackPanel>
@@ -983,7 +984,7 @@
                     </TabItem>
                     <TabItem Tag="CAT Command Log">
                         <Grid>
-                            <Canvas x:Name="CATCommandLogCanvas" Style="{StaticResource DisplayCanvasStyle}" Height="133" Margin="0,84,0,0">
+                            <Canvas x:Name="CATCommandLogCanvas" Style="{StaticResource TabCanvasStyle}" Height="133" Margin="0,0,0,0">
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="Created" Foreground="LightGray" Width="110"/>
                                     <Label Content="Sent CAT" Foreground="LightGray"/>
@@ -1038,7 +1039,9 @@
                     </TabItem>
                 </TabControl>
 
-                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="72" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
+                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
+
+                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged"/>
 
             </Canvas>
         </Canvas>

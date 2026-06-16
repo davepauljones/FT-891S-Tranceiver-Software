@@ -49,17 +49,13 @@ namespace YAESU_FT_891_Front_End
             public const byte RadioTXOn = 2;
         }
 
-        
-
         public struct RigLEDColors
         {
             public const byte LightGray = 0;
             public const byte Green = 1;
             public const byte Red = 2;
             public const byte Blue = 3;
-        }
-
-        
+        } 
 
     }
 }

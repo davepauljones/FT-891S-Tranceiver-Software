@@ -27,22 +27,41 @@ namespace YAESU_FT_891_Front_End
                 anim,
                 HandoffBehavior.SnapshotAndReplace);
         }
-        public static void AnimateButtonClick(Canvas c, Action onComplete)
+        public static void AnimateButtonClick(FrameworkElement element, Action onComplete)
         {
             // 1. Setup the Brush
-            SolidColorBrush animatedBrush = new SolidColorBrush(Colors.Black);
-            animatedBrush.Opacity = 0;
-            c.Background = animatedBrush;
+            SolidColorBrush animatedBrush = new SolidColorBrush(Colors.Black) { Opacity = 0 };
 
-            // 2. Define the Fade In (First)
+            // Safely assign the brush based on the actual type of the control
+            if (element is Panel panel)
+            {
+                panel.Background = animatedBrush;
+            }
+            else if (element is Border border)
+            {
+                border.Background = animatedBrush;
+            }
+            else if (element is Control control)
+            {
+                control.Background = animatedBrush;
+            }
+            else
+            {
+                // Fallback or safety check: If it doesn't support a background, 
+                // just run the callback immediately and exit.
+                onComplete?.Invoke();
+                return;
+            }
+
+            // 2. Define the Fade In
             DoubleAnimation fadeIn = new DoubleAnimation
             {
                 To = 0.35,
-                Duration = TimeSpan.FromMilliseconds(200), // 1 second as requested
+                Duration = TimeSpan.FromMilliseconds(200),
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            // 3. Define the Fade Out (Second)
+            // 3. Define the Fade Out
             DoubleAnimation fadeOut = new DoubleAnimation
             {
                 To = 0.0,
@@ -56,7 +75,7 @@ namespace YAESU_FT_891_Front_End
                 animatedBrush.BeginAnimation(SolidColorBrush.OpacityProperty, fadeOut);
             };
 
-            // Chain: Fade Out -> Execute the Callback (Shutdown)
+            // Chain: Fade Out -> Execute the Callback
             fadeOut.Completed += (s, e) => onComplete?.Invoke();
 
             // Start the sequence
