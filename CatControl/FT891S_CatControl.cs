@@ -197,7 +197,7 @@ namespace FT891S_CatControl
     // =========================================================================
     // 3. TYPES, ENUMS & BACKING TARGET STRUCTURES
     // =========================================================================
-    public enum RadioMode { LSB = 1, USB = 2, CW = 3, FM = 4, AM = 5, RTTY_LSB = 6, CW_R = 7, DATA_LSB = 8, RTTY_USB = 9, DATA_USB = 10, FM_N = 11, DATA_FM = 12 }
+    public enum RadioMode { LSB = 1, USB = 2, CW = 3, FM = 4, AM = 5, RTTY_LSB = 6, CW_R = 7, DATA_LSB = 8, RTTY_USB = 9, DATA_USB = 10, FM_N = 11, DATA_FM = 12, AM_N = 13 }
     public enum AgcMode { Off = 0, Fast = 1, Mid = 2, Slow = 3, Auto = 4 }
 
     public enum MeterTypes { DependsOnFrontPanelMETER = 0, S = 1, DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID = 2, COMP = 3, ALC = 4, PO = 5, SWR = 6, ID = 7 }
@@ -248,7 +248,8 @@ namespace FT891S_CatControl
             dict => new ModeResult
             {
                 MainRX = int.Parse(dict["P1"]),
-                Mode = (RadioMode)int.Parse(dict["P2"])
+                // FIX: Parse P2 as a Hexadecimal string to support A, B, C, etc.
+                Mode = (RadioMode)int.Parse(dict["P2"], System.Globalization.NumberStyles.HexNumber)
             },
             result =>
             {
@@ -332,6 +333,20 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.currentBand = result
         );
+        public static readonly FT891S_CatCommand<int> AB = new FT891S_CatCommand<int>(
+            "AB",
+            new CatStructure(),
+            new CatStructure(),
+            dict => 0,
+            result => { }
+        );
+        public static readonly FT891S_CatCommand<int> BA = new FT891S_CatCommand<int>(
+            "BA",
+            new CatStructure(),
+            new CatStructure(),
+            dict => 0,
+            result => { }
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -345,7 +360,9 @@ namespace FT891S_CatControl
             { "ID", ID },
             { "RG", RG },
             { "AG", AG },
-            { "BS", BS }
+            { "BS", BS },
+            { "AB", AB },
+            { "BA", BA }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -449,6 +466,7 @@ namespace FT891S_CatControl
             if (delayMs > 0)
                 await Task.Delay(delayMs);
         }
+
         public async Task SendCatCommandAsync(string opCode, object[] values, int delayMs = 0)
         {
             if (!FT891S_CatCommandTypes.ParsersByOpCode.TryGetValue(opCode, out ICatCommand cmd))

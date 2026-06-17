@@ -154,7 +154,7 @@ namespace YAESU_FT_891_Front_End
                     AMTextBlock.Foreground = new SolidColorBrush(Colors.Black);
                     break;
                 case ModesFT710.AM_N:
-                    currentModeFT891 = (int)RadioMode.AM;
+                    currentModeFT891 = (int)RadioMode.AM_N;
                     AM_NBorder.Background = new SolidColorBrush(Colors.DodgerBlue);
                     AM_NTextBlock.Foreground = new SolidColorBrush(Colors.Black);
                     break;

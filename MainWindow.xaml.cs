@@ -16,6 +16,7 @@ using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
+using System.Threading.Tasks;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -36,7 +37,6 @@ namespace YAESU_FT_891_Front_End
 
         public FT891S_SerialPort fT891S_SerialPort;
 
-        public YAESU_FT_891_CAT_Dictionary yAESU_FT_891_CAT_Dictionary;
         public FrequencyManagement frequencyManagement;
 
         public int TranceiverTXRXState = TranceiverStates.RadioTXOff;
@@ -77,8 +77,6 @@ namespace YAESU_FT_891_Front_End
         void Init_Startup()
         {
             fT891S_SerialPort = new FT891S_SerialPort(this, "COM8");
-            
-            yAESU_FT_891_CAT_Dictionary = new YAESU_FT_891_CAT_Dictionary(this);
 
             memorySlot = new MemorySlot(this);
 
@@ -446,7 +444,9 @@ namespace YAESU_FT_891_Front_End
 
             _lastMoveTime3 = now;
         }
-        private void ApplyKnobInput4(double deltaY)
+
+        private int AFGainCurrentDeltaY;
+        private async void ApplyKnobInput4(double deltaY)
         {
             DateTime now = DateTime.Now;
 
@@ -456,14 +456,16 @@ namespace YAESU_FT_891_Front_End
             double speed = Math.Abs(deltaY) / dt;
             _lastBlurSpeed4 = (_lastBlurSpeed4 * 0.8) + (speed * 0.2);
 
-            if (deltaY > 0 && QMBListView.SelectedIndex > 0)
-            {
-                QMBListView.SelectedIndex--;
-            }
-            else if (deltaY < 0 && QMBListView.SelectedIndex < QMBListView.Items.Count - 1)
-            {
-                QMBListView.SelectedIndex++;
-            }
+            // 1. Determine direction (Scrolling up adds 10, scrolling down subtracts 10)
+            int step = (deltaY > 0) ? 10 : -10;
+
+            // 2. Add the step to the current value
+            int proposedValue = AFGainCurrentDeltaY + step;
+
+            // 3. Force it to stay strictly between 0 and 255
+            AFGainCurrentDeltaY = Math.Min(Math.Max(proposedValue, 0), 255);
+
+            await _catManager.SendCatCommandAsync("AG", new object[] { 0, AFGainCurrentDeltaY }, _catManager.OutGoingDataLoopDelay);
 
             /*StationScope item = (StationScope)QMBListView.Items[QMBListView.SelectedIndex];
 
@@ -637,7 +639,7 @@ namespace YAESU_FT_891_Front_End
 
         public int stationScopeListViewSelectedItem;
 
-        private void StationScopeListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void StationScopeListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DependencyObject dep = (DependencyObject)e.OriginalSource;
 
@@ -659,9 +661,10 @@ namespace YAESU_FT_891_Front_End
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, item.station.Frequency, MainFrequencyTextBlock);
 
-            yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
+            //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
+            await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
         }
-        private void QMBListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void QMBListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DependencyObject dep = (DependencyObject)e.OriginalSource;
 
@@ -683,7 +686,8 @@ namespace YAESU_FT_891_Front_End
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, item.station.Frequency, MainFrequencyTextBlock);
 
-            yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
+            //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
+            await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
 
             if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
             {
@@ -974,24 +978,42 @@ namespace YAESU_FT_891_Front_End
             AFGainKnobCanvasBlurEffect.Radius = 0;
         }
 
+        // 1. Add this field at the top of your class to track the last update time
+        private DateTime _lastKnobUpdateTime = DateTime.MinValue;
         private void AFGainKnobAreaCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (!isDragging) return;
             e.Handled = true;
+
+            // --- TIME THROTTLE START ---
+            // Only allow changes every 50 milliseconds (adjust this to change speed)
+            if ((DateTime.Now - _lastKnobUpdateTime).TotalMilliseconds < 50)
+            {
+                return; // Too soon! Ignore this mouse twitch.
+            }
+            // --- TIME THROTTLE END ---
 
             Point pos = e.GetPosition(AFGainKnobAreaCanvas);
             double deltaY = _lastMousePos4.Y - pos.Y;
 
             if (DateTime.Now > (AFGainKnobAreaCanvas_PreviewMouseDown_DateTime + TimeSpan.FromMilliseconds(250)))
             {
-                ApplyKnobInput4(deltaY); // Your specific business logic
-                ProcessKnobRotation(ref _lastBlurSpeed4, ref _blurImpulse4, ref _lastMoveTime4, AFGainKnobBrurCanvas, deltaY);
-                SignifyMovement(_lastMoveTime4, AFGainKnobBrurCanvas, _blurTimer4);
+                // Now we can use a very simple modifier because the events are spaced out
+                double controlledDelta = deltaY * 0.5;
+
+                ApplyKnobInput4(controlledDelta);
+
+                // Update the timestamp *only* when a valid movement happens
+                _lastKnobUpdateTime = DateTime.Now;
             }
+
+            ProcessKnobRotation(ref _lastBlurSpeed4, ref _blurImpulse4, ref _lastMoveTime4, AFGainKnobBrurCanvas, deltaY);
+            SignifyMovement(_lastMoveTime4, AFGainKnobBrurCanvas, _blurTimer4);
+
             _lastMousePos4 = pos;
         }
-
-        private void AFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private int lastAFGain = 100;
+        private async void AFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             // CRITICAL FIX: These MUST happen every time the mouse is released, 
             // otherwise a fast click leaves the canvas permanently dragging!
@@ -1014,38 +1036,27 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                if (TranceiverMode != TranceiverModes.FunctionMenu)
+                if (FT891S_CatManager.currentRadioState.AFGain > 0 && FT891S_CatManager.currentRadioState.AFGain < 255)
                 {
-                    TabControlCanvas.Visibility = Visibility.Hidden;
-                    DefaultCanvas.Visibility = Visibility.Hidden;
-                    FunctioMenuTabCanvas.Visibility = Visibility.Visible;
+                    await _catManager.SendCatCommandAsync("AG", "0", _catManager.OutGoingDataLoopDelay);
 
-                    LastTranceiverMode = TranceiverMode;
+                    lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
 
-                    TabControlTabControl.SelectedIndex = TranceiverModes.FunctionMenu;
-                    TranceiverMode = TranceiverModes.FunctionMenu;
+                    FT891S_CatManager.currentRadioState.AFGain = 0;
+                    await _catManager.SendCatCommandAsync("AG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
                 }
-                else if (TranceiverMode == TranceiverModes.FunctionMenu)
+                else
                 {
-                    TabControlCanvas.Visibility = Visibility.Visible;
-                    DefaultCanvas.Visibility = Visibility.Visible;
-                    FunctioMenuTabCanvas.Visibility = Visibility.Hidden;
-
-                    TranceiverMode = LastTranceiverMode;
-                    TabControlTabControl.SelectedIndex = TranceiverMode;
-
-                    if (FunctionMenuClass.FunctionMenuSelectedItem > FunctionMenuClass.FunctionModeMaxFunction)
-                    {
-                        // if not on a valid adjustable parameter, just default to 1st element in the list which is LEVEL
-                        FunctionMenuClass.GetBorderByTag(0);
-                        FunctionModeLabel.Content = FunctionMenuClass.GetName(0);
-                    }
+                    FT891S_CatManager.currentRadioState.AFGain = lastAFGain;
+                    await _catManager.SendCatCommandAsync("AG", new object[] { 0, lastAFGain }, _catManager.OutGoingDataLoopDelay);
                 }
 
                 // --- WE CLICKED ---
-                if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+                if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
                 {
-                    Console.WriteLine("AFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold)");
+                    //await _catManager.SendCatCommandAsync("AG", "0" , _catManager.OutGoingDataLoopDelay);
+                    Console.WriteLine("AFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastAFGain);
+                    Console.WriteLine(FT891S_CatManager.currentRadioState.AFGain);
                 }
 
                 // Hide the blur canvas since we didn't actually spin the knob
@@ -1368,7 +1379,8 @@ namespace YAESU_FT_891_Front_End
             // Example Usage: Update a MainWindow status bar, radio interface frequency, etc.
             System.Diagnostics.Debug.WriteLine($"ModeFT710 changed to: {selectedModeFT710Code}, ModeFT891: {selectedModeFT891Code}");
 
-            await _catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(selectedModeFT891Code) }, _catManager.OutGoingDataLoopDelay);
+            //await _catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(selectedModeFT891Code) }, _catManager.OutGoingDataLoopDelay);
+            await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(selectedModeFT891Code)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
         }
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1384,5 +1396,7 @@ namespace YAESU_FT_891_Front_End
                 FadoutBorderWindow(modeUserControl.ModeWindowBorder, 0);
             }
         }
+
+        
     }
 }

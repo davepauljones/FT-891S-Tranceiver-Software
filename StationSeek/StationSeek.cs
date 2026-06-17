@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
-using static YAESU_FT_891_Front_End.YAESU_FT_891_CAT_Dictionary;
 
 namespace YAESU_FT_891_Front_End
 { 
@@ -60,8 +59,8 @@ namespace YAESU_FT_891_Front_End
 
             mainWindow._catManager.StopOutgoingDataLoop();
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
-            await Task.Delay(20);
+            //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
+            await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
             Int32 PositionInTheList = 1;
 
@@ -111,8 +110,8 @@ namespace YAESU_FT_891_Front_End
 
                 if (RequestToStopScanning)
                 {
-                    mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
-                    await Task.Delay(20);
+                    //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
+                    await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
                     mainWindow._catManager.StartOutgoingDataLoop();
 
@@ -125,7 +124,8 @@ namespace YAESU_FT_891_Front_End
             }
 
             if (RigMode != RigModes.FM)
-                mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
+                //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
+                await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
             else
                 mainWindow.fT891S_SerialPort.SendCAT(_port, "SQ015");
 
@@ -163,37 +163,37 @@ namespace YAESU_FT_891_Front_End
             FoundStationCountLabel.Content = foundStationCountLabel;
         }
 
-        public async void ScanFoundStations(SerialPort _port)
-        {
-            if (IsScanning) return;
+        //public async void ScanFoundStations(SerialPort _port)
+        //{
+        //    if (IsScanning) return;
 
-            IsScanning = true;
+        //    IsScanning = true;
 
-            mainWindow._catManager.StopOutgoingDataLoop();
+        //    mainWindow._catManager.StopOutgoingDataLoop();
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
-            await Task.Delay(20);
+        //    mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
+        //    await Task.Delay(20);
 
-            foreach (StationSeekClass foundStation in StationSeekActiveList)
-            {
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, foundStation.Frequency);
-                await Task.Delay(10);
+        //    foreach (StationSeekClass foundStation in StationSeekActiveList)
+        //    {
+        //        mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, foundStation.Frequency);
+        //        await Task.Delay(10);
 
-                mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-                await Task.Delay(10);
+        //        mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
+        //        await Task.Delay(10);
 
-                mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
-                await Task.Delay(20);
+        //        mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
+        //        await Task.Delay(20);
 
-                await Task.Delay(1000);
-            }
+        //        await Task.Delay(1000);
+        //    }
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
-            await Task.Delay(20);
+        //    mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
+        //    await Task.Delay(20);
 
-            mainWindow._catManager.StartOutgoingDataLoop();
+        //    mainWindow._catManager.StartOutgoingDataLoop();
 
-            IsScanning = false;
-        }
+        //    IsScanning = false;
+        //}
     }
 }

@@ -113,6 +113,16 @@ namespace YAESU_FT_891_Front_End
                     rigMode.BackgroundColor = Colors.SaddleBrown;
                     rigMode.ForegroundColor = Colors.White;
                     break;
+                case RadioMode.AM_N:
+                    rigMode.Name = "AM-N";
+                    rigMode.BackgroundColor = Colors.SaddleBrown;
+                    rigMode.ForegroundColor = Colors.White;
+                    break;
+                default:
+                    rigMode.Name = "USB";
+                    rigMode.BackgroundColor = Colors.DodgerBlue;
+                    rigMode.ForegroundColor = Colors.White;
+                    break;
             }
 
             return rigMode;

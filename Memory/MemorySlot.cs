@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
-using static YAESU_FT_891_Front_End.YAESU_FT_891_CAT_Dictionary;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -52,14 +51,14 @@ namespace YAESU_FT_891_Front_End
         {
             RadioState rs = new RadioState();
             rs.VfoAFrequency = 14200000;
-            rs.VfoBFrequency = 14200000;
-            rs.OperatingMode = RadioMode.FM;
+            rs.VfoBFrequency = 7150000;
+            rs.OperatingMode = RadioMode.USB;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_A, rs);//main is the contents of VFO A
 
             rs = new RadioState();
             rs.VfoAFrequency = 7150000;
-            rs.VfoBFrequency = 7150000;
+            rs.VfoBFrequency = 14200000;
             rs.OperatingMode = RadioMode.AM;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_B, rs);//sub is the contents of VFO B
@@ -124,7 +123,7 @@ namespace YAESU_FT_891_Front_End
             mainWindow.SubRigModeLabel.Content = rmcs.Name;
 
         }
-        public void SwapVFOs(MainWindow mainWindow)
+        public async void SwapVFOs(MainWindow mainWindow)
         {
             if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
             {
@@ -192,20 +191,22 @@ namespace YAESU_FT_891_Front_End
             //FT891SerialPort.StopSerialLoop();
 
             //Main
+            //write sub mode to main
+            //await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(MainRigState.OperatingMode) }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, MainRigState.OperatingMode);
-
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(MainRigState.OperatingMode);
+            //update UI incase rig is turned off or not connected
+            //UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, MainRigState.OperatingMode);
 
 
             //Sub
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SwapSubWithMain();
+            //to switch A into B you have to do it in A the swap it
+            await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
 
-            UpdateUIRigMode(mainWindow.SubRigModeLabelBorder, mainWindow.SubRigModeLabel, SubRigState.OperatingMode);
+            //update UI incase rig is turned off or not connected
+            //UpdateUIRigMode(mainWindow.SubRigModeLabelBorder, mainWindow.SubRigModeLabel, SubRigState.OperatingMode);
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SetMode(SubRigState.OperatingMode);
+            //await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(SubRigState.OperatingMode) }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-            mainWindow.yAESU_FT_891_CAT_Dictionary.SwapMainWithSub();
         }
     }
 }
