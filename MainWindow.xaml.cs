@@ -1038,7 +1038,7 @@ namespace YAESU_FT_891_Front_End
             {
                 if (FT891S_CatManager.currentRadioState.AFGain > 0 && FT891S_CatManager.currentRadioState.AFGain < 255)
                 {
-                    await _catManager.SendCatCommandAsync("AG", "0", _catManager.OutGoingDataLoopDelay);
+                    //await _catManager.SendCatCommandAsync("AG", "0", _catManager.OutGoingDataLoopDelay);
 
                     lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
 

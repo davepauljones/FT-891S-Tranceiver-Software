@@ -146,6 +146,21 @@ namespace FT891S_CatControl
             else
                 _stateUpdater(typedResult);
         }
+
+        public void ApplyOutgoingValues(object[] values)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            for (int i = 0; i < SetStructure.Parameters.Count; i++)
+            {
+                dict[SetStructure.Parameters[i].Name] =
+                    values[i]?.ToString() ?? "";
+            }
+
+            T result = Parser(dict);
+
+            _stateUpdater(result);
+        }
     }
 
     // Fluent Chaining Extension Engine (.NET 4.8 Compatibility Layout)
@@ -277,18 +292,38 @@ namespace FT891S_CatControl
             result => FT891S_CatManager.currentRadioState.IfShiftHz = result
         );
 
+        //public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
+        //    "RM",
+        //    // 1. Tell it to expect a 1-digit parameter when building the outbound command string
+        //    new CatStructure().Expect("P1", 1),
+        
+        //    // 2. This remains the same for parsing the incoming response
+        //    new CatStructure().Expect("P1", 1).Expect("P2", 3),
+        
+        //    dict => new MeterResult
+        //    {
+        //        MeterType = (MeterTypes)int.Parse(dict["P1"]),
+        //        ReadingValue = int.Parse(dict["P2"])
+        //    },
+        //    result => {
+        //        FT891S_CatManager.currentRadioState.ActiveMeterType = result.MeterType;
+        //        FT891S_CatManager.currentRadioState.CurrentMeterReading = result.ReadingValue;
+        //    }
+        //);
         public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
             "RM",
-            // 1. Tell it to expect a 1-digit parameter when building the outbound command string
+
+            // 1. Outbound layout
             new CatStructure().Expect("P1", 1),
         
-            // 2. This remains the same for parsing the incoming response
+            // 2. Inbound layout
             new CatStructure().Expect("P1", 1).Expect("P2", 3),
         
+            // FIX: Check if P2 exists to avoid KeyNotFoundException during local state updates
             dict => new MeterResult
             {
                 MeterType = (MeterTypes)int.Parse(dict["P1"]),
-                ReadingValue = int.Parse(dict["P2"])
+                ReadingValue = dict.ContainsKey("P2") ? int.Parse(dict["P2"]) : 0
             },
             result => {
                 FT891S_CatManager.currentRadioState.ActiveMeterType = result.MeterType;
@@ -488,6 +523,30 @@ namespace FT891S_CatControl
             }
 
             string catString = builder.Build();
+
+            // ======================================================
+            // LOCAL STATE UPDATE (NO RADIO REQUIRED)
+            // ======================================================
+            if (cmd is FT891S_CatCommand<int> cmdInt)
+            {
+                cmdInt.ApplyOutgoingValues(values);
+            }
+            else if (cmd is FT891S_CatCommand<long> cmdLong)
+            {
+                cmdLong.ApplyOutgoingValues(values);
+            }
+            else if (cmd is FT891S_CatCommand<ModeResult> cmdMode)
+            {
+                cmdMode.ApplyOutgoingValues(values);
+            }
+            else if (cmd is FT891S_CatCommand<AgcResult> cmdAgc)
+            {
+                cmdAgc.ApplyOutgoingValues(values);
+            }
+            else if (cmd is FT891S_CatCommand<MeterResult> cmdMeter)
+            {
+                cmdMeter.ApplyOutgoingValues(values);
+            }
 
             if (mainWindow.fT891S_SerialPort._port != null &&
                 mainWindow.fT891S_SerialPort._port.IsOpen)
