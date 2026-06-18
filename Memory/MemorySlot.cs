@@ -36,6 +36,8 @@ namespace YAESU_FT_891_Front_End
         public byte CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
         public byte CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
 
+        private bool IsVFO_AB = false;
+
         public RadioState MainRigState = new RadioState();
         public RadioState SubRigState = new RadioState();
 
@@ -123,90 +125,106 @@ namespace YAESU_FT_891_Front_End
             mainWindow.SubRigModeLabel.Content = rmcs.Name;
 
         }
-        public async void SwapVFOs(MainWindow mainWindow)
+        // 1. Changed from 'async void' to 'async Task' for proper async handling and error tracking
+        public async Task SwapVFOs(MainWindow mainWindow)
         {
-            if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
+            mainWindow._catManager.StopOutgoingDataLoop();
+
+            // 1. Declare out variables explicitly before using them (Required in older C#)
+            RadioState vfoAState = null;
+            RadioState vfoBState = null;
+
+            // 2. Fetch both states safely
+            if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out vfoAState) &&
+                MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out vfoBState))
             {
-                RadioState sub;
+                // 3. Swap the data payloads in the dictionary
+                MemorySlotDictionary[(int)MemorySlots.VFO_A] = vfoBState;
+                MemorySlotDictionary[(int)MemorySlots.VFO_B] = vfoAState;
 
-                if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
+                // 4. Toggle the tracking state using standard if/else statements
+                if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
                 {
-                    MainRigState = sub;
                     CurrentOccupierOfMainRigState = MemorySlots.VFO_B;
-                }
-
-                RadioState main;
-
-                if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
-                {
-                    SubRigState = main;
                     CurrentOccupierOfSubRigState = MemorySlots.VFO_A;
                 }
-            }
-            else if (CurrentOccupierOfMainRigState == MemorySlots.VFO_B)
-            {
-                RadioState main;
-
-                if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
+                else
                 {
-                    MainRigState = main;
                     CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
-                }
-
-                RadioState sub;
-
-                if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
-                {
-                    SubRigState = sub;
                     CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
                 }
+
+                // 5. Update local state references based on the new positions
+                MainRigState = MemorySlotDictionary[(int)MemorySlots.VFO_A];
+                SubRigState = MemorySlotDictionary[(int)MemorySlots.VFO_B];
             }
 
+            // 6. Update the UI Labels
             if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
             {
                 mainWindow.MainVFOABLabel.Content = "VFO-A";
                 mainWindow.SubVFOABLabel.Content = "VFO-B";
             }
-            else if (CurrentOccupierOfMainRigState == MemorySlots.VFO_B)
+            else
             {
                 mainWindow.MainVFOABLabel.Content = "VFO-B";
                 mainWindow.SubVFOABLabel.Content = "VFO-A";
             }
 
+            // 7. Refresh UI Frequencies
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, mainWindow.MainFrequencyTextBlock);
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, mainWindow.SubFrequencyTextBlock);
 
+            // 8. Update UI Mode Visuals
             RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
-
             mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
             mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
             mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
             RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
-
             mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
             mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
             mainWindow.SubRigModeLabel.Content = rmcs.Name;
 
-            //FT891SerialPort.StopSerialLoop();
+            // 9. Send CAT Hardware Commands
+            // 9. Send CAT Hardware Commands
+            try
+            {
+                // --- STEP A: Update the CURRENT Main VFO before swapping ---
+                // Because the physical rig hasn't flipped yet, the "current active VFO" 
+                // on the radio actually needs the data we just put into SubRigState!
+                await mainWindow._catManager.SendCatCommandAsync("BA", mainWindow._catManager.OutGoingDataLoopDelay);
 
-            //Main
-            //write sub mode to main
-            //await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(MainRigState.OperatingMode) }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { SubRigState.VfoAFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(SubRigState.OperatingMode)).ToString("X") }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-            //update UI incase rig is turned off or not connected
-            //UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, MainRigState.OperatingMode);
+                await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
 
+                // --- STEP B: Swap the radio's active VFO ---
+                // This makes the radio flip its context to the other VFO slot.
+                if (IsVFO_AB)
+                {
+                    IsVFO_AB = false;
+                    await mainWindow._catManager.SendCatCommandAsync("BA", mainWindow._catManager.OutGoingDataLoopDelay);
+                }
+                else
+                {
+                    IsVFO_AB = true;
+                    //await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
+                }
 
-            //Sub
-            //to switch A into B you have to do it in A the swap it
-            await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
+                // --- STEP C: Update the NEW active VFO (which used to be Sub) ---
+                // Now that the rig has flipped, the primary VFO register on the radio 
+                // is ready to receive our target MainRigState data.
+                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { MainRigState.VfoAFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(MainRigState.OperatingMode)).ToString("X") }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-            //update UI incase rig is turned off or not connected
-            //UpdateUIRigMode(mainWindow.SubRigModeLabelBorder, mainWindow.SubRigModeLabel, SubRigState.OperatingMode);
-
-            //await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(SubRigState.OperatingMode) }, mainWindow._catManager.OutGoingDataLoopDelay);
-
+                mainWindow._catManager.StartOutgoingDataLoop();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("CAT VFO Swap Failed: " + ex.Message);
+            }
         }
     }
 }
