@@ -415,7 +415,8 @@ namespace YAESU_FT_891_Front_End
             _lastMoveTime2 = now;
         }
 
-        private void ApplyKnobInput3(double deltaY)
+        private int RFGainCurrentDeltaY;
+        private async void ApplyKnobInput3(double deltaY)
         {
             DateTime now = DateTime.Now;
 
@@ -425,22 +426,16 @@ namespace YAESU_FT_891_Front_End
             double speed = Math.Abs(deltaY) / dt;
             _lastBlurSpeed3 = (_lastBlurSpeed3 * 0.8) + (speed * 0.2);
 
-            if (deltaY > 0 && QMBListView.SelectedIndex > 0)
-            {
-                QMBListView.SelectedIndex--;
-            }
-            else if (deltaY < 0 && QMBListView.SelectedIndex < QMBListView.Items.Count - 1)
-            {
-                QMBListView.SelectedIndex++;
-            }
+            // 1. Determine direction (Scrolling up adds 10, scrolling down subtracts 10)
+            int step = (deltaY > 0) ? 1 : -1;//do this to change the step int step = (deltaY > 0) ? 10 : -10;//
 
-            /*StationScope item = (StationScope)QMBListView.Items[QMBListView.SelectedIndex];
+            // 2. Add the step to the current value
+            int proposedValue = RFGainCurrentDeltaY + step;
 
-            UpdateFrequency(item.station.Frequency);
+            // 3. Force it to stay strictly between 0 and 255
+            RFGainCurrentDeltaY = Math.Min(Math.Max(proposedValue, 0), 255);
 
-            SetFrequency(item.station.Frequency);
-
-            SetRfGain(_port, 20);*/
+            await _catManager.SendCatCommandAsync("RG", new object[] { 0, RFGainCurrentDeltaY }, _catManager.OutGoingDataLoopDelay);
 
             _lastMoveTime3 = now;
         }
@@ -466,14 +461,6 @@ namespace YAESU_FT_891_Front_End
             AFGainCurrentDeltaY = Math.Min(Math.Max(proposedValue, 0), 255);
 
             await _catManager.SendCatCommandAsync("AG", new object[] { 0, AFGainCurrentDeltaY }, _catManager.OutGoingDataLoopDelay);
-
-            /*StationScope item = (StationScope)QMBListView.Items[QMBListView.SelectedIndex];
-
-            UpdateFrequency(item.station.Frequency);
-
-            SetFrequency(item.station.Frequency);
-
-            SetRfGain(_port, 20);*/
 
             _lastMoveTime4 = now;
         }
@@ -850,24 +837,42 @@ namespace YAESU_FT_891_Front_End
             RFGainKnobCanvasBlurEffect.Radius = 0;
         }
 
+        // 1. Add this field at the top of your class to track the last update time
+        private DateTime _lastKnobUpdateTime3 = DateTime.MinValue;
         private void RFGainKnobAreaCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (!isDragging) return;
             e.Handled = true;
+
+            // --- TIME THROTTLE START ---
+            // Only allow changes every 50 milliseconds (adjust this to change speed)
+            if ((DateTime.Now - _lastKnobUpdateTime3).TotalMilliseconds < 50)
+            {
+                return; // Too soon! Ignore this mouse twitch.
+            }
+            // --- TIME THROTTLE END ---
 
             Point pos = e.GetPosition(RFGainKnobAreaCanvas);
             double deltaY = _lastMousePos3.Y - pos.Y;
 
             if (DateTime.Now > (RFGainKnobAreaCanvas_PreviewMouseDown_DateTime + TimeSpan.FromMilliseconds(250)))
             {
-                ApplyKnobInput3(deltaY); // Your specific business logic
-                ProcessKnobRotation(ref _lastBlurSpeed3, ref _blurImpulse3, ref _lastMoveTime3, RFGainKnobBrurCanvas, deltaY);
-                SignifyMovement(_lastMoveTime3, RFGainKnobBrurCanvas, _blurTimer3);
+                // Now we can use a very simple modifier because the events are spaced out
+                double controlledDelta = deltaY * 0.5;
+
+                ApplyKnobInput3(controlledDelta);
+
+                // Update the timestamp *only* when a valid movement happens
+                _lastKnobUpdateTime3 = DateTime.Now;
             }
+
+            ProcessKnobRotation(ref _lastBlurSpeed3, ref _blurImpulse3, ref _lastMoveTime3, RFGainKnobBrurCanvas, deltaY);
+            SignifyMovement(_lastMoveTime3, RFGainKnobBrurCanvas, _blurTimer3);
+
             _lastMousePos3 = pos;
         }
-
-        private void RFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private int lastRFGain = 100;
+        private async void RFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             // CRITICAL FIX: These MUST happen every time the mouse is released, 
             // otherwise a fast click leaves the canvas permanently dragging!
@@ -890,38 +895,24 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                if (TranceiverMode != TranceiverModes.FunctionMenu)
+                if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < 255)
                 {
-                    TabControlCanvas.Visibility = Visibility.Hidden;
-                    DefaultCanvas.Visibility = Visibility.Hidden;
-                    FunctioMenuTabCanvas.Visibility = Visibility.Visible;
+                    lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
 
-                    LastTranceiverMode = TranceiverMode;
-
-                    TabControlTabControl.SelectedIndex = TranceiverModes.FunctionMenu;
-                    TranceiverMode = TranceiverModes.FunctionMenu;
+                    FT891S_CatManager.currentRadioState.RFGain = 0;
+                    await _catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
                 }
-                else if (TranceiverMode == TranceiverModes.FunctionMenu)
+                else
                 {
-                    TabControlCanvas.Visibility = Visibility.Visible;
-                    DefaultCanvas.Visibility = Visibility.Visible;
-                    FunctioMenuTabCanvas.Visibility = Visibility.Hidden;
-
-                    TranceiverMode = LastTranceiverMode;
-                    TabControlTabControl.SelectedIndex = TranceiverMode;
-
-                    if (FunctionMenuClass.FunctionMenuSelectedItem > FunctionMenuClass.FunctionModeMaxFunction)
-                    {
-                        // if not on a valid adjustable parameter, just default to 1st element in the list which is LEVEL
-                        FunctionMenuClass.GetBorderByTag(0);
-                        FunctionModeLabel.Content = FunctionMenuClass.GetName(0);
-                    }
+                    FT891S_CatManager.currentRadioState.RFGain = lastRFGain;
+                    await _catManager.SendCatCommandAsync("RG", new object[] { 0, lastRFGain }, _catManager.OutGoingDataLoopDelay);
                 }
 
                 // --- WE CLICKED ---
-                if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+                if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
                 {
-                    Console.WriteLine("RFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold)");
+                    Console.WriteLine("RFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastRFGain);
+                    Console.WriteLine(FT891S_CatManager.currentRadioState.RFGain);
                 }
 
                 // Hide the blur canvas since we didn't actually spin the knob
@@ -1038,8 +1029,6 @@ namespace YAESU_FT_891_Front_End
             {
                 if (FT891S_CatManager.currentRadioState.AFGain > 0 && FT891S_CatManager.currentRadioState.AFGain < 255)
                 {
-                    //await _catManager.SendCatCommandAsync("AG", "0", _catManager.OutGoingDataLoopDelay);
-
                     lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
 
                     FT891S_CatManager.currentRadioState.AFGain = 0;
@@ -1054,7 +1043,6 @@ namespace YAESU_FT_891_Front_End
                 // --- WE CLICKED ---
                 if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
                 {
-                    //await _catManager.SendCatCommandAsync("AG", "0" , _catManager.OutGoingDataLoopDelay);
                     Console.WriteLine("AFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastAFGain);
                     Console.WriteLine(FT891S_CatManager.currentRadioState.AFGain);
                 }
