@@ -68,7 +68,22 @@ namespace YAESU_FT_891_Front_End
         public const byte MicEQ_0N_Or_Off = 7;
         public const byte ProcLevel_Off_To_100 = 8;
         public const byte AMCLevel_1_To_100 = 9;
-        //too carry on to complete all functions
+        public const byte VOXGain_0_To_100 = 10;
+        public const byte VOXDelay_30_To_3000 = 11;
+        public const byte AntiVox_0_To_100 = 12;
+        public const byte RFPower_5_To_100 = 13;
+        public const byte MoniLevel_0_To_100 = 14;
+        public const byte Keyer_0_To_1 = 15;
+        public const byte BkIn_0_To_1 = 16;
+        public const byte CwSpeed_4_To_60 = 17;
+        public const byte CwPitch_300_To_1050 = 18;
+        public const byte BkDelay_30_To_1050 = 19;
+        public const byte Message_1_To_5 = 20;
+        public const byte Record_0_To_1 = 21;
+        public const byte Play_1_To_6 = 22;
+        public const byte Txw_0 = 23;
+        public const byte Aess_0_To_100 = 24;
+        public const byte AessCf_700_To_1000 = 25;
     }
     public struct FunctionMenuScaleNamePositions
     {
@@ -150,9 +165,9 @@ namespace YAESU_FT_891_Front_End
             {
                 Min = 0,
                 Max = 1,
-                Default = 0,
+                Default = 1,
                 currentValue = 1,
-                ScaleName = "Marker",
+                ScaleName = "MARKER",
                 ScaleNamePosition = FunctionMenuScaleNamePositions.None,
                 ScaleType = FunctionMenuScaleTypes.Marker_ON_Or_Off
             };
@@ -164,13 +179,287 @@ namespace YAESU_FT_891_Front_End
                 Max = 11,
                 Default = 1,
                 currentValue = 1,
-                ScaleName = "Color",
+                ScaleName = "COLOR",
                 ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
                 ScaleType = FunctionMenuScaleTypes.Color_1_To_11
             };
             FunctionMenuMinMaxScaleTypeList.Add(color);
 
-            //to be completed
+            FunctionMenuMinMaxScaleType contrast = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 20,
+                Default = 10,
+                currentValue = 10,
+                ScaleName = "CONTRAST",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Contrast_0_To_20
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(contrast);
+
+            FunctionMenuMinMaxScaleType dimmer = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 20,
+                Default = 16,
+                currentValue = 16,
+                ScaleName = "DIMMER",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Dimmer_0_To_20
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(dimmer);
+
+            FunctionMenuMinMaxScaleType mgroup = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 255,
+                Default = 1,
+                currentValue = 1,
+                ScaleName = "M-GROUP",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.MGroup_1_To_255
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(mgroup);
+
+            FunctionMenuMinMaxScaleType micgain = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 50,
+                currentValue = 50,
+                ScaleName = "MIC GAIN",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.MicGain_0_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(micgain);
+
+            FunctionMenuMinMaxScaleType miceq = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 1,
+                Default = 1,
+                currentValue = 1,
+                ScaleName = "MIC EQ",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.MicEQ_0N_Or_Off
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(miceq);
+
+            FunctionMenuMinMaxScaleType proclevel = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "PROC LEVEL",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.ProcLevel_Off_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(proclevel);
+
+            FunctionMenuMinMaxScaleType amclevel = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 100,
+                Default = 1,
+                currentValue = 1,
+                ScaleName = "AMC LEVEL",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.AMCLevel_1_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(amclevel);
+
+            FunctionMenuMinMaxScaleType voxgain = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 50,
+                currentValue = 50,
+                ScaleName = "VOX GAIN",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.VOXGain_0_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(voxgain);
+
+            FunctionMenuMinMaxScaleType voxdelay = new FunctionMenuMinMaxScaleType
+            {
+                Min = 30,
+                Max = 3000,
+                Default = 200,
+                currentValue = 200,
+                ScaleName = "VOX DELAY",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.VOXDelay_30_To_3000
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(voxdelay);
+
+            FunctionMenuMinMaxScaleType antivox = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 50,
+                currentValue = 50,
+                ScaleName = "ANTI VOX",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.AntiVox_0_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(antivox);
+
+            FunctionMenuMinMaxScaleType rfpower = new FunctionMenuMinMaxScaleType
+            {
+                Min = 5,
+                Max = 100,
+                Default = 5,
+                currentValue = 5,
+                ScaleName = "RF POWER",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.RFPower_5_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(rfpower);
+
+            FunctionMenuMinMaxScaleType monilevel = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "MONI LEVEL",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.MoniLevel_0_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(monilevel);
+
+            FunctionMenuMinMaxScaleType keyer = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 1,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "KEYER",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Keyer_0_To_1
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(keyer);
+
+            FunctionMenuMinMaxScaleType bkin = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 1,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "BK-IN",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.BkIn_0_To_1
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(bkin);
+
+            FunctionMenuMinMaxScaleType cwspeed = new FunctionMenuMinMaxScaleType
+            {
+                Min = 4,
+                Max = 60,
+                Default = 20,
+                currentValue = 20,
+                ScaleName = "CW SPEED",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.CwSpeed_4_To_60
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(cwspeed);
+
+            FunctionMenuMinMaxScaleType cwpitch = new FunctionMenuMinMaxScaleType
+            {
+                Min = 300,
+                Max = 1050,
+                Default = 700,
+                currentValue = 700,
+                ScaleName = "CW PITCH",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.CwPitch_300_To_1050
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(cwpitch);
+
+            FunctionMenuMinMaxScaleType bkdelay = new FunctionMenuMinMaxScaleType
+            {
+                Min = 30,
+                Max = 1050,
+                Default = 200,
+                currentValue = 200,
+                ScaleName = "BK-DELAY",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.BkDelay_30_To_1050
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(bkdelay);
+
+            FunctionMenuMinMaxScaleType message = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 5,
+                Default = 1,
+                currentValue = 1,
+                ScaleName = "MESSAGE",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Message_1_To_5
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(message);
+
+            FunctionMenuMinMaxScaleType record = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 1,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "RECORD",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Record_0_To_1
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(record);
+
+            FunctionMenuMinMaxScaleType play = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 6,
+                Default = 1,
+                currentValue = 1,
+                ScaleName = "PLAY",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Play_1_To_6
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(play);
+
+            FunctionMenuMinMaxScaleType txw = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 0,
+                Default = 0,
+                currentValue = 0,
+                ScaleName = "TXW",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Txw_0
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(txw);
+
+            FunctionMenuMinMaxScaleType aess = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 100,
+                Default = 50,
+                currentValue = 50,
+                ScaleName = "AESS",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.Aess_0_To_100
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(aess);
+
+            FunctionMenuMinMaxScaleType aesscf = new FunctionMenuMinMaxScaleType
+            {
+                Min = 70,
+                Max = 1000,
+                Default = 700,
+                currentValue = 700,
+                ScaleName = "AESS-CF",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
+                ScaleType = FunctionMenuScaleTypes.AessCf_700_To_1000
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(aesscf);
         }
 
         public static string GetName(byte index)
@@ -210,19 +499,24 @@ namespace YAESU_FT_891_Front_End
             
             if (FunctionMenuSelectedItem <= FunctionModeMaxFunction)
                 FunctionModeLabel.Content = GetName(FunctionMenuSelectedItem);
+
+            SetFunctionMenuSelectedItemLevel(0, mainWindow.FunctionValueTextBlock, true);
         }
 
-        public static void SetFunctionMenuSelectedItemLevel(Double delta, TextBlock FunctionValueTextBlock)
+        public static void SetFunctionMenuSelectedItemLevel(Double delta, TextBlock FunctionValueTextBlock, bool LoadOnly = false)
         {
-            FunctionMenuMinMaxScaleType f = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem];
+            FunctionMenuMinMaxScaleType f = FunctionMenuMinMaxScaleTypeList[FunctionMenuSelectedItem];
 
-            if (delta > 0 && f.currentValue < f.Max)
+            if (!(LoadOnly))
             {
-                f.currentValue++;
-            }
-            else if (delta <= 0 && f.currentValue > f.Min)
-            {
-                f.currentValue--;
+                if (delta > 0 && f.currentValue < f.Max)
+                {
+                    f.currentValue++;
+                }
+                else if (delta <= 0 && f.currentValue > f.Min)
+                {
+                    f.currentValue--;
+                }
             }
 
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
@@ -230,7 +524,7 @@ namespace YAESU_FT_891_Front_End
                 Console.WriteLine("f.currentValue = " + f.currentValue);
             }
 
-            FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue = f.currentValue;
+            FunctionMenuMinMaxScaleTypeList[FunctionMenuSelectedItem].currentValue = f.currentValue;
 
             String FunctionValueTextBlockText = String.Empty;
             switch (f.ScaleNamePosition)
@@ -239,6 +533,8 @@ namespace YAESU_FT_891_Front_End
                     switch (f.ScaleType)
                     {
                         case FunctionMenuScaleTypes.Marker_ON_Or_Off:
+                            FunctionValueTextBlockText += " ";
+                            
                             if (f.currentValue > 0)
                                 FunctionValueTextBlockText += "ON";
                             else
@@ -248,10 +544,12 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case FunctionMenuScaleNamePositions.ToLeft:
                     FunctionValueTextBlockText += f.ScaleName;
+                    FunctionValueTextBlockText += " ";
                     FunctionValueTextBlockText += f.currentValue;
                     break;
                 case FunctionMenuScaleNamePositions.ToRight:
                     FunctionValueTextBlockText += f.currentValue;
+                    FunctionValueTextBlockText += " ";
                     FunctionValueTextBlockText += f.ScaleName;
                     break;
             }

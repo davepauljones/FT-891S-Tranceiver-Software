@@ -1218,6 +1218,8 @@ namespace YAESU_FT_891_Front_End
                 FunctionModeLabel.Content = FunctionMenuClass.GetName(Convert.ToByte(switchValue));
             }
 
+            FunctionMenuClass.SetFunctionMenuSelectedItemLevel(0, FunctionValueTextBlock, true);
+
             if (ConsoleDebugLevel == ConsoleDebugLevels.All)
             {
                 Console.Write("FunctionMenu_MouseLeftButtonDown = ");
