@@ -53,6 +53,30 @@ namespace YAESU_FT_891_Front_End
         public const byte GoDown = 4;
     }
 
+    public struct FunctionMenuScaleTypes
+    {
+        public const byte Level_dB = 0;
+        public const byte Peak_LV1_To_LV5 = 1;
+        public const byte Marker_ON_Or_Off = 2;
+        public const byte Color_1_To_11 = 3;
+        public const byte Contrast_0_To_20 = 4;
+        public const byte Dimmer_0_To_20 = 5;
+        public const byte MGroup_1_To_255 = 5; //increases value based on amount of memory groups
+        public const byte MicGain_0_To_100 = 6;
+        public const byte MicEQ_0N_Or_Off = 7;
+        public const byte ProcLevel_Off_To_100 = 8;
+        public const byte AMCLevel_1_To_100 = 9;
+        //too carry on to complete all functions
+    }
+    public class FunctionMenuMinMaxScaleType
+    {
+        public int Min = 0;
+        public int Max = 0;
+        public int currentValue = 0;
+        public String ScaleName = String.Empty;
+        public byte ScaleType = 0;
+    }
+
     public class FunctionMenuClass
     {
         public static byte FunctionMenuSelectedItem = FunctionMenu.Level;
@@ -60,6 +84,8 @@ namespace YAESU_FT_891_Front_End
         private static Label FunctionModeLabel;
 
         public static byte FunctionModeMaxFunction = 20;
+
+        public static List<FunctionMenuMinMaxScaleType> FunctionMenuMinMaxScaleTypeList = new List<FunctionMenuMinMaxScaleType>();
 
         private static readonly string[] MenuNames = new string[]
         {
@@ -77,6 +103,51 @@ namespace YAESU_FT_891_Front_End
             FunctionMenuClass.FunctionModeLabel = FunctionModeLabel;
 
             GetBorderByTag(Convert.ToInt16(FunctionMenuSelectedItem));
+        }
+
+        private void Setup_FunctionMenuMinMaxScaleTypeList()
+        {
+            FunctionMenuMinMaxScaleType level = new FunctionMenuMinMaxScaleType
+            {
+                Min = -30,
+                Max = 30,
+                currentValue = 0,
+                ScaleName = "Level",
+                ScaleType = FunctionMenuScaleTypes.Level_dB
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(level);
+
+            FunctionMenuMinMaxScaleType peak = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 5,
+                currentValue = 1,
+                ScaleName = "Peak",
+                ScaleType = FunctionMenuScaleTypes.Peak_LV1_To_LV5
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(peak);
+
+            FunctionMenuMinMaxScaleType marker = new FunctionMenuMinMaxScaleType
+            {
+                Min = 0,
+                Max = 1,
+                currentValue = 1,
+                ScaleName = "Marker",
+                ScaleType = FunctionMenuScaleTypes.Marker_ON_Or_Off
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(marker);
+
+            FunctionMenuMinMaxScaleType color = new FunctionMenuMinMaxScaleType
+            {
+                Min = 1,
+                Max = 11,
+                currentValue = 1,
+                ScaleName = "Color",
+                ScaleType = FunctionMenuScaleTypes.Color_1_To_11
+            };
+            FunctionMenuMinMaxScaleTypeList.Add(color);
+
+            //to be completed
         }
 
         public static string GetName(byte index)

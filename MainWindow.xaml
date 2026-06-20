@@ -32,6 +32,14 @@
                 </Canvas.Background>
             </Canvas>
 
+            <Canvas Canvas.Left="20" Canvas.Top="236" Width="150" Height="22" IsHitTestVisible="False">
+                <TextBlock Width="150" Text="AF  &amp;  RF / SQL" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.8"/>
+            </Canvas>
+            
+            <Canvas Canvas.Left="20" Canvas.Top="256" Width="150" Height="22" IsHitTestVisible="False">
+                <TextBlock Width="150" Text="MULTI" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.8"/>
+            </Canvas>
+
             <Canvas Canvas.Left="264" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
                 <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="COM PORT" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                 <TextBlock x:Name="ComportTextBlock" Canvas.Left="68" Canvas.Top="-3" Text="COM8" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
@@ -120,7 +128,9 @@
                 PreviewMouseWheel="SelectionKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="SelectionKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="SelectionKnobAreaCanvas_PreviewMouseMove"
-                PreviewMouseUp="SelectionKnobAreaCanvas_PreviewMouseUp"/>
+                PreviewMouseUp="SelectionKnobAreaCanvas_PreviewMouseUp">
+                <TextBlock x:Name="FunctionValueTextBlock" Canvas.Left="-1" Canvas.Top="43" Text="128" Width="108" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
+            </Canvas>
 
             <Canvas Width="62" Height="191" Canvas.Left="184" Canvas.Top="144">
                 <Canvas.Background>

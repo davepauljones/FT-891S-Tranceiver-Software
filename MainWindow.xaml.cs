@@ -1073,6 +1073,30 @@ namespace YAESU_FT_891_Front_End
             {
                 simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
             }
+            else if (TranceiverMode == TranceiverModes.NoiseFilters)
+            {
+                switch(FunctionMenuClass.FunctionMenuSelectedItem)
+                {
+                    case FunctionMenu.Level:
+                        iint level = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue;
+                        
+                        if (delta > 0)
+                            level++;
+                        else
+                            level--;
+
+                        FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue = level;
+
+                        FunctionValueTextBlock.Text = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue.ToString();
+                        break;
+                    case FunctionMenu.Peak:
+                        break;
+                    case FunctionMenu.Marker:
+                        break;
+                    case FunctionMenu.Color:
+                        break;
+                }
+            }
 
             _blurImpulse2 += Math.Abs(delta) * 0.8;
             if (_blurImpulse2 > 6.0)
