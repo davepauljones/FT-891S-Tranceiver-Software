@@ -2,6 +2,7 @@
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,13 +11,12 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using static YAESU_FT_891_Front_End.Animations;
+using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
-using static YAESU_FT_891_Front_End.Animations;
-using static YAESU_FT_891_Front_End.HelperFunctions;
-using System.Threading.Tasks;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -111,7 +111,7 @@ namespace YAESU_FT_891_Front_End
             _blurTimer4.Tick += BlurTimer4_Tick;
             _blurTimer4.Start();
 
-            FunctionMenuClass functionMenu = new FunctionMenuClass(FunctionMenuGrid, FunctionModeLabel);
+            FunctionMenuClass functionMenu = new FunctionMenuClass(this, FunctionMenuGrid, FunctionModeLabel);
 
             currentRigState = new RigState();
             currentRigState.TXPowerWatts = 5; //default rf power 5 watts for safety
@@ -140,6 +140,8 @@ namespace YAESU_FT_891_Front_End
 
             bandUserControl.BandWindowBorder.Visibility = Visibility.Hidden;
             modeUserControl.ModeWindowBorder.Visibility = Visibility.Hidden;
+
+            SwitchToADisplayMode(TabControlTabControl, TranceiverModes.Main, TabControlDescriptionLabel);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -1071,31 +1073,12 @@ namespace YAESU_FT_891_Front_End
             }
             else if (TranceiverMode == TranceiverModes.Main)
             {
-                simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
+                FunctionMenuClass.SetFunctionMenuSelectedItemLevel(delta, FunctionValueTextBlock);
+                //simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
             }
             else if (TranceiverMode == TranceiverModes.NoiseFilters)
             {
-                switch(FunctionMenuClass.FunctionMenuSelectedItem)
-                {
-                    case FunctionMenu.Level:
-                        iint level = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue;
-                        
-                        if (delta > 0)
-                            level++;
-                        else
-                            level--;
-
-                        FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue = level;
-
-                        FunctionValueTextBlock.Text = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue.ToString();
-                        break;
-                    case FunctionMenu.Peak:
-                        break;
-                    case FunctionMenu.Marker:
-                        break;
-                    case FunctionMenu.Color:
-                        break;
-                }
+                FunctionMenuClass.SetFunctionMenuSelectedItemLevel(delta, FunctionValueTextBlock);
             }
 
             _blurImpulse2 += Math.Abs(delta) * 0.8;

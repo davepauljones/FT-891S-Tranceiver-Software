@@ -21,8 +21,8 @@ namespace YAESU_FT_891_Front_End
     }
     public class TranceiverDisplayModes
     {
-        public static int TranceiverMode = TranceiverModes.RadioIDCheck;
-        public static int LastTranceiverMode = TranceiverModes.RadioIDCheck;
+        public static int TranceiverMode = TranceiverModes.Main;
+        public static int LastTranceiverMode = TranceiverModes.Main;
 
         public TranceiverDisplayModes()
         {

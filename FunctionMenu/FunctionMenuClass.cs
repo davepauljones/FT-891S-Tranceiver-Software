@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using YourNamespace;
+using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -68,20 +70,30 @@ namespace YAESU_FT_891_Front_End
         public const byte AMCLevel_1_To_100 = 9;
         //too carry on to complete all functions
     }
+    public struct FunctionMenuScaleNamePositions
+    {
+        public const byte None = 0;
+        public const byte ToLeft = 1;
+        public const byte ToRight = 2;
+    }
     public class FunctionMenuMinMaxScaleType
     {
         public int Min = 0;
         public int Max = 0;
+        public int Default = 0;
         public int currentValue = 0;
         public String ScaleName = String.Empty;
+        public int ScaleNamePosition = FunctionMenuScaleNamePositions.ToRight;
         public byte ScaleType = 0;
     }
 
     public class FunctionMenuClass
     {
-        public static byte FunctionMenuSelectedItem = FunctionMenu.Level;
+        private static MainWindow mainWindow;
         private static Grid FunctionMenuGrid;
         private static Label FunctionModeLabel;
+
+        public static byte FunctionMenuSelectedItem = FunctionMenu.Level;
 
         public static byte FunctionModeMaxFunction = 20;
 
@@ -97,12 +109,15 @@ namespace YAESU_FT_891_Front_End
             "EXTENSION SETTING", "BACK"
         };
 
-        public FunctionMenuClass(Grid FunctionMenuGrid, Label FunctionModeLabel)
+        public FunctionMenuClass(MainWindow mainWindow, Grid FunctionMenuGrid, Label FunctionModeLabel)
         {
+            FunctionMenuClass.mainWindow = mainWindow;
             FunctionMenuClass.FunctionMenuGrid = FunctionMenuGrid;
             FunctionMenuClass.FunctionModeLabel = FunctionModeLabel;
 
             GetBorderByTag(Convert.ToInt16(FunctionMenuSelectedItem));
+
+            Setup_FunctionMenuMinMaxScaleTypeList();
         }
 
         private void Setup_FunctionMenuMinMaxScaleTypeList()
@@ -111,8 +126,10 @@ namespace YAESU_FT_891_Front_End
             {
                 Min = -30,
                 Max = 30,
+                Default = 0,
                 currentValue = 0,
-                ScaleName = "Level",
+                ScaleName = "dB",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToRight,
                 ScaleType = FunctionMenuScaleTypes.Level_dB
             };
             FunctionMenuMinMaxScaleTypeList.Add(level);
@@ -121,8 +138,10 @@ namespace YAESU_FT_891_Front_End
             {
                 Min = 1,
                 Max = 5,
+                Default = 1,
                 currentValue = 1,
-                ScaleName = "Peak",
+                ScaleName = "LV",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
                 ScaleType = FunctionMenuScaleTypes.Peak_LV1_To_LV5
             };
             FunctionMenuMinMaxScaleTypeList.Add(peak);
@@ -131,8 +150,10 @@ namespace YAESU_FT_891_Front_End
             {
                 Min = 0,
                 Max = 1,
+                Default = 0,
                 currentValue = 1,
                 ScaleName = "Marker",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.None,
                 ScaleType = FunctionMenuScaleTypes.Marker_ON_Or_Off
             };
             FunctionMenuMinMaxScaleTypeList.Add(marker);
@@ -141,8 +162,10 @@ namespace YAESU_FT_891_Front_End
             {
                 Min = 1,
                 Max = 11,
+                Default = 1,
                 currentValue = 1,
                 ScaleName = "Color",
+                ScaleNamePosition = FunctionMenuScaleNamePositions.ToLeft,
                 ScaleType = FunctionMenuScaleTypes.Color_1_To_11
             };
             FunctionMenuMinMaxScaleTypeList.Add(color);
@@ -187,6 +210,53 @@ namespace YAESU_FT_891_Front_End
             
             if (FunctionMenuSelectedItem <= FunctionModeMaxFunction)
                 FunctionModeLabel.Content = GetName(FunctionMenuSelectedItem);
+        }
+
+        public static void SetFunctionMenuSelectedItemLevel(Double delta, TextBlock FunctionValueTextBlock)
+        {
+            FunctionMenuMinMaxScaleType f = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem];
+
+            if (delta > 0 && f.currentValue < f.Max)
+            {
+                f.currentValue++;
+            }
+            else if (delta <= 0 && f.currentValue > f.Min)
+            {
+                f.currentValue--;
+            }
+
+            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+            {
+                Console.WriteLine("f.currentValue = " + f.currentValue);
+            }
+
+            FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenuClass.FunctionMenuSelectedItem].currentValue = f.currentValue;
+
+            String FunctionValueTextBlockText = String.Empty;
+            switch (f.ScaleNamePosition)
+            {
+                case FunctionMenuScaleNamePositions.None:
+                    switch (f.ScaleType)
+                    {
+                        case FunctionMenuScaleTypes.Marker_ON_Or_Off:
+                            if (f.currentValue > 0)
+                                FunctionValueTextBlockText += "ON";
+                            else
+                                FunctionValueTextBlockText += "OFF";
+                            break;
+                    }
+                    break;
+                case FunctionMenuScaleNamePositions.ToLeft:
+                    FunctionValueTextBlockText += f.ScaleName;
+                    FunctionValueTextBlockText += f.currentValue;
+                    break;
+                case FunctionMenuScaleNamePositions.ToRight:
+                    FunctionValueTextBlockText += f.currentValue;
+                    FunctionValueTextBlockText += f.ScaleName;
+                    break;
+            }
+
+            FunctionValueTextBlock.Text = FunctionValueTextBlockText;
         }
 
         public static void GetBorderByTag( int targetTagValue)

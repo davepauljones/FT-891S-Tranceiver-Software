@@ -120,6 +120,8 @@ namespace YAESU_FT_891_Front_End
                     //85-135 height of active band span scope 50px
                     Double height = Convert.ToDouble(MainWindow.GetSMeterIntegerForBandScope(FT891S_CatManager.currentRadioState.CurrentMeterReading));
 
+                    height += FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenu.Level].currentValue;
+
                     Rectangle r = new Rectangle { Width = SimulatedWaterfall.currentFrequencySpanRectangleWidth, Height = height, Fill = new SolidColorBrush(Colors.DodgerBlue) };
 
                     bandScopeCanvas.Children.Add(r);
