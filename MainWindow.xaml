@@ -9,6 +9,7 @@
         xmlns:meter="clr-namespace:HamRadioControls"
         xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:modeUserControl="clr-namespace:YAESU_FT_891_Front_End"
+        xmlns:frequencyDisplay="clr-namespace:YAESU_FT_891_Front_End"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
         ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
@@ -337,11 +338,13 @@
                     <Label Content="FAST" Style="{StaticResource DisplayThreeCharLabelStyle}" Foreground="Black"/>
                 </Border>
 
-                <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right">
+                <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
                     <TextBlock.Effect>
                         <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
                     </TextBlock.Effect>
                 </TextBlock>
+
+                <frequencyDisplay:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="406" Canvas.Top="2" Frequency="27555000" Panel.ZIndex="1" Width="200" Height="40"/>
 
                 <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right">
                     <TextBlock.Effect>
@@ -979,6 +982,7 @@
                     <TabItem Tag="DNR &amp; FILTERS">
                         <Grid>
                             <Canvas x:Name="FiltersCanvas" Style="{StaticResource TabCanvasStyle}">
+                                
                             </Canvas>
                         </Grid>
                     </TabItem>
@@ -1049,9 +1053,9 @@
                     </TabItem>
                 </TabControl>
 
-                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
+                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Visible"/>
 
-                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged"/>
+                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Visible"/>
 
             </Canvas>
         </Canvas>

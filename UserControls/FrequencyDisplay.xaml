@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.FrequencyDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+             xmlns:sevensegmentdisplay="clr-namespace:YAESU_FT_891_Front_End"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="218">
+    <Canvas>
+        <Viewbox Stretch="Uniform" Height="40">
+            <Canvas Width="800" Height="160">
+                
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_1" Canvas.Left="0" Canvas.Top="0" HexDigit="One" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_2" Canvas.Left="110" Canvas.Top="0" HexDigit="Four" Dot="On" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_3" Canvas.Left="220" Canvas.Top="0" HexDigit="Two" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_4" Canvas.Left="330" Canvas.Top="0" HexDigit="Four" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_5" Canvas.Left="440" Canvas.Top="0" HexDigit="Two" Dot="On" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_6" Canvas.Left="550" Canvas.Top="0" HexDigit="Five" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_7" Canvas.Left="660" Canvas.Top="0" HexDigit="Zero" Panel.ZIndex="1" Width="100" Height="166"/>
+                <sevensegmentdisplay:SevenSegmentDisplay x:Name="Digit_8" Canvas.Left="770" Canvas.Top="0" HexDigit="Zero" Panel.ZIndex="1" Width="100" Height="166"/>
+                
+            </Canvas>
+        </Viewbox>
+    </Canvas>
+</UserControl>

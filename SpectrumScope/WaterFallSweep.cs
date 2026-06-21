@@ -106,6 +106,8 @@ namespace YAESU_FT_891_Front_End
                 await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
 
                 mainWindow.frequencyManagement.SetFrequencyUIForBandScope(freq, mainWindow.MainFrequencyTextBlock);
+                mainWindow.LargeFrequencyDisplay.Frequency = freq;
+
                 //mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, freq, mainWindow.MainFrequencyTextBlock);
 
                 await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
@@ -147,6 +149,8 @@ namespace YAESU_FT_891_Front_End
             }
 
             await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { FT891S_CatManager.currentRadioState.VfoALastFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+            mainWindow.LargeFrequencyDisplay.Frequency = FT891S_CatManager.currentRadioState.VfoALastFrequency;
 
             await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
 

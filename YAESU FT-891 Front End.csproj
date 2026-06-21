@@ -118,6 +118,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="UserControls\FrequencyDisplay.xaml.cs">
+      <DependentUpon>FrequencyDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SevenSegmentDisplay.xaml.cs">
+      <DependentUpon>SevenSegmentDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Misc\Animations.cs" />
     <Compile Include="UserControls\ModeUserControl.xaml.cs">
       <DependentUpon>ModeUserControl.xaml</DependentUpon>
@@ -155,6 +161,14 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
+    <Page Include="UserControls\FrequencyDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SevenSegmentDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\ModeUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

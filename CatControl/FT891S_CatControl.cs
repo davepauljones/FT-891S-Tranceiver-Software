@@ -570,6 +570,7 @@ namespace FT891S_CatControl
         private void DoTranceiverMode_Main()
         {
             mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+            mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
 
             UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);
 
@@ -688,13 +689,16 @@ namespace FT891S_CatControl
                     if (!(mainWindow.stationSeek.IsScanning))
                     {
                         mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                        mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     }
                     break;
                 case TranceiverModes.NoiseFilters:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
                 case TranceiverModes.CWDecoder:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
             }
 
