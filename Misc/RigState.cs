@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -18,20 +19,6 @@ namespace YAESU_FT_891_Front_End
         // =========================================================
         // ENUMS
         // =========================================================
-
-        public enum OperatingMode
-        {
-            LSB,
-            USB,
-            CW,
-            CWR,
-            AM,
-            FM,
-            DATA,
-            PKT,
-            RTTY,
-            UNKNOWN
-        }
 
         public enum VFOSelection
         {
@@ -88,7 +75,7 @@ namespace YAESU_FT_891_Front_End
 
         public string Band { get; set; } = "20m";
 
-        public int Mode { get; set; } = RigModes.SSB1;
+        public RadioMode Mode { get; set; } = RadioMode.USB;
 
         public VFOSelection ActiveVFO { get; set; } = VFOSelection.A;
 

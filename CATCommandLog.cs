@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {

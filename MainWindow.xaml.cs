@@ -11,6 +11,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using YAESU_FT_891_Front_End.Models;
+using YAESU_FT_891_Front_End.Radio;
 using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MyStructs;
@@ -66,6 +68,8 @@ namespace YAESU_FT_891_Front_End
         public CATCommandLog cATCommandLog;
 
         public TranceiverDisplayModes tranceiverDisplayModes;
+
+        private IModeMapper _modeMapper;
 
         public MainWindow()
         {
@@ -146,6 +150,8 @@ namespace YAESU_FT_891_Front_End
             tranceiverDisplayModes = new TranceiverDisplayModes(this);
 
             tranceiverDisplayModes.SwitchToTranceiverMode(TranceiverModes.BootUp);
+
+            _modeMapper = new FT891ModeMapper(); // or FT710ModeMapper depending on radio
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -300,7 +306,7 @@ namespace YAESU_FT_891_Front_End
 
                 SetRigLEDColor(this, RigLEDColors.Red);
             }
-            else if (state == TranceiverStates.RadioTXOff && RigMode != RigModes.FM)
+            else if (state == TranceiverStates.RadioTXOff && RigMode != RadioMode.FM)
             {
                 DefaultMeterLabel.Content = "S";
                 TranceiverTXRXState = TranceiverStates.RadioTXOff;
@@ -313,7 +319,7 @@ namespace YAESU_FT_891_Front_End
 
                 SetRigLEDColor(this, RigLEDColors.LightGray);
             }
-            else if (state == TranceiverStates.RadioTXOff && RigMode == RigModes.FM)
+            else if (state == TranceiverStates.RadioTXOff && RigMode == RadioMode.FM)
             {
                 DefaultMeterLabel.Content = "S";
                 TranceiverTXRXState = TranceiverStates.RadioTXOff;
@@ -1256,7 +1262,7 @@ namespace YAESU_FT_891_Front_End
                     break;
 
                 case FunctionMenu.RfPower:
-                    if (RigMode == RigModes.AM || RigMode == RigModes.D_AM_N)
+                    if (RigMode == RadioMode.AM || RigMode == RadioMode.AM_N)
                     {
                         if (mouseWheelScrollDirection == MenuDirections.GoUp && currentRigState.TXPowerWatts <= (currentRigState.TXPowerWattsAMMaximum - currentRigState.TXPowerWattsStep))
                             currentRigState.TXPowerWatts += currentRigState.TXPowerWattsStep;
@@ -1371,22 +1377,30 @@ namespace YAESU_FT_891_Front_End
 
         private async void ModeUserControl_ModeChanged(object sender, ModeChangedEventArgs e)
         {
-            // You now have access to both fields right here!
-            byte selectedModeFT710Code = e.SelectedModeFT710;
-            int  selectedModeFT891Code = e.SelectedModeFT891;
+            byte catValue = _modeMapper.ToCAT(e.Mode);
 
-            // Example Usage: Update a MainWindow status bar, radio interface frequency, etc.
-            System.Diagnostics.Debug.WriteLine($"ModeFT710 changed to: {selectedModeFT710Code}, ModeFT891: {selectedModeFT891Code}");
-
-            //await _catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(selectedModeFT891Code) }, _catManager.OutGoingDataLoopDelay);
-            await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(selectedModeFT891Code)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
+            await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(catValue)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
         }
+
+        //private async void ModeUserControl_ModeChanged(object sender, ModeChangedEventArgs e)
+        //{
+        //    // You now have access to both fields right here!
+        //    byte selectedModeFT710Code = e.SelectedModeFT710;
+        //    int  selectedModeFT891Code = e.SelectedModeFT891;
+
+        //    // Example Usage: Update a MainWindow status bar, radio interface frequency, etc.
+        //    System.Diagnostics.Debug.WriteLine($"ModeFT710 changed to: {selectedModeFT710Code}, ModeFT891: {selectedModeFT891Code}");
+
+        //    //await _catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(selectedModeFT891Code) }, _catManager.OutGoingDataLoopDelay);
+        //    await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(selectedModeFT891Code)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
+        //}
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {          
             if (modeUserControl.ModeWindowBorder.Visibility != Visibility.Visible)
             {
                 // 1. Instant Show: Make it visible and reset opacity to full
+                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.OperatingMode);
                 modeUserControl.ModeWindowBorder.Visibility = Visibility.Visible;
                 modeUserControl.ModeWindowBorder.Opacity = 1.0;
             }

@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 { 
@@ -125,7 +126,7 @@ namespace YAESU_FT_891_Front_End
                 }
             }
 
-            if (RigMode != RigModes.FM)
+            if (RigMode != RadioMode.FM)
                 //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
             else

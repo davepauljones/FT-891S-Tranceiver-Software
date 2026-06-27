@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -112,13 +113,13 @@ namespace YAESU_FT_891_Front_End
 
             //mainWindow.MainVFOABLabel.Content = SubRigState.Mode;
 
-            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
+            RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
 
             mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
             mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
             mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
-            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
+            RigModeDisplay rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
 
             mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
             mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
@@ -176,12 +177,12 @@ namespace YAESU_FT_891_Front_End
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, mainWindow.SubFrequencyTextBlock);
 
             // 8. Update UI Mode Visuals
-            RigModeClass rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
+            RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
             mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
             mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
             mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
-            RigModeClass rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
+            RigModeDisplay rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
             mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
             mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
             mainWindow.SubRigModeLabel.Content = rmcs.Name;

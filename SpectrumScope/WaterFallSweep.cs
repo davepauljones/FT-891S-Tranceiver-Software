@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -160,7 +161,7 @@ namespace YAESU_FT_891_Front_End
 
             SweepActive = false;
 
-            if (RigMode != RigModes.FM)
+            if (RigMode != RadioMode.FM)
             {
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
                 //await mainWindow._catManager.SendCatCommandAsync("AG", new object[] { 0, FT891S_CatManager.currentRadioState.AFGain }, mainWindow._catManager.OutGoingDataLoopDelay);

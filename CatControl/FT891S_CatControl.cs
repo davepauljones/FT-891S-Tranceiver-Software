@@ -20,6 +20,7 @@ using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
+using YAESU_FT_891_Front_End.Models;
 
 namespace FT891S_CatControl
 {
@@ -212,7 +213,6 @@ namespace FT891S_CatControl
     // =========================================================================
     // 3. TYPES, ENUMS & BACKING TARGET STRUCTURES
     // =========================================================================
-    public enum RadioMode { LSB = 1, USB = 2, CW = 3, FM = 4, AM = 5, RTTY_LSB = 6, CW_R = 7, DATA_LSB = 8, RTTY_USB = 9, DATA_USB = 10, FM_N = 11, DATA_FM = 12, AM_N = 13 }
     public enum AgcMode { Off = 0, Fast = 1, Mid = 2, Slow = 3, Auto = 4 }
 
     public enum MeterTypes { DependsOnFrontPanelMETER = 0, S = 1, DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID = 2, COMP = 3, ALC = 4, PO = 5, SWR = 6, ID = 7 }

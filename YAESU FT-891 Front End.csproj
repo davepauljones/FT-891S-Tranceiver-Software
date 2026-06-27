@@ -118,6 +118,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RadioMode\FT891ModeMapper.cs" />
+    <Compile Include="RadioMode\ModeChangedEventArgs.cs" />
+    <Compile Include="RadioMode\FT710ModeMapper.cs" />
+    <Compile Include="RadioMode\IModeMapper.cs" />
+    <Compile Include="RadioMode\RadioMode.cs" />
+    <Compile Include="RadioMode\RigModeDisplay.cs" />
+    <Compile Include="RadioMode\RigStateChanges.cs" />
     <Compile Include="UserControls\FrequencyDisplay.xaml.cs">
       <DependentUpon>FrequencyDisplay.xaml</DependentUpon>
     </Compile>
@@ -146,7 +153,6 @@
     <Compile Include="Memory\MemorySlot.cs" />
     <Compile Include="StationSeek\QMBRigStates.cs" />
     <Compile Include="Misc\RigState.cs" />
-    <Compile Include="Misc\RigStateChanges.cs" />
     <Compile Include="SpectrumScope\SimulatedWaterfall.cs" />
     <Compile Include="SpectrumScope\Sprite.cs" />
     <Compile Include="UserControls\StationScope.xaml.cs">
