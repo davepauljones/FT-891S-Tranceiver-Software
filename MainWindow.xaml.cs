@@ -69,7 +69,7 @@ namespace YAESU_FT_891_Front_End
 
         public TranceiverDisplayModes tranceiverDisplayModes;
 
-        private IModeMapper _modeMapper;
+        public static IModeMapper _modeMapper;
 
         public MainWindow()
         {
@@ -142,8 +142,6 @@ namespace YAESU_FT_891_Front_End
 
             _catManager = new FT891S_CatManager(this, this.Dispatcher);
 
-            _catManager.StartOutgoingDataLoop();
-
             bandUserControl.BandWindowBorder.Visibility = Visibility.Hidden;
             modeUserControl.ModeWindowBorder.Visibility = Visibility.Hidden;
 
@@ -151,7 +149,10 @@ namespace YAESU_FT_891_Front_End
 
             tranceiverDisplayModes.SwitchToTranceiverMode(TranceiverModes.BootUp);
 
-            _modeMapper = new FT891ModeMapper(); // or FT710ModeMapper depending on radio
+            _modeMapper = new FT891ModeMapper();
+            modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
+
+            _catManager.StartOutgoingDataLoop();
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -1381,19 +1382,6 @@ namespace YAESU_FT_891_Front_End
 
             await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(catValue)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
         }
-
-        //private async void ModeUserControl_ModeChanged(object sender, ModeChangedEventArgs e)
-        //{
-        //    // You now have access to both fields right here!
-        //    byte selectedModeFT710Code = e.SelectedModeFT710;
-        //    int  selectedModeFT891Code = e.SelectedModeFT891;
-
-        //    // Example Usage: Update a MainWindow status bar, radio interface frequency, etc.
-        //    System.Diagnostics.Debug.WriteLine($"ModeFT710 changed to: {selectedModeFT710Code}, ModeFT891: {selectedModeFT891Code}");
-
-        //    //await _catManager.SendCatCommandAsync("MD", new object[] { 0, Convert.ToInt16(selectedModeFT891Code) }, _catManager.OutGoingDataLoopDelay);
-        //    await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(selectedModeFT891Code)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
-        //}
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {          

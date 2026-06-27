@@ -1,10 +1,26 @@
-﻿using YAESU_FT_891_Front_End.Models;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End.Radio
 {
     public class FT891ModeMapper : IModeMapper
     {
+        public IEnumerable<RadioMode> SupportedModes => new[]
+        {
+            RadioMode.LSB,
+            RadioMode.USB,
+            RadioMode.CW_L,
+            RadioMode.CW_U,
+            RadioMode.AM,
+            RadioMode.AM_N,
+            RadioMode.FM,
+            RadioMode.FM_N,
+            RadioMode.DATA_L,
+            RadioMode.DATA_U,
+            RadioMode.RTTY_L,
+            RadioMode.RTTY_U
+        };
         public byte ToCAT(RadioMode mode)
         {
             switch (mode)
@@ -18,9 +34,8 @@ namespace YAESU_FT_891_Front_End.Radio
                 case RadioMode.CW_U: return 7;
                 case RadioMode.DATA_L: return 8;
                 case RadioMode.RTTY_U: return 9;
-                case RadioMode.DATA_U: return 10;
                 case RadioMode.FM_N: return 11;
-                case RadioMode.DATA_FM: return 12;
+                case RadioMode.DATA_U: return 12;
                 case RadioMode.AM_N: return 13;
 
                 default:
@@ -41,9 +56,8 @@ namespace YAESU_FT_891_Front_End.Radio
                 case 7: return RadioMode.CW_U;
                 case 8: return RadioMode.DATA_L;
                 case 9: return RadioMode.RTTY_U;
-                case 10: return RadioMode.DATA_U;
-                case 11: return RadioMode.FM_N;
-                case 12: return RadioMode.DATA_FM;
+                case 11: return RadioMode.DATA_U;
+                case 12: return RadioMode.FM_N;
                 case 13: return RadioMode.AM_N;
 
                 default:

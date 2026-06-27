@@ -264,7 +264,8 @@ namespace FT891S_CatControl
             {
                 MainRX = int.Parse(dict["P1"]),
                 // FIX: Parse P2 as a Hexadecimal string to support A, B, C, etc.
-                Mode = (RadioMode)int.Parse(dict["P2"], System.Globalization.NumberStyles.HexNumber)
+                //Mode = (RadioMode)int.Parse(dict["P2"], System.Globalization.NumberStyles.HexNumber)
+                Mode = _modeMapper.FromCAT(byte.Parse(dict["P2"], System.Globalization.NumberStyles.HexNumber))
             },
             result =>
             {
@@ -292,24 +293,6 @@ namespace FT891S_CatControl
             result => FT891S_CatManager.currentRadioState.IfShiftHz = result
         );
 
-        //public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
-        //    "RM",
-        //    // 1. Tell it to expect a 1-digit parameter when building the outbound command string
-        //    new CatStructure().Expect("P1", 1),
-        
-        //    // 2. This remains the same for parsing the incoming response
-        //    new CatStructure().Expect("P1", 1).Expect("P2", 3),
-        
-        //    dict => new MeterResult
-        //    {
-        //        MeterType = (MeterTypes)int.Parse(dict["P1"]),
-        //        ReadingValue = int.Parse(dict["P2"])
-        //    },
-        //    result => {
-        //        FT891S_CatManager.currentRadioState.ActiveMeterType = result.MeterType;
-        //        FT891S_CatManager.currentRadioState.CurrentMeterReading = result.ReadingValue;
-        //    }
-        //);
         public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
             "RM",
 

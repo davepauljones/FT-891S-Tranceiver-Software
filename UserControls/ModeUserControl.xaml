@@ -12,85 +12,85 @@
 
                 <TextBlock Text="MODE" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
 
-                <Border x:Name="LSBBorder" Tag="0" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="LSBBorder" Tag="LSB" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="LSBTextBlock" Text="LSB" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="USBBorder" Tag="1" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="USBBorder" Tag="USB" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="USBTextBlock" Text="USB" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="CW_LBorder" Tag="2" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="CW_LBorder" Tag="CW_L" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="CW_LTextBlock" Text="CW-L" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="CW_UBorder" Tag="3" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="CW_UBorder" Tag="CW_U" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="CW_UTextBlock" Text="CW-U" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
 
-                <Border x:Name="AMBorder" Tag="4" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="AMBorder" Tag="AM" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="AMTextBlock" Text="AM" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="AM_NBorder" Tag="5" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="AM_NBorder" Tag="AM_N" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="AM_NTextBlock" Text="AM-N" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="FMBorder" Tag="6" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="FMBorder" Tag="FM" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="FMTextBlock" Text="FM" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="FM_NBorder" Tag="7" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="FM_NBorder" Tag="FM_N" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="FM_NTextBlock" Text="FM-N" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
 
-                <Border x:Name="DATA_LBorder" Tag="8" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="DATA_LBorder" Tag="DATA_L" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="DATA_LTextBlock" Text="DATA-L" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="DATA_UBorder" Tag="9" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="DATA_UBorder" Tag="DATA_U" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="DATA_UTextBlock" Text="DATA-U" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="DATA_FMBorder" Tag="10" Canvas.Left="148" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="DATA_FMBorder" Tag="DATA_FM" Canvas.Left="148" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="DATA_FMTextBlock" Text="DATA-FM" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="D_FM_NBorder" Tag="11" Canvas.Left="221" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="D_FM_NBorder" Tag="DATA_FM_N" Canvas.Left="221" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="D_FM_NTextBlock" Text="D-FM-N" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                
-                <Border x:Name="RTTY_LBorder" Tag="12" Canvas.Left="2" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+
+                <Border x:Name="RTTY_LBorder" Tag="RTTY_L" Canvas.Left="2" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="RTTY_LTextBlock" Text="RTTY-L" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="RTTY_UBorder" Tag="13" Canvas.Left="75" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="RTTY_UBorder" Tag="RTTY_U" Canvas.Left="75" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="RTTY_UTextBlock" Text="RTTY-U" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="PSKBorder" Tag="14" Canvas.Left="148" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="PSKBorder" Tag="PSK" Canvas.Left="148" Canvas.Top="133" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="PSKTextBlock" Text="PSK" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                     </StackPanel>
                 </Border>
-                <Border x:Name="PRESETBorder" Tag="15" Canvas.Left="223" Canvas.Top="134.5" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" BorderBrush="White" BorderThickness="2" Width="70" Height="21" Background="Gray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
+                <Border x:Name="PRESETBorder" Tag="PRESET" Canvas.Left="223" Canvas.Top="134.5" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" BorderBrush="White" BorderThickness="2" Width="70" Height="21" Background="Gray" MouseLeftButtonDown="ModeWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="PRESETTextBlock" Text="PRESET" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White" Margin="0,-1.5,0,0"/>
                     </StackPanel>

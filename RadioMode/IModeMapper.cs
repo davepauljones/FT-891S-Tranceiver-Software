@@ -10,5 +10,7 @@ namespace YAESU_FT_891_Front_End.Models
     {
         byte ToCAT(RadioMode mode);
         RadioMode FromCAT(byte value);
+
+        IEnumerable<RadioMode> SupportedModes { get; }
     }
 }

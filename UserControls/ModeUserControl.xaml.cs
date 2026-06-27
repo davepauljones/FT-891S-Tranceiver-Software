@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static YAESU_FT_891_Front_End.Animations;
 using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
@@ -52,30 +53,60 @@ namespace YAESU_FT_891_Front_End
             };
         }
 
+        public void SetSupportedModes(IEnumerable<RadioMode> supportedModes)
+        {
+            var supported = new HashSet<RadioMode>(supportedModes);
+
+            foreach (var kvp in _ui)
+            {
+                bool isSupported = supported.Contains(kvp.Key);
+
+                kvp.Value.border.IsEnabled = isSupported;
+                kvp.Value.border.Opacity = isSupported ? 1.0 : 0.35;
+
+                kvp.Value.border.Background = isSupported
+                    ? Brushes.LightGray
+                    : Brushes.DimGray;
+
+                kvp.Value.text.Foreground = isSupported
+                    ? Brushes.Black
+                    : Brushes.Gray;
+            }
+        }
+
         private void ModeWindowCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Border b && byte.TryParse(b.Tag.ToString(), out var val))
+            var border = sender as Border;
+            if (border == null)
+                return;
+
+            if (!border.IsEnabled)
+                return;
+
+            RadioMode mode;
+            if (Enum.TryParse(border.Tag.ToString(), out mode))
             {
-                ChangeMode((RadioMode)val);
+                ChangeMode(mode);
+
+                FadoutBorderWindow(ModeWindowBorder);
             }
         }
 
         public void ChangeMode(RadioMode mode)
         {
-            foreach (var item in _ui.Values)
+            foreach (var kvp in _ui)
             {
-                item.border.Background = Brushes.LightGray;
-                item.text.Foreground = Brushes.Black;
+                if (kvp.Value.border.IsEnabled)
+                {
+                    kvp.Value.border.Background = Brushes.LightGray;
+                    kvp.Value.text.Foreground = Brushes.Black;
+                }
             }
 
-            // preset styling
-            PRESETBorder.Background = Brushes.Gray;
-            PRESETTextBlock.Foreground = Brushes.White;
-
-            if (_ui.TryGetValue(mode, out var selected))
+            if (_ui.ContainsKey(mode) && _ui[mode].border.IsEnabled)
             {
-                selected.border.Background = Brushes.DodgerBlue;
-                selected.text.Foreground = Brushes.White;
+                _ui[mode].border.Background = Brushes.DodgerBlue;
+                _ui[mode].text.Foreground = Brushes.White;
             }
 
             _currentMode = mode;
