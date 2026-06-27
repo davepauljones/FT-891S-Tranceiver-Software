@@ -54,14 +54,28 @@ namespace YAESU_FT_891_Front_End
 
         private void CreateDigits(long frequency)
         {
-            Digit_8.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_7.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_6.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_5.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_4.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_3.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_2.HexDigit = (HexDigits)(frequency % 10); frequency /= 10;
-            Digit_1.HexDigit = (HexDigits)(frequency % 10);
+            var digits = new[]
+            {
+                Digit_1, Digit_2, Digit_3, Digit_4,
+                Digit_5, Digit_6, Digit_7, Digit_8
+            };
+
+            string s = frequency.ToString().PadLeft(8, '0');
+
+            bool leading = true;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                int digit = s[i] - '0';
+
+                if (digit != 0)
+                    leading = false;
+
+                digits[i].HexDigit =
+                    (leading && i < s.Length - 1)
+                        ? (HexDigits)16
+                        : (HexDigits)digit;
+            }
         }
     }
 }

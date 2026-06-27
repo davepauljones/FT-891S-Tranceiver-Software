@@ -668,9 +668,9 @@ namespace FT891S_CatControl
             // Routes through layouts and updates global properties safely on your UI Thread
             FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
 
-            switch (TranceiverMode)
+            switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
             {
-                case TranceiverModes.RadioIDCheck:
+                case TranceiverModes.BootUp:
                     if (currentRadioState.RadioID == 650)
                     {
                         mainWindow.RadioIDTextBlock.Text = "FT-891";
@@ -682,7 +682,7 @@ namespace FT891S_CatControl
                         mainWindow.RadioIDAmberLED.Opacity = 0.2;
                     }
                     break;
-                case TranceiverModes.Main:
+                case TranceiverModes.MainWaterfall:
                     DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.StationScope:
@@ -696,7 +696,7 @@ namespace FT891S_CatControl
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
                     mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
-                case TranceiverModes.CWDecoder:
+                case TranceiverModes.MorseCode:
                     mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
                     mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
@@ -763,13 +763,13 @@ namespace FT891S_CatControl
                 if (packet == 8)
                     packet = 0;
 
-                switch (TranceiverMode)
+                switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
                 {
-                    case TranceiverModes.RadioIDCheck:
+                    case TranceiverModes.BootUp:
                         //SendReadQuery("ID");
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
                         break;
-                    case TranceiverModes.Main:
+                    case TranceiverModes.MainWaterfall:
                         if (!(mainWindow.waterFallSweep.SweepActive))
                         {
                             await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
@@ -859,7 +859,7 @@ namespace FT891S_CatControl
                         await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
                         break;
-                    case TranceiverModes.CWDecoder:
+                    case TranceiverModes.MorseCode:
                         await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
 
                         break;

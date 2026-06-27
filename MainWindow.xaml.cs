@@ -65,6 +65,8 @@ namespace YAESU_FT_891_Front_End
 
         public CATCommandLog cATCommandLog;
 
+        public TranceiverDisplayModes tranceiverDisplayModes;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -141,7 +143,9 @@ namespace YAESU_FT_891_Front_End
             bandUserControl.BandWindowBorder.Visibility = Visibility.Hidden;
             modeUserControl.ModeWindowBorder.Visibility = Visibility.Hidden;
 
-            SwitchToADisplayMode(TabControlTabControl, TranceiverModes.Main, TabControlDescriptionLabel);
+            tranceiverDisplayModes = new TranceiverDisplayModes(this);
+
+            tranceiverDisplayModes.SwitchToTranceiverMode(TranceiverModes.BootUp);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -552,7 +556,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                ChangeDisplayMode(TabControlTabControl, TabControlDescriptionLabel, 0);
+                tranceiverDisplayModes.ToggleTranceiverMode(tranceiverDisplayModes.CurrentTranceiverMode.ID);
             });
         }
 
@@ -800,14 +804,14 @@ namespace YAESU_FT_891_Front_End
             double delta = (e.Delta > 0 ? 1 : -1) * 6.0;
             ApplyKnobInput3(delta);
 
-            if (TranceiverMode == TranceiverModes.FunctionMenu)
+            if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.FunctionMenu)
             {
                 if (delta > 0)
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoRight);
                 else
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoLeft);
             }
-            else if (TranceiverMode == TranceiverModes.Main)
+            else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.MainWaterfall)
             {
                 simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
             }
@@ -932,14 +936,14 @@ namespace YAESU_FT_891_Front_End
             double delta = (e.Delta > 0 ? 1 : -1) * 6.0;
             ApplyKnobInput4(delta);
 
-            if (TranceiverMode == TranceiverModes.FunctionMenu)
+            if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.FunctionMenu)
             {
                 if (delta > 0)
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoRight);
                 else
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoLeft);
             }
-            else if (TranceiverMode == TranceiverModes.Main)
+            else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.MainWaterfall)
             {
                 simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
             }
@@ -1064,19 +1068,19 @@ namespace YAESU_FT_891_Front_End
             double delta = (e.Delta > 0 ? 1 : -1) * 6.0;
             ApplyKnobInput2(delta);
 
-            if (TranceiverMode == TranceiverModes.FunctionMenu)
+            if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.FunctionMenu)
             {
                 if (delta > 0)
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoRight);
                 else
                     FunctionMenuClass.ChangeFunctionMenu(MenuDirections.GoLeft);
             }
-            else if (TranceiverMode == TranceiverModes.Main)
+            else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.MainWaterfall)
             {
                 FunctionMenuClass.SetFunctionMenuSelectedItemLevel(delta, FunctionValueTextBlock);
                 //simulatedWaterfall.DoScrollBasedOnCursorMode(delta);
             }
-            else if (TranceiverMode == TranceiverModes.NoiseFilters)
+            else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.NoiseFilters)
             {
                 FunctionMenuClass.SetFunctionMenuSelectedItemLevel(delta, FunctionValueTextBlock);
             }
@@ -1148,25 +1152,23 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                if (TranceiverMode != TranceiverModes.FunctionMenu)
+                if (tranceiverDisplayModes.CurrentTranceiverMode.ID != TranceiverModes.FunctionMenu)
                 {
                     TabControlCanvas.Visibility = Visibility.Hidden;
                     DefaultCanvas.Visibility = Visibility.Hidden;
                     FunctioMenuTabCanvas.Visibility = Visibility.Visible;
 
-                    LastTranceiverMode = TranceiverMode;
+                    tranceiverDisplayModes.LastTranceiverMode = tranceiverDisplayModes.CurrentTranceiverMode;
 
-                    TabControlTabControl.SelectedIndex = TranceiverModes.FunctionMenu;
-                    TranceiverMode = TranceiverModes.FunctionMenu;
+                    tranceiverDisplayModes.ToggleTranceiverMode(TranceiverModes.FunctionMenu);
                 }
-                else if (TranceiverMode == TranceiverModes.FunctionMenu)
+                else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.FunctionMenu)
                 {
                     TabControlCanvas.Visibility = Visibility.Visible;
                     DefaultCanvas.Visibility = Visibility.Visible;
                     FunctioMenuTabCanvas.Visibility = Visibility.Hidden;
 
-                    TranceiverMode = LastTranceiverMode;
-                    TabControlTabControl.SelectedIndex = TranceiverMode;
+                    tranceiverDisplayModes.SwitchToTranceiverMode(tranceiverDisplayModes.LastTranceiverMode.ID);
 
                     if (FunctionMenuClass.FunctionMenuSelectedItem > FunctionMenuClass.FunctionModeMaxFunction)
                     {

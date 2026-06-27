@@ -97,6 +97,7 @@
                 Canvas.Left="37"
                 Canvas.Top="135"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 PreviewMouseWheel="AFGainKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="AFGainKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="AFGainKnobAreaCanvas_PreviewMouseMove"
@@ -126,6 +127,7 @@
                 Canvas.Left="30"
                 Canvas.Top="318"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 PreviewMouseWheel="SelectionKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="SelectionKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="SelectionKnobAreaCanvas_PreviewMouseMove"
@@ -183,6 +185,7 @@
                 Canvas.Left="230"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="OMB"
                 MouseDown="OMBButtonCanvas_MouseDown"/>
 
@@ -192,6 +195,7 @@
                 Canvas.Left="338"
                 Canvas.Top="10"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="M>V"
                 MouseDown="MVButtonCanvas_MouseDown"/>
             
@@ -201,6 +205,7 @@
                 Canvas.Left="449"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="V>M"
                 MouseDown="VMButtonCanvas_MouseDown"/>
             
@@ -210,6 +215,7 @@
                 Canvas.Left="565"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="V/M"
                 MouseDown="VMToggleButtonCanvas_MouseDown"/>
 
@@ -219,6 +225,7 @@
                 Canvas.Left="683"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="A/B"
                 MouseDown="ABButtonCanvas_MouseDown"/>
             
@@ -228,6 +235,7 @@
                 Canvas.Left="803"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="BAND"
                 MouseDown="BandButtonCanvas_MouseDown"/>
 
@@ -237,6 +245,7 @@
                  Canvas.Left="897"
                  Canvas.Top="8"
                  Background="Transparent"
+                 Panel.ZIndex="1"
                  ToolTip="FAST / NORMAL"
                  MouseDown="FastButtonCanvas_MouseDown"/>
 
@@ -246,6 +255,7 @@
                 Canvas.Left="1073"
                 Canvas.Top="8"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="POWER OFF"
                 MouseDown="PowerOffButtonCanvas_MouseDown"/>
 
@@ -255,6 +265,7 @@
                  Canvas.Left="938"
                  Canvas.Top="54"
                  Background="Transparent"
+                 Panel.ZIndex="1"
                  PreviewMouseWheel="VFOKnobAreaCanvas_PreviewMouseWheel"
                  PreviewMouseDown="VFOKnobAreaCanvas_PreviewMouseDown"
                  PreviewMouseMove="VFOKnobAreaCanvas_PreviewMouseMove"
@@ -266,6 +277,7 @@
                 Canvas.Left="294"
                 Canvas.Top="366"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="TOGGLE FUNCTION"
                 MouseDown="FButtonCanvas_MouseDown"/>
             
@@ -275,6 +287,7 @@
                 Canvas.Left="426"
                 Canvas.Top="366"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="SCAN 80M"
                 MouseDown="AButtonCanvas_MouseDown"/>
 
@@ -284,6 +297,7 @@
                 Canvas.Left="556"
                 Canvas.Top="366"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="SCAN 40M"
                 PreviewMouseDown="BButtonCanvas_PreviewMouseDown"/>
 
@@ -293,6 +307,7 @@
                 Canvas.Left="678"
                 Canvas.Top="366"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="SCAN 20M"
                 PreviewMouseDown="CButtonCanvas_PreviewMouseDown"/>
 
@@ -302,6 +317,7 @@
                 Canvas.Left="828"
                 Canvas.Top="366"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 ToolTip="SCAN 20M"
                 MouseDown="CLARButtonCanvas_MouseDown"/>
 
@@ -330,11 +346,11 @@
                     <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
                 </Viewbox>
 
-                <Border Canvas.Left="170" Canvas.Top="07" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
+                <Border Canvas.Left="26" Canvas.Top="66" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
                     <Label x:Name="TabControlDescriptionLabel" Content="SIMULATED WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
                 </Border>
 
-                <Border x:Name="FastNormalGrid" Canvas.Left="258" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="40" Background="Beige">
+                <Border x:Name="FastNormalGrid" Canvas.Left="234" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="40" Background="Beige">
                     <Label Content="FAST" Style="{StaticResource DisplayThreeCharLabelStyle}" Foreground="Black"/>
                 </Border>
 
@@ -344,7 +360,7 @@
                     </TextBlock.Effect>
                 </TextBlock>
 
-                <frequencyDisplay:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="406" Canvas.Top="2" Frequency="27555000" Panel.ZIndex="1" Width="200" Height="40"/>
+                <frequencyDisplay:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="3" Frequency="27555000" Height="40"/>
 
                 <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right">
                     <TextBlock.Effect>
@@ -356,23 +372,23 @@
                     <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
                 </Border>
 
-                <Border x:Name="MainVFOABLabelBorder" Canvas.Left="308" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
+                <Border x:Name="MainVFOABLabelBorder" Canvas.Left="276" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
                     <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
                 </Border>
 
-                <Border x:Name="MainRigModeLabelBorder" Canvas.Left="308" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
+                <Border x:Name="MainRigModeLabelBorder" Canvas.Left="276" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
                     <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                 </Border>
 
-                <Border x:Name="SubVFOABLabelBorder" Canvas.Left="375" Canvas.Top="41" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
+                <Border x:Name="SubVFOABLabelBorder" Canvas.Left="342" Canvas.Top="42" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
                     <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
                 </Border>
 
-                <Border x:Name="SubRigModeLabelBorder" Canvas.Left="375" Canvas.Top="55" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
+                <Border x:Name="SubRigModeLabelBorder" Canvas.Left="342" Canvas.Top="56" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
                     <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                 </Border>
 
-                <Border x:Name="PowerControlLabelBorder" Canvas.Left="308" Canvas.Top="48" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                <Border x:Name="PowerControlLabelBorder" Canvas.Left="276" Canvas.Top="48" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
                     <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                 </Border>
 
@@ -680,7 +696,16 @@
                         </ControlTemplate>
                     </TabControl.Template>
 
-                    <TabItem Tag="SIMULATED WATERFALL" IsSelected="True" Padding="0">
+                    <TabItem Tag="0" Padding="0">
+
+                        <Canvas x:Name="BootUpTabCanvas" Style="{StaticResource TabCanvasStyle}">
+                            <TextBlock Text="Welcome To G7UIV's FT891S Software" Width="642" Height="155" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
+                            <TextBlock Text="G7UIV" Width="642" Height="155" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="0,50,0,0"/>
+                        </Canvas>
+
+                    </TabItem>
+                    
+                    <TabItem Tag="1" Padding="0">
 
                         <Canvas x:Name="SimulatedWaterfallTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
@@ -900,7 +925,7 @@
                         </Canvas>
 
                     </TabItem>
-                    <TabItem Tag="STATION SCOPE" Padding="0">
+                    <TabItem Tag="2" Padding="0">
 
                         <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
@@ -979,14 +1004,14 @@
                         </Canvas>
                     </TabItem>
 
-                    <TabItem Tag="DNR &amp; FILTERS">
+                    <TabItem Tag="3">
                         <Grid>
                             <Canvas x:Name="FiltersCanvas" Style="{StaticResource TabCanvasStyle}">
                                 
                             </Canvas>
                         </Grid>
                     </TabItem>
-                    <TabItem Tag="CW DECODER">
+                    <TabItem Tag="4">
                         <Grid>
                             <Canvas x:Name="CWDecoderCanvas" Style="{StaticResource TabCanvasStyle}">
                                 <StackPanel Orientation="Vertical" Canvas.Left="10" Canvas.Top="0" Margin="0,10,0,0">
@@ -996,7 +1021,9 @@
                             </Canvas>
                         </Grid>
                     </TabItem>
-                    <TabItem Tag="CAT Command Log">
+                    
+                    
+                    <TabItem Tag="11">
                         <Grid>
                             <Canvas x:Name="CATCommandLogCanvas" Style="{StaticResource TabCanvasStyle}" Height="133" Margin="0,0,0,0">
                                 <StackPanel Orientation="Horizontal">
@@ -1051,11 +1078,12 @@
                             </Canvas>
                         </Grid>
                     </TabItem>
+
                 </TabControl>
 
-                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Visible"/>
+                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
 
-                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Visible"/>
+                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged"/>
 
             </Canvas>
         </Canvas>

@@ -35,7 +35,6 @@ namespace YAESU_FT_891_Front_End
             CreateCATCommandLog(a);
             CreateCATCommandLog(b);
 
-            SwitchToTabByTag(mainWindow.TabControlTabControl, "CAT Command Log");
             //SwitchToADisplayMode(mainWindow.TabControlTabControl, TranceiverModes.CatCommandLog, mainWindow.TranceiverModeLabel);
         }
 

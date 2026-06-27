@@ -1,6 +1,8 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -8,84 +10,110 @@ using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
 {
-    public struct TranceiverModes
+    public struct TranceiverModes //are nothing to do with Tab Item
     {
-        public const byte Main = 0;
-        public const byte StationScope = 1;
-        public const byte NoiseFilters = 2;
-        public const byte CWDecoder = 3;
-        public const byte Test = 4;
-        public const byte FunctionMenu = 99;
-        public const byte RadioIDCheck = 100;
-        public const byte CatCommandLog = 101;
+        public const int BootUp = 0;
+        public const int MainWaterfall = 1;
+        public const int StationScope = 2;
+        public const int NoiseFilters = 3;
+        public const int MorseCode = 4;
+        public const int FunctionMenu = 10;
+        public const int CatCommandLog = 11;
+    }
+    public class TranceiverMode
+    {
+        public int ID;
+        public String ShortName;
+        public String LongName;
+        public bool HasTabItem;
     }
     public class TranceiverDisplayModes
     {
-        public static int TranceiverMode = TranceiverModes.Main;
-        public static int LastTranceiverMode = TranceiverModes.Main;
+        public TranceiverMode CurrentTranceiverMode;
+        public TranceiverMode LastTranceiverMode;
 
-        public TranceiverDisplayModes()
+        public static Dictionary<int, TranceiverMode> TranceiverModesDictionary = new Dictionary<int, TranceiverMode>();
+
+        MainWindow mainWindow;
+        public TranceiverDisplayModes(MainWindow mainWindow)
         {
+            this.mainWindow = mainWindow;
+
+            SetupTranceiverModes();
         }
 
-        public static void SwitchToTabByTag(TabControl tabControl, string tag)
+        private void SetupTranceiverModes()
         {
-            foreach (TabItem tab in tabControl.Items)
+            TranceiverMode BootUp = new TranceiverMode { ID = TranceiverModes.BootUp, ShortName = "Boot Up", LongName = "Boot Up", HasTabItem = true };
+            TranceiverModesDictionary.Add(TranceiverModes.BootUp, BootUp);
+
+            TranceiverMode MainWaterfall = new TranceiverMode { ID = TranceiverModes.MainWaterfall, ShortName = "Waterfall", LongName = "Main Waterfall", HasTabItem = true };
+            TranceiverModesDictionary.Add(TranceiverModes.MainWaterfall, MainWaterfall);
+
+            TranceiverMode StationScope = new TranceiverMode { ID = TranceiverModes.StationScope, ShortName = "Stations", LongName = "Station Scope", HasTabItem = true };
+            TranceiverModesDictionary.Add(TranceiverModes.StationScope, StationScope);
+
+            TranceiverMode NoiseFilters = new TranceiverMode { ID = TranceiverModes.NoiseFilters, ShortName = "Filters", LongName = "Noise Filters", HasTabItem = true };
+            TranceiverModesDictionary.Add(TranceiverModes.NoiseFilters, NoiseFilters);
+
+            TranceiverMode MorseCode = new TranceiverMode { ID = TranceiverModes.MorseCode, ShortName = "Morse", LongName = "Morse Code", HasTabItem = true };
+            TranceiverModesDictionary.Add(TranceiverModes.MorseCode, MorseCode);
+
+            TranceiverMode FunctionMenu = new TranceiverMode { ID = TranceiverModes.FunctionMenu, ShortName = "Function", LongName = "Function Menu", HasTabItem = false };
+            TranceiverModesDictionary.Add(TranceiverModes.FunctionMenu, FunctionMenu);
+
+            TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "CAT Log", LongName = "CAT Command Log", HasTabItem = false };
+            TranceiverModesDictionary.Add(TranceiverModes.CatCommandLog, CatCommandLog);
+        }
+
+        public void SwitchToTranceiverMode(int tranceiverMode)
+        {
+            if (TranceiverModesDictionary.TryGetValue(tranceiverMode, out TranceiverMode GotTranceiverMode))
             {
-                if (tab.Tag?.ToString() == tag)
+                if (GotTranceiverMode.HasTabItem)
                 {
-                    tabControl.SelectedItem = tab;
-                    return;
+                    mainWindow.TabControlTabControl.SelectedIndex = tranceiverMode;
                 }
-            }
-        }
-        public static void SwitchToADisplayMode(TabControl tabControl, byte tranceiverMode, Label tranceiverModeLabel)
-        {
-            tabControl.SelectedIndex = Convert.ToInt16(tranceiverMode);
 
-            TranceiverMode = Convert.ToInt16(tranceiverMode);
-
-            if (tabControl.SelectedItem is TabItem currentTab)
-            {
-                string tagValue = currentTab.Tag?.ToString();
-
-                tranceiverModeLabel.Content = tagValue;
+                CurrentTranceiverMode = GotTranceiverMode;
+                mainWindow.TranceiverModeLabel.Content = GotTranceiverMode.ShortName;
+                mainWindow.TabControlDescriptionLabel.Content = GotTranceiverMode.LongName;
 
                 Console.Write("SwitchToADisplayMode = ");
-                Console.WriteLine(tagValue);
+                Console.WriteLine(GotTranceiverMode.ID);
+            }
+            else
+            {
+                Console.Write("SwitchToADisplayMode = ");
+                Console.Write(GotTranceiverMode.ID);
+                Console.WriteLine(" Not found");
             }
         }
-        public static void ChangeDisplayMode(TabControl tabControl, Label tranceiverModeLabel, int displayMode)
+        public void ToggleTranceiverMode(int tranceiverMode)
         {
-            if (TranceiverMode == TranceiverModes.RadioIDCheck)
+
+            if (tranceiverMode == TranceiverModes.BootUp)
             {
-                TranceiverMode = TranceiverModes.Main;
+                tranceiverMode = TranceiverModes.MainWaterfall;
             }
-            else if (TranceiverMode == TranceiverModes.Main)
+            else if (tranceiverMode == TranceiverModes.MainWaterfall)
             {
-                TranceiverMode = TranceiverModes.StationScope;
+                tranceiverMode = TranceiverModes.StationScope;
             }
-            else if (TranceiverMode == TranceiverModes.StationScope)
+            else if (tranceiverMode == TranceiverModes.StationScope)
             {
-                TranceiverMode = TranceiverModes.NoiseFilters;
+                tranceiverMode = TranceiverModes.NoiseFilters;
             }
-            else if (TranceiverMode == TranceiverModes.NoiseFilters)
+            else if (tranceiverMode == TranceiverModes.NoiseFilters)
             {
-                TranceiverMode = TranceiverModes.CWDecoder;
+                tranceiverMode = TranceiverModes.MorseCode;
             }
-            else if (TranceiverMode == TranceiverModes.CWDecoder)
+            else if (tranceiverMode == TranceiverModes.MorseCode)
             {
-                TranceiverMode = TranceiverModes.Main;
+                tranceiverMode = TranceiverModes.MainWaterfall;
             }
 
-            tabControl.SelectedIndex = TranceiverMode;
-
-            if (tabControl.SelectedItem is TabItem currentTab)
-            {
-                string tagValue = currentTab.Tag?.ToString();
-
-                tranceiverModeLabel.Content = tagValue;
-            }
+            SwitchToTranceiverMode(tranceiverMode);
         }
     }
 }
