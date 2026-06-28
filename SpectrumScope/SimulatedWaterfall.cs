@@ -12,7 +12,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 using static YAESU_FT_891_Front_End.Animations;
 
@@ -147,17 +146,17 @@ namespace YAESU_FT_891_Front_End
 
             if (delta > 0 && hitRightEdge)
             {
-                long _currentFrequency = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null);
+                long _currentFrequency = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null);
                 _currentFrequency += freqStepHz;
-                frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, _currentFrequency, mainWindow.MainFrequencyTextBlock);
+                frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, _currentFrequency, mainWindow.MainFrequencyTextBlock);
                 maxRightPositionReached = true;
                 maxLeftPositionReached = false;
             }
             else if (delta < 0 && hitLeftEdge)
             {
-                long _currentFrequency = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null);
+                long _currentFrequency = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null);
                 _currentFrequency -= freqStepHz;
-                frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, _currentFrequency, mainWindow.MainFrequencyTextBlock);
+                frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, _currentFrequency, mainWindow.MainFrequencyTextBlock);
                 maxLeftPositionReached = true;
                 maxRightPositionReached = false;
             }
@@ -616,13 +615,13 @@ namespace YAESU_FT_891_Front_End
                 // Generates relative offsets: -400, -200, 14.252.000, +200, +400 (for 1K span)
                 labels[0].Text = string.Format("-{0}", FormatOffset(stepHz * 2));
                 labels[1].Text = string.Format("-{0}", FormatOffset(stepHz));
-                labels[2].Text = frequencyManagement.FormatFrequency(frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null));
+                labels[2].Text = frequencyManagement.FormatFrequency(frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null));
                 labels[3].Text = string.Format("+{0}", FormatOffset(stepHz));
                 labels[4].Text = string.Format("+{0}", FormatOffset(stepHz * 2));
             }
             else if (currentCursorMode == CursorModes.Cursor)
             {
-                long freq = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null);
+                long freq = frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null);
 
                 // Which label index should display the current frequency?
                 // normal = center, left edge = left-most, right edge = right-most
@@ -746,7 +745,7 @@ namespace YAESU_FT_891_Front_End
             if(currentCursorMode == CursorModes.Center)
                 mainWindow.SpanLabel3TextBlock.Text = frequencyManagement.FormatFrequency(centerFrequency);
 
-            if (frequencyManagement.lastRadioState.VfoAFrequency != frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, null))
+            if (frequencyManagement.lastRadioState.VfoAFrequency != frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null))
                 AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 60);
         }
 
@@ -769,7 +768,7 @@ namespace YAESU_FT_891_Front_End
             double frequencyOffsetHz = numberOfSteps * 1000.0;
 
             // 5. Update the current frequency
-            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, (long)Math.Round(CenterFrequencyHz + frequencyOffsetHz), mainWindow.MainFrequencyTextBlock);
+            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, (long)Math.Round(CenterFrequencyHz + frequencyOffsetHz), mainWindow.MainFrequencyTextBlock);
             
             if (mainWindow.LeftHandStopIndicatorCanvas.Visibility == Visibility.Visible || mainWindow.RightHandStopIndicatorCanvas.Visibility == Visibility.Visible)
                 ChangeSpanLegends(currentFrequencySpan);

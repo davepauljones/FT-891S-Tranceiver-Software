@@ -16,7 +16,6 @@ using YAESU_FT_891_Front_End.Radio;
 using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MyStructs;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 
@@ -48,7 +47,6 @@ namespace YAESU_FT_891_Front_End
         public byte ConsoleDebugLevel = ConsoleDebugLevels.CurrentDebug;
         public byte DevelopmentStatus = Development.InProgress;
 
-        public static RigState currentRigState;
         public MemorySlot memorySlot;
 
         public QMBRigStates qMBRigStates;
@@ -119,9 +117,8 @@ namespace YAESU_FT_891_Front_End
 
             FunctionMenuClass functionMenu = new FunctionMenuClass(this, FunctionMenuGrid, FunctionModeLabel);
 
-            currentRigState = new RigState();
-            currentRigState.TXPowerWatts = 5; //default rf power 5 watts for safety
-            RfPowerFunctionTextBlock.Text = currentRigState.TXPowerWatts.ToString() + "W";
+            FT891S_CatManager.currentRadioState.TXPowerWatts = 5; //default rf power 5 watts for safety
+            RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
             decoder = new CWDecoderEngine();
 
@@ -142,8 +139,8 @@ namespace YAESU_FT_891_Front_End
 
             _catManager = new FT891S_CatManager(this, this.Dispatcher);
 
-            bandUserControl.BandWindowBorder.Visibility = Visibility.Hidden;
-            modeUserControl.ModeWindowBorder.Visibility = Visibility.Hidden;
+            bandUserControl.Visibility = Visibility.Hidden;
+            modeUserControl.Visibility = Visibility.Hidden;
 
             tranceiverDisplayModes = new TranceiverDisplayModes(this);
 
@@ -153,6 +150,9 @@ namespace YAESU_FT_891_Front_End
             modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
 
             _catManager.StartOutgoingDataLoop();
+
+            ApplyKnobInput3(0);
+            ApplyKnobInput4(0);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -393,7 +393,7 @@ namespace YAESU_FT_891_Front_End
             if (FT891S_CatManager.currentRadioState.VfoAFrequency < MinFrequency) FT891S_CatManager.currentRadioState.VfoAFrequency = MinFrequency;
             if (FT891S_CatManager.currentRadioState.VfoAFrequency > MaxFrequency) FT891S_CatManager.currentRadioState.VfoAFrequency = MaxFrequency;
 
-            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, MainFrequencyTextBlock);
+            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FT891S_CatManager.currentRadioState.VfoAFrequency, MainFrequencyTextBlock);
 
             _lastMoveTime = now;
         }
@@ -428,7 +428,6 @@ namespace YAESU_FT_891_Front_End
             _lastMoveTime2 = now;
         }
 
-        private int RFGainCurrentDeltaY;
         private async void ApplyKnobInput3(double deltaY)
         {
             DateTime now = DateTime.Now;
@@ -442,18 +441,21 @@ namespace YAESU_FT_891_Front_End
             // 1. Determine direction (Scrolling up adds 10, scrolling down subtracts 10)
             int step = (deltaY > 0) ? 1 : -1;//do this to change the step int step = (deltaY > 0) ? 10 : -10;//
 
+            if (deltaY == 0) step = 0;
+
             // 2. Add the step to the current value
-            int proposedValue = RFGainCurrentDeltaY + step;
+            int proposedValue = FT891S_CatManager.currentRadioState.RFGain + step;
 
             // 3. Force it to stay strictly between 0 and 255
-            RFGainCurrentDeltaY = Math.Min(Math.Max(proposedValue, 0), 255);
+            FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), 30);
 
-            await _catManager.SendCatCommandAsync("RG", new object[] { 0, RFGainCurrentDeltaY }, _catManager.OutGoingDataLoopDelay);
+            RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+
+            await _catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGain }, _catManager.OutGoingDataLoopDelay);
 
             _lastMoveTime3 = now;
         }
 
-        private int AFGainCurrentDeltaY;
         private async void ApplyKnobInput4(double deltaY)
         {
             DateTime now = DateTime.Now;
@@ -467,13 +469,17 @@ namespace YAESU_FT_891_Front_End
             // 1. Determine direction (Scrolling up adds 10, scrolling down subtracts 10)
             int step = (deltaY > 0) ? 10 : -10;
 
+            if (deltaY == 0) step = 0;
+
             // 2. Add the step to the current value
-            int proposedValue = AFGainCurrentDeltaY + step;
+            int proposedValue = FT891S_CatManager.currentRadioState.AFGain + step;
 
             // 3. Force it to stay strictly between 0 and 255
-            AFGainCurrentDeltaY = Math.Min(Math.Max(proposedValue, 0), 255);
+            FT891S_CatManager.currentRadioState.AFGain = Math.Min(Math.Max(proposedValue, 0), 255);
 
-            await _catManager.SendCatCommandAsync("AG", new object[] { 0, AFGainCurrentDeltaY }, _catManager.OutGoingDataLoopDelay);
+            AFGainTextBlock.Text = FT891S_CatManager.currentRadioState.AFGain.ToString() + " AF";
+
+            await _catManager.SendCatCommandAsync("AG", new object[] { 0, FT891S_CatManager.currentRadioState.AFGain }, _catManager.OutGoingDataLoopDelay);
 
             _lastMoveTime4 = now;
         }
@@ -659,7 +665,7 @@ namespace YAESU_FT_891_Front_End
 
             stationSeek.UpdateFoundStationCountLabel(FoundStationCountLabel, stationSeek.StationSeekActiveList[StationScopeListView.SelectedIndex].ID.ToString() + " of " + stationSeek.StationSeekActiveList.Count);
 
-            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, item.station.Frequency, MainFrequencyTextBlock);
+            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
 
             //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
             await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
@@ -684,7 +690,7 @@ namespace YAESU_FT_891_Front_End
 
             //add ability to send these freq's to rig QMB
 
-            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, item.station.Frequency, MainFrequencyTextBlock);
+            frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
 
             //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
             await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
@@ -730,9 +736,9 @@ namespace YAESU_FT_891_Front_End
             {
                 if (StationScopeListView.SelectedIndex != -1)
                 {
-                    RigState rigState = new RigState { RXFrequencyHz = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].Frequency, SMeter = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].SignalStrength };
+                    RadioState radioState = new RadioState { VfoAFrequency = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].Frequency, SMeter = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].SignalStrength };
 
-                    qMBRigStates.AddNewRigStateToList(QMBListView, rigState);
+                    qMBRigStates.AddNewRigStateToList(QMBListView, radioState);
                 }
 
                 if (ConsoleDebugLevel == ConsoleDebugLevels.All)
@@ -788,15 +794,15 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (bandUserControl.BandWindowBorder.Visibility != Visibility.Visible)
+                if (bandUserControl.Visibility != Visibility.Visible)
                 {
                     // 1. Instant Show: Make it visible and reset opacity to full
-                    bandUserControl.BandWindowBorder.Visibility = Visibility.Visible;
-                    bandUserControl.BandWindowBorder.Opacity = 1.0;
+                    bandUserControl.Visibility = Visibility.Visible;
+                    bandUserControl.Opacity = 1.0;
                 }
                 else
                 {
-                    FadoutBorderWindow(bandUserControl.BandWindowBorder, 0);
+                    FadoutUserControl(bandUserControl, 0);
                 }
             });
         }
@@ -1265,25 +1271,25 @@ namespace YAESU_FT_891_Front_End
                 case FunctionMenu.RfPower:
                     if (RigMode == RadioMode.AM || RigMode == RadioMode.AM_N)
                     {
-                        if (mouseWheelScrollDirection == MenuDirections.GoUp && currentRigState.TXPowerWatts <= (currentRigState.TXPowerWattsAMMaximum - currentRigState.TXPowerWattsStep))
-                            currentRigState.TXPowerWatts += currentRigState.TXPowerWattsStep;
-                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && currentRigState.TXPowerWatts >= (currentRigState.TXPowerWattsMinimum + currentRigState.TXPowerWattsStep))
-                            currentRigState.TXPowerWatts -= currentRigState.TXPowerWattsStep;
+                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.TXPowerWatts <= (FT891S_CatManager.currentRadioState.TXPowerWattsAMMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.TXPowerWatts += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.TXPowerWatts >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.TXPowerWatts -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
 
-                        RfPowerFunctionTextBlock.Text = currentRigState.TXPowerWatts.ToString() + "W";
+                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
-                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + currentRigState.TXPowerWatts.ToString("D3"));
+                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + FT891S_CatManager.currentRadioState.TXPowerWatts.ToString("D3"));
                     }
                     else
                     { 
-                        if (mouseWheelScrollDirection == MenuDirections.GoUp && currentRigState.TXPowerWatts <= (currentRigState.TXPowerWattsMaximum - currentRigState.TXPowerWattsStep))
-                            currentRigState.TXPowerWatts += currentRigState.TXPowerWattsStep;
-                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && currentRigState.TXPowerWatts >= (currentRigState.TXPowerWattsMinimum + currentRigState.TXPowerWattsStep))
-                            currentRigState.TXPowerWatts -= currentRigState.TXPowerWattsStep;
+                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.TXPowerWatts <= (FT891S_CatManager.currentRadioState.TXPowerWattsMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.TXPowerWatts += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.TXPowerWatts >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.TXPowerWatts -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
 
-                        RfPowerFunctionTextBlock.Text = currentRigState.TXPowerWatts.ToString() + "W";
+                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
-                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + currentRigState.TXPowerWatts.ToString("D3"));
+                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + FT891S_CatManager.currentRadioState.TXPowerWatts.ToString("D3"));
                     }
  
                     if (ConsoleDebugLevel == ConsoleDebugLevels.All)
@@ -1404,16 +1410,16 @@ namespace YAESU_FT_891_Front_End
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {          
-            if (modeUserControl.ModeWindowBorder.Visibility != Visibility.Visible)
+            if (modeUserControl.Visibility != Visibility.Visible)
             {
                 // 1. Instant Show: Make it visible and reset opacity to full
                 modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.OperatingMode);
-                modeUserControl.ModeWindowBorder.Visibility = Visibility.Visible;
-                modeUserControl.ModeWindowBorder.Opacity = 1.0;
+                modeUserControl.Visibility = Visibility.Visible;
+                modeUserControl.Opacity = 1.0;
             }
             else
             {
-                FadoutBorderWindow(modeUserControl.ModeWindowBorder, 0);
+                FadoutUserControl(modeUserControl, 0);
             }
         }
 

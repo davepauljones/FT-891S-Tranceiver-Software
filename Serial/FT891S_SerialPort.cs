@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using static YAESU_FT_891_Front_End.MyStructs;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 
 namespace YAESU_FT_891_Front_End

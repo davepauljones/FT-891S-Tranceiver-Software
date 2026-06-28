@@ -107,5 +107,31 @@ namespace YAESU_FT_891_Front_End
             borderWindow.Visibility = Visibility.Hidden;
             borderWindow.BeginAnimation(UIElement.OpacityProperty, null);
         }
+        public static async void FadoutUserControl(UIElement uie, int initalHoldValue = 260)
+        {
+            // 1. THE HOLD: Wait for 1 second asynchronously without blocking the UI
+            await Task.Delay(initalHoldValue);
+
+            // 2. THE FADE: Create a direct, non-storyboard animation
+            DoubleAnimation fadeAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromSeconds(0.5) // Fades over 0.5 seconds
+            };
+
+            // This ensures the opacity stays at 0.0 when finished
+            fadeAnimation.FillBehavior = FillBehavior.HoldEnd;
+
+            // 3. START THE FADE
+            uie.BeginAnimation(UIElement.OpacityProperty, fadeAnimation);
+
+            // 4. THE HIDE: Wait for the 0.5-second fade to finish
+            await Task.Delay(550);
+
+            // 5. Hard-set the visibility and clear the animation to free up the property
+            uie.Visibility = Visibility.Hidden;
+            uie.BeginAnimation(UIElement.OpacityProperty, null);
+        }
     }
 }

@@ -19,7 +19,6 @@ using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MainWindow;
 using static YAESU_FT_891_Front_End.MyStructs;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 
@@ -50,6 +49,7 @@ namespace FT891S_CatControl
         public int RFGain { get; set; } = 0;
         public int AFGain { get; set; } = 0;
         public long RadioID { get; set; }
+        public int SMeter { get; set; }
     }
 
     // =========================================================================
@@ -561,7 +561,7 @@ namespace FT891S_CatControl
 
         private void DoTranceiverMode_Main()
         {
-            mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+            mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
             mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
 
             UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);
@@ -660,6 +660,8 @@ namespace FT891S_CatControl
             // Routes through layouts and updates global properties safely on your UI Thread
             FT891S_CatCommandTypes.ProcessIncomingRadioData(serialMessageLine, _uiDispatcher);
 
+            DoTranceiverMode_Main();
+
             switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
             {
                 case TranceiverModes.BootUp:
@@ -676,22 +678,21 @@ namespace FT891S_CatControl
                     //DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.MainWaterfall:
-                    DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.StationScope:
                     if (!(mainWindow.stationSeek.IsScanning))
                     {
-                        mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-                        mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
+                        //mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                        //mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     }
                     break;
                 case TranceiverModes.NoiseFilters:
-                    mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-                    mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
+                    //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    //mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
                 case TranceiverModes.MorseCode:
-                    mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-                    mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
+                    //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+                    //mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
                     break;
             }
 
@@ -837,33 +838,23 @@ namespace FT891S_CatControl
                 if (packet == 8)
                     packet = 0;
 
+                await MainWaterfallOutGoingData(packet);
+
                 switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
                 {
                     case TranceiverModes.BootUp:
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
-
-                        await MainWaterfallOutGoingData(packet);
                         break;
                     case TranceiverModes.MainWaterfall:
-                        await MainWaterfallOutGoingData(packet);
                         break;
                     case TranceiverModes.StationScope:
-                        if (!(mainWindow.stationSeek.IsScanning))
-                        {
-                            await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
-                        }
                         break;
                     case TranceiverModes.NoiseFilters:
-                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
-
                         break;
                     case TranceiverModes.MorseCode:
-                        await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
-
                         break;
                 }
                 packet++;
-                //Console.WriteLine("OutgoingDataLoop");
             }
         }
 

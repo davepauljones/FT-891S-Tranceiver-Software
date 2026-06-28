@@ -152,7 +152,6 @@
     <Compile Include="FunctionMenu\FunctionMenuClass.cs" />
     <Compile Include="Memory\MemorySlot.cs" />
     <Compile Include="StationSeek\QMBRigStates.cs" />
-    <Compile Include="Misc\RigState.cs" />
     <Compile Include="SpectrumScope\SimulatedWaterfall.cs" />
     <Compile Include="SpectrumScope\Sprite.cs" />
     <Compile Include="UserControls\StationScope.xaml.cs">

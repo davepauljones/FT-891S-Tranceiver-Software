@@ -21,9 +21,8 @@
         <Canvas.Effect>
             <DropShadowEffect Color="Black" BlurRadius="25" ShadowDepth="9" Direction="-45" Opacity="0.8"/>
         </Canvas.Effect>
+        
         <Rectangle x:Name="BacklightRectangle" Canvas.Left="272" Canvas.Top="96" Fill="#444444" Width="646" Height="244"/>
-        <!--Fill="#ebecf5"-->
-        <!--<Rectangle x:Name="LEDRectangle" Canvas.Left="188" Canvas.Top="146" Fill="#dfdfdf" Width="50" Height="184"/>-->
 
         <Canvas Width="1339" Height="443" VerticalAlignment="Top">
 
@@ -77,6 +76,7 @@
                 Canvas.Left="12"
                 Canvas.Top="74"
                 Background="Transparent"
+                Panel.ZIndex="1"
                 PreviewMouseWheel="RFGainKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="RFGainKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="RFGainKnobAreaCanvas_PreviewMouseMove"
@@ -713,7 +713,7 @@
 
                         <Canvas x:Name="SimulatedWaterfallTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
-                            <Border x:Name="SpanPopupWindowBorder" Canvas.Left="170" Canvas.Top="72" Width="300" Panel.ZIndex="1" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
+                            <Border x:Name="SpanPopupWindowBorder" Canvas.Left="170" Canvas.Top="-12" Width="300" Panel.ZIndex="1" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
                                 
                                 <Canvas>
                                 
@@ -776,7 +776,7 @@
                                 
                             </Border>
 
-                            <Border x:Name="SpeedPopupWindowBorder" Canvas.Left="170" Canvas.Top="72" Panel.ZIndex="1" Width="300" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
+                            <Border x:Name="SpeedPopupWindowBorder" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="126" CornerRadius="5" Background="Gray" Visibility="Hidden">
 
                                 <Canvas>
 
@@ -1085,9 +1085,9 @@
 
                 </TabControl>
 
-                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged"/>
+                <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Hidden"/>
 
-                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged"/>
+                <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Hidden"/>
 
             </Canvas>
         </Canvas>

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using YAESU_FT_891_Front_End.Models;
 
@@ -108,8 +107,8 @@ namespace YAESU_FT_891_Front_End
                 CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
             }
 
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, mainWindow.MainFrequencyTextBlock);
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, mainWindow.SubFrequencyTextBlock);
+            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, mainWindow.MainFrequencyTextBlock);
+            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, mainWindow.SubFrequencyTextBlock);
 
             //mainWindow.MainVFOABLabel.Content = SubRigState.Mode;
 
@@ -173,8 +172,8 @@ namespace YAESU_FT_891_Front_End
             }
 
             // 7. Refresh UI Frequencies
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, mainWindow.MainFrequencyTextBlock);
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, FrequencyLocations.RXFrequencyHz, mainWindow.SubFrequencyTextBlock);
+            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, mainWindow.MainFrequencyTextBlock);
+            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, mainWindow.SubFrequencyTextBlock);
 
             // 8. Update UI Mode Visuals
             RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);

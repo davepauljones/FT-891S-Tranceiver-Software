@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static YAESU_FT_891_Front_End.MyStructs;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using YAESU_FT_891_Front_End.Models;
 
@@ -74,7 +73,7 @@ namespace YAESU_FT_891_Front_End
                 //mainWindow.frequencyManagement.SetFrequency(freq);
                 //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
 
-                mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, freq, mainWindow.MainFrequencyTextBlock);
+                mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, freq, mainWindow.MainFrequencyTextBlock);
                 mainWindow.LargeFrequencyDisplay.Frequency = freq;
 
                 //await mainWindow._catManager.SendCatCommandAsync("FA", mainWindow._catManager.OutGoingDataLoopDelay);

@@ -88,7 +88,7 @@ namespace YAESU_FT_891_Front_End
             {
                 ChangeMode(mode);
 
-                FadoutBorderWindow(ModeWindowBorder);
+                FadoutUserControl(this);
             }
         }
 

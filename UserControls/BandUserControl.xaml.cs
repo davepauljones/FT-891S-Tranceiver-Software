@@ -187,7 +187,7 @@ namespace YAESU_FT_891_Front_End
             // --- RAISE EVENT UP TO MAINWINDOW ---
             RaiseEvent(new BandChangedEventArgs(BandChangedEvent, currentBand, currentBandFrequency));
 
-            FadoutBorderWindow(BandWindowBorder);
+            FadoutUserControl(this);
         }
     }
 }

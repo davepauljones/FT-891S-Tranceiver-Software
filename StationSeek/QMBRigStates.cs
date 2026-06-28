@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace YAESU_FT_891_Front_End
 {
     public class QMBRigStates
     {
-        public List<RigState> QMBRigStatesList = new List<RigState>();
+        public List<RadioState> QMBRigStatesList = new List<RadioState>();
 
         MainWindow mainWindow;
         public QMBRigStates(MainWindow mainWindow)
@@ -22,37 +23,37 @@ namespace YAESU_FT_891_Front_End
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
             {
                 Console.WriteLine(">>>>>>>>>>>>>>> QMBRigStates.ListRigState Start");
-                foreach (RigState rs in QMBRigStatesList)
+                foreach (RadioState rs in QMBRigStatesList)
                 {
-                    Console.Write(rs.RXFrequencyHz.ToString());
+                    Console.Write(rs.VfoAFrequency.ToString());
                     Console.Write(", ");
                     Console.Write(rs.TXPowerWatts.ToString());
                     Console.Write(", ");
-                    Console.Write(rs.Mode.ToString());
+                    Console.Write(rs.OperatingMode.ToString());
                     Console.Write(", ");
                     Console.WriteLine(rs.RFGain.ToString());
                 }
                 Console.WriteLine(">>>>>>>>>>>>>>> QMBRigStates.ListRigState End");
             }
         }
-        public void AddNewRigStateToList(ListView QMBListView, RigState rigState)
+        public void AddNewRigStateToList(ListView QMBListView, RadioState radioState)
         {
-            if (rigState.RXFrequencyHz == 0) return;
+            if (radioState.VfoAFrequency == 0) return;
 
             int DuplicateFoundCount = 0;
 
-            foreach (RigState rs in QMBRigStatesList)
+            foreach (RadioState rs in QMBRigStatesList)
             {
-               if (rigState.RXFrequencyHz == rs.RXFrequencyHz) DuplicateFoundCount++;
+               if (radioState.VfoAFrequency == rs.VfoAFrequency) DuplicateFoundCount++;
             }
 
             if (DuplicateFoundCount == 0)
             {
-                QMBRigStatesList.Add(rigState);
+                QMBRigStatesList.Add(radioState);
 
                 int PositionInTheList = QMBRigStatesList.Count-1;
 
-                StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = rigState.RXFrequencyHz, SignalStrength = rigState.SMeter };
+                StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = radioState.VfoAFrequency, SignalStrength = radioState.SMeter };
 
                 QMBListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
             }

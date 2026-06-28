@@ -11,7 +11,6 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using static YAESU_FT_891_Front_End.MyStructs;
-using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using YAESU_FT_891_Front_End.Models;
 
