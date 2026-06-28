@@ -449,6 +449,11 @@ namespace YAESU_FT_891_Front_End
             // 3. Force it to stay strictly between 0 and 255
             FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), 30);
 
+            if (FT891S_CatManager.currentRadioState.RFGain == 0)
+                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+            else
+                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
             RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
 
             await _catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGain }, _catManager.OutGoingDataLoopDelay);
@@ -476,6 +481,11 @@ namespace YAESU_FT_891_Front_End
 
             // 3. Force it to stay strictly between 0 and 255
             FT891S_CatManager.currentRadioState.AFGain = Math.Min(Math.Max(proposedValue, 0), 255);
+
+            if (FT891S_CatManager.currentRadioState.AFGain == 0)
+                AFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+            else
+                AFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
 
             AFGainTextBlock.Text = FT891S_CatManager.currentRadioState.AFGain.ToString() + " AF";
 
@@ -919,11 +929,13 @@ namespace YAESU_FT_891_Front_End
                     lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
 
                     FT891S_CatManager.currentRadioState.RFGain = 0;
+                    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
                     await _catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
                 }
                 else
                 {
                     FT891S_CatManager.currentRadioState.RFGain = lastRFGain;
+                    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     await _catManager.SendCatCommandAsync("RG", new object[] { 0, lastRFGain }, _catManager.OutGoingDataLoopDelay);
                 }
 
@@ -1051,11 +1063,13 @@ namespace YAESU_FT_891_Front_End
                     lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
 
                     FT891S_CatManager.currentRadioState.AFGain = 0;
+                    AFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
                     await _catManager.SendCatCommandAsync("AG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
                 }
                 else
                 {
                     FT891S_CatManager.currentRadioState.AFGain = lastAFGain;
+                    AFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     await _catManager.SendCatCommandAsync("AG", new object[] { 0, lastAFGain }, _catManager.OutGoingDataLoopDelay);
                 }
 
