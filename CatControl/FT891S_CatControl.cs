@@ -1,6 +1,7 @@
 ﻿using HamRadioControls;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
@@ -12,15 +13,15 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using YAESU_FT_891_Front_End; // NOTE: Ensure "WindowsBase" is in your Project References!
+using YAESU_FT_891_Front_End.Models;
 using static FT891S_CatControl.CatStructure;
+using static YAESU_FT_891_Front_End.Animations;
+using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MainWindow;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigState;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
-using static YAESU_FT_891_Front_End.Animations;
-using static YAESU_FT_891_Front_End.HelperFunctions;
-using YAESU_FT_891_Front_End.Models;
 
 namespace FT891S_CatControl
 {
@@ -298,10 +299,10 @@ namespace FT891S_CatControl
 
             // 1. Outbound layout
             new CatStructure().Expect("P1", 1),
-        
+
             // 2. Inbound layout
             new CatStructure().Expect("P1", 1).Expect("P2", 3),
-        
+
             // FIX: Check if P2 exists to avoid KeyNotFoundException during local state updates
             dict => new MeterResult
             {
@@ -365,6 +366,13 @@ namespace FT891S_CatControl
             dict => 0,
             result => { }
         );
+        public static readonly FT891S_CatCommand<int> EX = new FT891S_CatCommand<int>(
+            "EX",
+            new CatStructure().Expect("P1", 4).Expect("P2", 1),
+            new CatStructure().Expect("P1", 4).Expect("P2", 1),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => { }
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -380,7 +388,8 @@ namespace FT891S_CatControl
             { "AG", AG },
             { "BS", BS },
             { "AB", AB },
-            { "BA", BA }
+            { "BA", BA },
+            { "EX", EX }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -664,6 +673,7 @@ namespace FT891S_CatControl
                         mainWindow.RadioIDTextBlock.Text = "??????";
                         mainWindow.RadioIDAmberLED.Opacity = 0.2;
                     }
+                    //DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.MainWaterfall:
                     DoTranceiverMode_Main();
@@ -734,6 +744,87 @@ namespace FT891S_CatControl
         DateTime lowPriorityDateTime = DateTime.Now;
         TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(15);
 
+        private async Task MainWaterfallOutGoingData(int packet)
+        {
+            if (!(mainWindow.waterFallSweep.SweepActive))
+            {
+                await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
+
+                await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
+
+                await SendCatCommandAsync("MD", "0", OutGoingDataLoopDelay);
+
+                await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
+
+                await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+
+
+                if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                {
+                    await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
+                }
+
+                switch (packet)
+                {
+                    case 0:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
+                        }
+                        break;
+                    case 1:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
+                        }
+                        break;
+                    case 2:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
+                        }
+                        break;
+                    case 3:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
+                        }
+                        break;
+                    case 4:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
+                        }
+                        break;
+                    case 5:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
+                        {
+                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
+                        }
+                        break;
+                }
+
+                if (mainWindow.waterFallSweep.ScopeOnOff == true)
+                {
+                    if (DateTime.Now > lowPriorityDateTime + lowPriorityCATCommandsTimeSpan)
+                    {
+                        if (mainWindow.Dispatcher.CheckAccess())
+                        {
+                            // We are already on the UI thread! Run it directly.
+                            mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6);
+                        }
+                        else
+                        {
+                            // We are on a background thread. Marshal it over.
+                            await mainWindow.Dispatcher.BeginInvoke(new Action(() => mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6)));
+                        }
+
+                        lowPriorityDateTime = DateTime.Now;
+                    }
+                }
+            }
+        }
+
         public int OutGoingDataLoopDelay = 5;
         public async Task OutgoingDataLoop(CancellationToken token)
         {
@@ -749,94 +840,18 @@ namespace FT891S_CatControl
                 switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
                 {
                     case TranceiverModes.BootUp:
-                        //SendReadQuery("ID");
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
+
+                        await MainWaterfallOutGoingData(packet);
                         break;
                     case TranceiverModes.MainWaterfall:
-                        if (!(mainWindow.waterFallSweep.SweepActive))
-                        {
-                            await SendCatCommandAsync("BY", OutGoingDataLoopDelay);
-
-                            await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
-
-                            await SendCatCommandAsync("MD", "0", OutGoingDataLoopDelay);
-
-                            await SendCatCommandAsync("PC", OutGoingDataLoopDelay);
-
-                            await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
-
-
-                            if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
-                            {
-                                await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
-                            }
-
-                            switch (packet)
-                            {
-                                case 0:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID }, 5);
-                                    }
-                                    break;
-                                case 1:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.COMP }, 5);
-                                    }
-                                    break;
-                                case 2:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ALC }, 5);
-                                    }
-                                    break;
-                                case 3:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.PO }, 5);
-                                    }
-                                    break;
-                                case 4:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.SWR }, 5);
-                                    }
-                                    break;
-                                case 5:
-                                    if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOn)
-                                    {
-                                        await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
-                                    }
-                                    break;
-                            }
-
-                            if (mainWindow.waterFallSweep.ScopeOnOff == true)
-                            {
-                                if (DateTime.Now > lowPriorityDateTime + lowPriorityCATCommandsTimeSpan)
-                                {
-                                    if (mainWindow.Dispatcher.CheckAccess())
-                                    {
-                                        // We are already on the UI thread! Run it directly.
-                                        mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6);
-                                    }
-                                    else
-                                    {
-                                        // We are on a background thread. Marshal it over.
-                                        await mainWindow.Dispatcher.BeginInvoke(new Action(() => mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6)));
-                                    }
-
-                                    lowPriorityDateTime = DateTime.Now;
-                                }
-                            }
-                        }
+                        await MainWaterfallOutGoingData(packet);
                         break;
                     case TranceiverModes.StationScope:
                         if (!(mainWindow.stationSeek.IsScanning))
                         {
                             await SendCatCommandAsync("FA", OutGoingDataLoopDelay);
                         }
-
                         break;
                     case TranceiverModes.NoiseFilters:
                         await SendCatCommandAsync("FA", OutGoingDataLoopDelay);

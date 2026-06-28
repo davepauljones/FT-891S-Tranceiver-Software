@@ -34,11 +34,11 @@
             </Canvas>
 
             <Canvas Canvas.Left="20" Canvas.Top="236" Width="150" Height="22" IsHitTestVisible="False">
-                <TextBlock Width="150" Text="AF  &amp;  RF / SQL" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.8"/>
+                <TextBlock Width="150" Text="AF  &amp;  RF / SQL" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.6"/>
             </Canvas>
             
             <Canvas Canvas.Left="20" Canvas.Top="256" Width="150" Height="22" IsHitTestVisible="False">
-                <TextBlock Width="150" Text="MULTI" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.8"/>
+                <TextBlock Width="150" Text="MULTI" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.6"/>
             </Canvas>
 
             <Canvas Canvas.Left="264" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
@@ -80,7 +80,9 @@
                 PreviewMouseWheel="RFGainKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="RFGainKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="RFGainKnobAreaCanvas_PreviewMouseMove"
-                PreviewMouseUp="RFGainKnobAreaCanvas_PreviewMouseUp"/>
+                PreviewMouseUp="RFGainKnobAreaCanvas_PreviewMouseUp">
+                <TextBlock x:Name="RFGainTextBlock" Canvas.Left="39" Canvas.Top="12" Text="128" Width="70" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
+            </Canvas>
 
             <Canvas x:Name="RFGainKnobBrurCanvas" Canvas.Left="13" Canvas.Top="73" Visibility="Hidden" Width="161" Height="170" VerticalAlignment="Top" IsHitTestVisible="False">
                 <Canvas.Background>
@@ -101,7 +103,9 @@
                 PreviewMouseWheel="AFGainKnobAreaCanvas_PreviewMouseWheel"
                 PreviewMouseDown="AFGainKnobAreaCanvas_PreviewMouseDown"
                 PreviewMouseMove="AFGainKnobAreaCanvas_PreviewMouseMove"
-                PreviewMouseUp="AFGainKnobAreaCanvas_PreviewMouseUp"/>
+                PreviewMouseUp="AFGainKnobAreaCanvas_PreviewMouseUp">
+                <TextBlock x:Name="AFGainTextBlock" Canvas.Left="1" Canvas.Top="28" Text="128" Width="70" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
+            </Canvas>
 
             <Canvas x:Name="AFGainKnobBrurCanvas" Canvas.Left="23" Canvas.Top="112" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
                 <Canvas.Background>

@@ -20,11 +20,11 @@ namespace YAESU_FT_891_Front_End
             { RadioMode.AM, new RigModeDisplay { Name="AM", BackgroundColor=Colors.Green, ForegroundColor=Colors.White }},
             { RadioMode.RTTY_L, new RigModeDisplay { Name="R-L", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
             { RadioMode.RTTY_U, new RigModeDisplay { Name="R-U", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
-            { RadioMode.DATA_L, new RigModeDisplay { Name="D-L", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
-            { RadioMode.DATA_U, new RigModeDisplay { Name="A-", BackgroundColor=Colors.Green, ForegroundColor=Colors.White }},
-            { RadioMode.FM_N, new RigModeDisplay { Name="FM-N", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
-            { RadioMode.DATA_FM, new RigModeDisplay { Name="D-FM", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
-            { RadioMode.AM_N, new RigModeDisplay { Name="AM-N", BackgroundColor=Colors.SaddleBrown, ForegroundColor=Colors.White }},
+            { RadioMode.DATA_L, new RigModeDisplay { Name="D-L", BackgroundColor=Colors.CornflowerBlue, ForegroundColor=Colors.White }},
+            { RadioMode.DATA_U, new RigModeDisplay { Name="D-U", BackgroundColor=Colors.CornflowerBlue, ForegroundColor=Colors.White }},
+            { RadioMode.FM_N, new RigModeDisplay { Name="FM-N", BackgroundColor=Colors.White, ForegroundColor=Colors.Black }},
+            { RadioMode.DATA_FM, new RigModeDisplay { Name="D-FM", BackgroundColor=Colors.Cyan, ForegroundColor=Colors.White }},
+            { RadioMode.AM_N, new RigModeDisplay { Name="AM-N", BackgroundColor=Colors.Green, ForegroundColor=Colors.White }},
         };
 
         public static void UpdateUIRigMode(Border rigModeBorder, Label rigModeLabel, RadioMode rigMode)

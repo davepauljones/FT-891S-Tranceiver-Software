@@ -109,9 +109,12 @@ namespace YAESU_FT_891_Front_End
                 _ui[mode].text.Foreground = Brushes.White;
             }
 
-            _currentMode = mode;
+            if (!(mode == _currentMode))
+            {
+                RaiseEvent(new ModeChangedEventArgs(ModeChangedEvent, mode));
 
-            RaiseEvent(new ModeChangedEventArgs(ModeChangedEvent, mode));
+                _currentMode = mode;
+            }
         }
     }
 }

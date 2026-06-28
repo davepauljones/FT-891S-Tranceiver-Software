@@ -56,8 +56,8 @@ namespace YAESU_FT_891_Front_End.Radio
                 case 7: return RadioMode.CW_U;
                 case 8: return RadioMode.DATA_L;
                 case 9: return RadioMode.RTTY_U;
-                case 11: return RadioMode.DATA_U;
-                case 12: return RadioMode.FM_N;
+                case 11: return RadioMode.FM_N;
+                case 12: return RadioMode.DATA_U;
                 case 13: return RadioMode.AM_N;
 
                 default:
