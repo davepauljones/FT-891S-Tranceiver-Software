@@ -2,6 +2,7 @@
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1437,6 +1438,67 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        
+        private void QRZExpandRetractButtonAreaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (QRZGrid.Visibility == Visibility.Collapsed)
+                QRZGrid.Visibility = Visibility;
+            else
+                QRZGrid.Visibility = Visibility.Collapsed;
+        }
+
+        private void QRZSent59Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            QRZSentTextBox.Text = "59";
+        }
+
+        private void QRZReceived59Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            QRZReceivedTextBox.Text = "59";
+        }
+
+        private void QRZLogButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        bool ToggleScreen;
+        private void RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (ToggleScreen == false)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // Force it into full grid space
+                    Grid.SetRow(MainViewBox, 0);
+                    Grid.SetColumn(MainViewBox, 0);
+                    Grid.SetRowSpan(MainViewBox, 1);
+                    Grid.SetColumnSpan(MainViewBox, 1);
+
+                    // Ensure it is stretchable
+                    MainViewBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    MainViewBox.VerticalAlignment = VerticalAlignment.Stretch;
+                    MainViewBox.Stretch = Stretch.Uniform;
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+
+                ToggleScreen = true;
+            }
+            else
+            {
+                // Normal
+                MainViewBox.Width = 1349;
+                MainViewBox.Height = 452;
+                MainViewBox.Stretch = Stretch.None;
+
+                // Full screen
+                MainViewBox.Width = double.NaN;
+                MainViewBox.Height = double.NaN;
+                MainViewBox.Stretch = Stretch.Uniform;
+
+                ToggleScreen = false;
+            }
+
+            Debug.WriteLine(MainViewBox.ActualWidth);
+            Debug.WriteLine(MainViewBox.ActualHeight);
+        }
     }
 }
