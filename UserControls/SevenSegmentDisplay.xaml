@@ -5,8 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
              mc:Ignorable="d" 
-             d:DesignHeight="166" d:DesignWidth="110" Background="#AA444444">
-    <Canvas Width="110" Height="160">
+             d:DesignHeight="166" d:DesignWidth="110" Background="#AA444444"
+             MouseLeftButtonDown="SevenSegmentUserControl_MouseLeftButtonDown"
+             MouseWheel="SevenSegmentUserControl_MouseWheel"
+             MouseLeave="SevenSegmentUserControl_MouseLeave">
+    <Canvas x:Name="SevenSegmentCanvas" Width="110" Height="160">
         <Canvas.RenderTransform>
             <SkewTransform AngleX="-7" CenterX="50" CenterY="80"/>
         </Canvas.RenderTransform>

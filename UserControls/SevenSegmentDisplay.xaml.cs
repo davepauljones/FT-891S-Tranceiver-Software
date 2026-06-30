@@ -1,6 +1,7 @@
 ﻿using HamRadioControls;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static HamRadioControls.AnalogMeter;
+using static System.Resources.ResXFileRef;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -48,9 +50,21 @@ namespace YAESU_FT_891_Front_End
             On
         }
 
+        //public static readonly DependencyProperty HexDigitProperty =
+        //    DependencyProperty.Register(nameof(HexDigit), typeof(HexDigits), typeof(SevenSegmentDisplay),
+        //        new PropertyMetadata(HexDigits.Eight, OnHexDigitChanged));
+
         public static readonly DependencyProperty HexDigitProperty =
-            DependencyProperty.Register(nameof(HexDigit), typeof(HexDigits), typeof(SevenSegmentDisplay),
-                new PropertyMetadata(HexDigits.Eight, OnHexDigitChanged));
+         DependencyProperty.Register(
+             nameof(HexDigit),
+             typeof(HexDigits),
+             typeof(SevenSegmentDisplay),
+             new FrameworkPropertyMetadata(
+                 HexDigits.Eight,
+                 FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, // <-- Add this flags option
+                 OnHexDigitChanged
+             )
+         );
 
         public HexDigits HexDigit
         {
@@ -70,8 +84,8 @@ namespace YAESU_FT_891_Front_End
         }
 
 
-        Brush OnColor = new SolidColorBrush(Colors.White);
-        Brush OffColor = new SolidColorBrush(MakeSemiTransparent(Colors.White, 16));
+        System.Windows.Media.Brush OnColor = new SolidColorBrush(Colors.White);
+        System.Windows.Media.Brush OffColor = new SolidColorBrush(MakeSemiTransparent(System.Windows.Media.Colors.White, 16));
         
         public SevenSegmentDisplay()
         {
@@ -110,7 +124,7 @@ namespace YAESU_FT_891_Front_End
         }
 
 
-        public static Color MakeSemiTransparent(Color baseColor, byte alpha)
+        public static System.Windows.Media.Color MakeSemiTransparent(System.Windows.Media.Color baseColor, byte alpha)
         {
             baseColor.A = alpha;
             return baseColor;
@@ -293,5 +307,52 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        bool ScrollWheelEnabled = false;
+        private void SevenSegmentUserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("Mouse left button was clicked");
+
+            if (!(ScrollWheelEnabled))
+            {
+                this.Background = new SolidColorBrush(Colors.Orange);
+                ScrollWheelEnabled = true;
+            }
+        }
+
+        private void SevenSegmentUserControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            Console.WriteLine("Mouse wheel is scrolling over the senven segment display");
+
+            if (ScrollWheelEnabled)
+            {
+                double delta = (e.Delta > 0 ? 1 : -1) * 6.0;
+
+                if (delta > 0)
+                {
+                    if ((int)HexDigit < 9)
+                        HexDigit++;
+                    else
+                        HexDigit = 0;
+                }
+                else if (delta < 0)
+                {
+                    if (HexDigit > 0)
+                        HexDigit--;
+                    else
+                        HexDigit = (HexDigits)9;
+                }
+
+                // --- CRITICAL STEP: Push the update directly up to the parent container binding ---
+                var bindingExpression = this.GetBindingExpression(HexDigitProperty);
+                bindingExpression?.UpdateSource();
+            }
+        }
+
+        private void SevenSegmentUserControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            System.Windows.Media.Color color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#AA444444");
+            this.Background = new SolidColorBrush(color);
+            ScrollWheelEnabled = false;
+        }
     }
 }
