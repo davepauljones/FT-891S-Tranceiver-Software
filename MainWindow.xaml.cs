@@ -2,6 +2,7 @@
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -75,9 +76,48 @@ namespace YAESU_FT_891_Front_End
             InitializeComponent();
 
             EnableDrag = true;
-            this.AllowsTransparency = true; 
+            this.AllowsTransparency = true;
+
+            // 1. Listen for when the user changes the frequency via the UI digits
+            var freqDescriptor = DependencyPropertyDescriptor.FromProperty(
+                FrequencyDisplay.FrequencyProperty, typeof(FrequencyDisplay));
+
+            freqDescriptor.AddValueChanged(LargeFrequencyDisplay, OnFrequencyUiChanged);
+
+            // 2. Listen for when the user starts/stops spinning the wheel
+            var editDescriptor = DependencyPropertyDescriptor.FromProperty(
+                FrequencyDisplay.IsDigitEditingProperty, typeof(FrequencyDisplay));
+
+            editDescriptor.AddValueChanged(LargeFrequencyDisplay, OnUiEditStateChanged);
         }
 
+        private async void OnFrequencyUiChanged(object sender, EventArgs e)
+        {
+            // This runs instantly when the user finishes scrolling a digit!
+            long newFrequency = LargeFrequencyDisplay.Frequency;
+
+            FT891S_CatManager.currentRadioState.VfoAFrequency = newFrequency;
+            await _catManager.SendCatCommandAsync("FA", new object[] { newFrequency }, 5);
+
+            // TODO: Send 'newFrequency' to your physical Yaesu FT-891 radio here via CAT commands
+            Console.WriteLine($"Sending new frequency to radio: {newFrequency} Hz");
+        }
+
+        private void OnUiEditStateChanged(object sender, EventArgs e)
+        {
+            if (LargeFrequencyDisplay.IsDigitEditing)
+            {
+                // User is spinning the wheel! Stop your continuous polling timer here
+                //StopRadioPollingTimer();
+                _catManager.StopOutgoingDataLoop();
+            }
+            else
+            {
+                // User walked away / closed edit. Resume fetching live data from the rig
+                //StartRadioPollingTimer();
+                _catManager.StartOutgoingDataLoop();
+            }
+        }
 
         void Init_Startup()
         {
@@ -206,7 +246,7 @@ namespace YAESU_FT_891_Front_End
         {
             Init_Startup();
 
-            this.Top = this.Top - 190;
+            //this.Top = this.Top;
             this.Left = this.Left - 120;
         }
 

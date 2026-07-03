@@ -67,6 +67,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="Height" Value="18"/>
         <Setter Property="Margin" Value="2"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
@@ -74,7 +75,7 @@
     <Style x:Key="DisplayThreeCharLabelStyle" TargetType="{x:Type Label}">
         <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource AncestorType=Border}}"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Width" Value="60"/>
+        <Setter Property="Width" Value="50"/>
         <Setter Property="Height" Value="16"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -83,8 +84,8 @@
         <Setter Property="VerticalContentAlignment" Value="Top"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontFamily" Value="Consolas"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Margin" Value="2"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="2,0,2,0"/>
     </Style>
 
     <Style x:Key="DisplayThreeCharSmallBorderStyle" TargetType="{x:Type Border}">

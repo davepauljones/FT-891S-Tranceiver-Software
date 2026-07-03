@@ -50,9 +50,16 @@ namespace YAESU_FT_891_Front_End
             On
         }
 
-        //public static readonly DependencyProperty HexDigitProperty =
-        //    DependencyProperty.Register(nameof(HexDigit), typeof(HexDigits), typeof(SevenSegmentDisplay),
-        //        new PropertyMetadata(HexDigits.Eight, OnHexDigitChanged));
+        // New property to notify the parent display when this specific digit is being edited
+        public static readonly DependencyProperty IsEditingProperty =
+            DependencyProperty.Register(nameof(IsEditing), typeof(bool), typeof(SevenSegmentDisplay),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public bool IsEditing
+        {
+            get => (bool)GetValue(IsEditingProperty);
+            set => SetValue(IsEditingProperty, value);
+        }
 
         public static readonly DependencyProperty HexDigitProperty =
          DependencyProperty.Register(
@@ -316,6 +323,7 @@ namespace YAESU_FT_891_Front_End
             {
                 this.Background = new SolidColorBrush(Colors.Orange);
                 ScrollWheelEnabled = true;
+                IsEditing = true; // <-- Added: We are editing now!
             }
         }
 
@@ -353,6 +361,7 @@ namespace YAESU_FT_891_Front_End
             System.Windows.Media.Color color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#AA444444");
             this.Background = new SolidColorBrush(color);
             ScrollWheelEnabled = false;
+            IsEditing = false; // <-- Added: Done editing!
         }
     }
 }

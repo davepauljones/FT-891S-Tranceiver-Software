@@ -157,11 +157,11 @@
                         <TextBlock x:Name="FunctionValueTextBlock" Canvas.Left="-1" Canvas.Top="43" Text="128" Width="108" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
-                    <Canvas x:Name="QRZExpandRetractButtonAreaCanvas" Canvas.Left="160" Canvas.Top="410" Width="30" Height="20" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="QRZExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
+                    <Canvas x:Name="QRZExpandRetractButtonAreaCanvas" Canvas.Left="140" Canvas.Top="410" Width="30" Height="20" Opacity="0.5" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="QRZExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
                         <TextBlock Text="QRZ" Width="30" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
-                    <Canvas x:Name="RigExpandRetractButtonAreaCanvas" Canvas.Left="200" Canvas.Top="410" Width="30" Height="20" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
+                    <Canvas x:Name="RigExpandRetractButtonAreaCanvas" Canvas.Left="180" Canvas.Top="410" Width="30" Height="20" Opacity="0.5" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
                         <TextBlock Text="RIG" Width="30" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
@@ -376,12 +376,8 @@
                             <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
                         </Viewbox>
 
-                        <Border Canvas.Left="26" Canvas.Top="66" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
+                        <Border Canvas.Left="156" Canvas.Top="5" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
                             <Label x:Name="TabControlDescriptionLabel" Content="SIMULATED WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
-                        </Border>
-
-                        <Border x:Name="FastNormalGrid" Canvas.Left="234" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="40" Background="Beige">
-                            <Label Content="FAST" Style="{StaticResource DisplayThreeCharLabelStyle}" Foreground="Black"/>
                         </Border>
 
                         <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
@@ -390,9 +386,11 @@
                             </TextBlock.Effect>
                         </TextBlock>
 
-                        <frequencyDisplay:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="3" Frequency="27555000" Height="40"/>
+                        <local:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="3" Frequency="27555000" Height="40"/>
 
-                        <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right">
+                        <frequencyDisplay:FrequencyDisplay x:Name="SubLargeFrequencyDisplay" Canvas.Left="394" Canvas.Top="44" Frequency="14252500" Width="180"/>
+                        
+                        <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
                             <TextBlock.Effect>
                                 <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
                             </TextBlock.Effect>
@@ -402,26 +400,36 @@
                             <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
                         </Border>
 
-                        <Border x:Name="MainVFOABLabelBorder" Canvas.Left="276" Canvas.Top="4" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
+                        <Border x:Name="MainVFOABLabelBorder" Canvas.Left="286" Canvas.Top="3" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
                             <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
                         </Border>
 
-                        <Border x:Name="MainRigModeLabelBorder" Canvas.Left="276" Canvas.Top="26" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
+                        <Border x:Name="MainRigModeLabelBorder" Canvas.Left="286" Canvas.Top="23" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
                             <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                         </Border>
 
-                        <Border x:Name="SubVFOABLabelBorder" Canvas.Left="342" Canvas.Top="42" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
+                        <Border x:Name="FastNormalGrid" Canvas.Left="310" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="FINE" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="SubVFOABLabelBorder" Canvas.Left="342" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
                             <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
                         </Border>
 
-                        <Border x:Name="SubRigModeLabelBorder" Canvas.Left="342" Canvas.Top="56" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
+                        <Border x:Name="SubRigModeLabelBorder" Canvas.Left="342" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
                             <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
 
-                        <Border x:Name="PowerControlLabelBorder" Canvas.Left="276" Canvas.Top="48" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                        <Border x:Name="PowerControlLabelBorder" Canvas.Left="230" Canvas.Top="23" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
                             <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                         </Border>
 
+                        <TextBlock x:Name="NBTextBlock" Canvas.Left="288" Canvas.Top="55" Text="NB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="20"/>
+                        <TextBlock x:Name="DNRTextBlock" Canvas.Left="311" Canvas.Top="55" Text="DNR" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="30"/>
+
+                        <TextBlock x:Name="TuneTextBlock" Canvas.Left="90" Canvas.Top="68" Text="TUNE" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="IndianRed" Width="60"/>
+                        
+                        <TextBlock x:Name="CenterCursorFixTextBlock" Canvas.Left="420" Canvas.Top="68" Text="CENTER" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
                         <TextBlock x:Name="SpeedTextBlock" Canvas.Left="470" Canvas.Top="68" Text="FAST1" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
                         <TextBlock Canvas.Left="538" Canvas.Top="68" Text="SPAN" Style="{StaticResource StatusBarTextBlockStyle}"/>
                         <TextBlock x:Name="FrequencySpanTextBlock" Canvas.Left="580" Canvas.Top="68" Text="50kHz" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
@@ -1120,7 +1128,7 @@
             </Canvas>
         </Viewbox>
         
-        <Grid x:Name="QRZGrid" Grid.Column="1" Grid.Row="1" Width="1349" Height="50" Background="Gray" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Visible">
+        <Grid x:Name="QRZGrid" Grid.Column="1" Grid.Row="1" Width="1349" Height="50" Background="Gray" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
             <Grid.Effect>
                 <DropShadowEffect Direction="0" ShadowDepth="1.1" BlurRadius="30" Color="Orange" Opacity="0.3"/>
             </Grid.Effect>

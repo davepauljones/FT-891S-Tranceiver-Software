@@ -15,6 +15,19 @@ namespace YAESU_FT_891_Front_End
                 typeof(FrequencyDisplay),
                 new FrameworkPropertyMetadata(14242500L, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFrequencyChanged));
 
+        // 1b. Define the Dependency Property for the editing state (visible to MainWindow)
+        public static readonly DependencyProperty IsDigitEditingProperty =
+            DependencyProperty.Register(
+                nameof(IsDigitEditing),
+                typeof(bool),
+                typeof(FrequencyDisplay),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public bool IsDigitEditing
+        {
+            get => (bool)GetValue(IsDigitEditingProperty);
+            set => SetValue(IsDigitEditingProperty, value);
+        }
         public long Frequency
         {
             get => (long)GetValue(FrequencyProperty);
@@ -36,6 +49,9 @@ namespace YAESU_FT_891_Front_End
             // 2. Hook into property change notifications for each individual digit
             var dpd = DependencyPropertyDescriptor.FromProperty(SevenSegmentDisplay.HexDigitProperty, typeof(SevenSegmentDisplay));
 
+            // Also grab a descriptor for the new IsEditing property
+            var editDpd = DependencyPropertyDescriptor.FromProperty(SevenSegmentDisplay.IsEditingProperty, typeof(SevenSegmentDisplay));
+
             SevenSegmentDisplay[] digits = { Digit_1, Digit_2, Digit_3, Digit_4, Digit_5, Digit_6, Digit_7, Digit_8 };
 
             foreach (var digit in digits)
@@ -43,11 +59,27 @@ namespace YAESU_FT_891_Front_End
                 if (digit != null)
                 {
                     dpd.AddValueChanged(digit, OnChildDigitChanged);
+
+                    // Added: Track when a digit enters or leaves its scroll-wheel edit state
+                    editDpd.AddValueChanged(digit, OnChildEditStateChanged);
                 }
             }
 
             // Push the initial frequency value down to the display
             UpdateDisplayFromFrequency();
+        }
+
+        // Automatically runs whenever any child digit turns its scroll wheel on or off
+        private void OnChildEditStateChanged(object sender, EventArgs e)
+        {
+            IsDigitEditing = (Digit_1 != null && Digit_1.IsEditing) ||
+                             (Digit_2 != null && Digit_2.IsEditing) ||
+                             (Digit_3 != null && Digit_3.IsEditing) ||
+                             (Digit_4 != null && Digit_4.IsEditing) ||
+                             (Digit_5 != null && Digit_5.IsEditing) ||
+                             (Digit_6 != null && Digit_6.IsEditing) ||
+                             (Digit_7 != null && Digit_7.IsEditing) ||
+                             (Digit_8 != null && Digit_8.IsEditing);
         }
 
         // Triggered when someone changes the overarching "Frequency" property externally
@@ -56,11 +88,11 @@ namespace YAESU_FT_891_Front_End
             var control = (FrequencyDisplay)d;
             control.UpdateDisplayFromFrequency();
         }
-
         // Pushes the 'Frequency' long value out into the individual UI segments
         private void UpdateDisplayFromFrequency()
         {
-            if (_isUpdating) return;
+            // Changed: If _isUpdating OR a digit is being actively edited, return immediately!
+            if (_isUpdating || IsDigitEditing) return;
             _isUpdating = true;
 
             try
