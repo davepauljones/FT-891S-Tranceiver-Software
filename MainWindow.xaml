@@ -891,6 +891,11 @@
                                 <Polygon Canvas.Left="295" Canvas.Top="0" Points="-20,47 20,47 20,50 -20,50" Fill="DodgerBlue"/>-->
                                     </Canvas>
 
+                                    <Canvas Canvas.Left="21" Canvas.Top="55" Width="600" Height="60">
+                                        <!-- The Image control that will host our raw pixel buffer -->
+                                        <Image x:Name="WaterfallImage" Stretch="Fill" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                    </Canvas>
+
                                     <Canvas x:Name="SweepYellowCursorCanvas" Canvas.Left="14" Canvas.Top="0">
                                         <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Yellow"/>
                                         <Polygon Canvas.Left="7" Canvas.Top="10" Points="0,0 0,45 1,45 1,0" Fill="Yellow"/>
@@ -1152,7 +1157,9 @@
                     </Grid>
                 </StackPanel>
 
-                <Button Content="LOG" Width="50" Height="28" Margin="10,0,0,0" MouseLeftButtonDown="QRZLogButton_MouseLeftButtonDown"/>
+                <Button x:Name="QRZLogButton" Content="LOG" Width="50" Height="28" Margin="10,0,0,0" MouseLeftButtonDown="QRZLogButton_MouseLeftButtonDown"/>
+
+                <Label x:Name="QRZLogStatus" Content="Status" FontSize="16" Width="758" Height="28" Margin="10,0,0,0"/>
 
             </StackPanel>
         </Grid>

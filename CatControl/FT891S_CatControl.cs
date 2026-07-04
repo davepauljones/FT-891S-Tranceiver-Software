@@ -50,6 +50,7 @@ namespace FT891S_CatControl
         public int AFGain { get; set; } = 0;
         public long RadioID { get; set; }
         public int SMeter { get; set; }
+        public ScanMode ScanMode { get; set; }
     }
 
     // =========================================================================
@@ -218,6 +219,8 @@ namespace FT891S_CatControl
 
     public enum MeterTypes { DependsOnFrontPanelMETER = 0, S = 1, DependsOnFrontPanelMETER_PO_COMP_ALC_SWR_ID = 2, COMP = 3, ALC = 4, PO = 5, SWR = 6, ID = 7 }
 
+    public enum ScanMode { Scan_OFF = 0, ScanUpward_ON = 1, ScanDownward_ON= 2 }
+
     public class AgcResult
     {
         public int MainSubSelection { get; set; }
@@ -373,6 +376,13 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"] + dict["P2"]),
             result => { }
         );
+        public static readonly FT891S_CatCommand<int> SC = new FT891S_CatCommand<int>(
+            "SC",
+            new CatStructure().Expect("P1", 1),
+            new CatStructure().Expect("P1", 1),
+            dict => int.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.ScanMode = (ScanMode)result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -389,7 +399,8 @@ namespace FT891S_CatControl
             { "BS", BS },
             { "AB", AB },
             { "BA", BA },
-            { "EX", EX }
+            { "EX", EX },
+            { "SC", SC }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -401,6 +412,33 @@ namespace FT891S_CatControl
             if (ParsersByOpCode.TryGetValue(opCode, out ICatCommand processingCommand))
             {
                 processingCommand.ParseAndApplyToGlobalState(rawRadioData, wpfDispatcher);
+            }
+            else
+            {
+                try
+                {
+                    if (rawRadioData != null && !string.IsNullOrWhiteSpace(rawRadioData.ToString()))
+                    {
+                        string replyStr = rawRadioData.ToString();
+
+                        // Filter out known error responses (e.g., Kenwood/Elecraft often return "??;")
+                        if (!replyStr.Contains("?"))
+                        {
+                            Console.WriteLine($"[DISCOVERED] Response: {rawRadioData}");
+                            // TODO: Log this to a file or a ObservableCollection bound to your WPF UI
+                        }
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    // Expected for 95% of commands that the radio doesn't recognize
+                    Console.WriteLine($"Command timed out.");
+                }
+                catch (Exception ex)
+                {
+                    // Handle port errors or unexpected issues
+                    Console.WriteLine($"Error testing {ex.Message}");
+                }
             }
         }
     }
@@ -678,6 +716,24 @@ namespace FT891S_CatControl
                     //DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.MainWaterfall:
+                    if (serialMessageLine.StartsWith("RM"))
+                    {
+                        int rawMeterValue = currentRadioState.CurrentMeterReading;
+
+                        // Pass the raw value to the waterfall class
+                        mainWindow.psudo3DWaterfall.ProcessMeterReading(rawMeterValue);
+
+                        // Check if the class just finished a complete 64-step line
+                        // (Since we reset _currentScanIndex to 0 inside ProcessMeterReading on completion)
+                        if (mainWindow.psudo3DWaterfall.IsSweepComplete)
+                        {
+                            // Push the render straight onto the UI thread immediately
+                            _uiDispatcher.BeginInvoke(new Action(() =>
+                            {
+                                mainWindow.psudo3DWaterfall.Render3DWaterfall();
+                            }));
+                        }
+                    }
                     break;
                 case TranceiverModes.StationScope:
                     if (!(mainWindow.stationSeek.IsScanning))
@@ -743,7 +799,7 @@ namespace FT891S_CatControl
         }
 
         DateTime lowPriorityDateTime = DateTime.Now;
-        TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(15);
+        TimeSpan lowPriorityCATCommandsTimeSpan = TimeSpan.FromSeconds(7);
 
         private async Task MainWaterfallOutGoingData(int packet)
         {
@@ -822,6 +878,20 @@ namespace FT891S_CatControl
 
                         lowPriorityDateTime = DateTime.Now;
                     }
+                }
+            }
+            else
+            {
+                if (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.MainWaterfall)
+                {
+                    // Ask the waterfall class what frequency it needs next
+                    mainWindow.psudo3DWaterfall.GetNextTargetFrequency();
+
+                    // 2. Set the frequency via your structured framework system
+                    // Pass the frequency value inside the object array parameter matching your structure layout
+                    //await SendCatCommandAsync("FA", new object[] { nextFrequency }, OutGoingDataLoopDelay);
+
+                    //await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, OutGoingDataLoopDelay);
                 }
             }
         }

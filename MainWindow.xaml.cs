@@ -71,6 +71,8 @@ namespace YAESU_FT_891_Front_End
 
         public static IModeMapper _modeMapper;
 
+        public Psudo3DWaterfall psudo3DWaterfall;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -118,7 +120,6 @@ namespace YAESU_FT_891_Front_End
                 _catManager.StartOutgoingDataLoop();
             }
         }
-
         void Init_Startup()
         {
             fT891S_SerialPort = new FT891S_SerialPort(this, "COM8");
@@ -194,6 +195,12 @@ namespace YAESU_FT_891_Front_End
 
             ApplyKnobInput3(0);
             ApplyKnobInput4(0);
+
+            // 1. Initialize your new class (Targeting 800x600 canvas)
+            psudo3DWaterfall = new Psudo3DWaterfall(this, WaterfallImage);
+
+            // 2. Assign the generated bitmap to the XAML Image control
+            WaterfallImage.Source = psudo3DWaterfall.Bitmap;
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -813,13 +820,33 @@ namespace YAESU_FT_891_Front_End
             });
         }
 
-        private void VMButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        int ScanningState = 0;
+        private async void VMButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-
+                
             });
+
+            if (ScanningState == 0)
+            {
+                waterFallSweep.SweepActive = true;
+                ScanningState = 1;
+                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            }
+            else if (ScanningState == 1)
+            {
+                waterFallSweep.SweepActive = true;
+                ScanningState = 2;
+                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            }
+            else if (ScanningState == 2)
+            {
+                waterFallSweep.SweepActive = false;
+                ScanningState = 0;
+                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            }
         }
 
         private void VMToggleButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1496,9 +1523,28 @@ namespace YAESU_FT_891_Front_End
             QRZReceivedTextBox.Text = "59";
         }
 
-        private void QRZLogButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void QRZLogButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            var qrzService = new QrzLogbookService();
 
+            string myApiKey = "YOUR-QRZ-LOGBOOK-API-KEY"; // Retrieve this from settings
+
+            // Construct a minimal ADIF string. 
+            // Format: <fieldname:length>value
+            string adifRecord = "<call:5>W1AW<band:3>20m<mode:3>SSB<qso_date:8>20260703<time_on:6>194500<station_callsign:6>ZZ1ZZZ";
+
+            // Disable button to prevent double-clicks
+            QRZLogButton.IsEnabled = false;
+            QRZLogStatus.Content = "Uploading to QRZ...";
+
+            string result = await qrzService.PushLogEntryAsync(myApiKey, adifRecord);
+
+            // Re-enable button and display the raw response
+            QRZLogButton.IsEnabled = true;
+            QRZLogStatus.Content = result;
+
+            // Note: A successful response from QRZ looks something like:
+            // RESULT=OK&logid=12345678 or an XML structure depending on the key version.
         }
 
         bool ToggleScreen;

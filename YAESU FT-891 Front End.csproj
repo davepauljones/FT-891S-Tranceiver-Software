@@ -118,6 +118,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Psudo3DWaterfall.cs" />
+    <Compile Include="QrzLogBookService.cs" />
     <Compile Include="RadioMode\FT891ModeMapper.cs" />
     <Compile Include="RadioMode\ModeChangedEventArgs.cs" />
     <Compile Include="RadioMode\FT710ModeMapper.cs" />
