@@ -17,6 +17,9 @@ namespace YAESU_FT_891_Front_End
         private const double LineHeight = 1; // Height of each waterfall step
         private double MaxHeight = 54; // Wrap-around point
 
+        private byte _lastSignalStrength = 0;
+        private double _rippleIntensity = 1.0; // Acts as our kinetic energy tracker
+
         public Sprite(MainWindow mainWindow, Canvas historyCanvas, Canvas bandScopeCanvas)
         {
             this.mainWindow = mainWindow;
@@ -26,102 +29,118 @@ namespace YAESU_FT_891_Front_End
             MaxHeight = mainWindow.WaterfallCanvas.Height;
         }
 
-        public void GenerateBandScopeSprite(byte signalStrength, double xCenter, double heightMultiplier)
+        public void GenerateCombinedSignalSprite(byte signalStrength, double xCenter, double maxSpanWidth, double heightMultiplier)
         {
+            // 1. Clear old elements from UI
+            bandScopeCanvas.Children.Clear();
             ClearWaterfallArea(bandScopeCanvas);
-            
-            // 2. Generate the single line segment
-            Polygon lineSegment = GenerateCurrentFrequencyPolygon(Convert.ToByte(MainWindow.GetSMeterIntegerForBandScope(signalStrength)), heightMultiplier);
 
-            // 3. Position the segment on the MAIN canvas
-            // We position X so that the center of the line aligns with xCenter
-            //double actualWidth = signalStrength * heightMultiplier;
-            Canvas.SetLeft(lineSegment, xCenter - (SimulatedWaterfall.currentBandScopeSpriteRectangleWidth / 2));
-            Canvas.SetBottom(lineSegment, 0);
-
-            // 4. Add to view
-            bandScopeCanvas.Children.Add(lineSegment);
-
-            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            if (signalStrength == 0)
             {
-                Console.WriteLine($"SignalStrength = {signalStrength} at Y = {ypos}");
-            }
-        }
-        public void GenerateHistorySprite(byte signalStrength, double xCenter, double widthMultiplier)
-        {
-            // 1. Wrap around if we hit the bottom of the waterfall area
-            if (ypos >= MaxHeight)
-            {
-                ClearWaterfallArea(historyCanvas);
-                ypos = 0;
+                _lastSignalStrength = 0;
+                _rippleIntensity = 0.0;
+                return;
             }
 
-            // 2. Generate the single line segment
-            Polygon lineSegment = GenerateHistoryPolygon(signalStrength, widthMultiplier);
-
-            // 3. Position the segment on the MAIN canvas
-            // We position X so that the center of the line aligns with xCenter
-            double actualWidth = signalStrength * widthMultiplier;
-            Canvas.SetLeft(lineSegment, xCenter - (actualWidth / 2));
-            Canvas.SetTop(lineSegment, ypos);
-
-            // 4. Add to view
-            historyCanvas.Children.Add(lineSegment);
-
-            // 5. Move down for the next signal sweep
-            ypos += LineHeight;
-
-            if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            // --- HYSTERESIS & MOMENTUM ENGINE ---
+            if (signalStrength != _lastSignalStrength)
             {
-                Console.WriteLine($"SignalStrength = {signalStrength} at Y = {ypos}");
+                // Signal changed! Instantly inject energy to cause a violent burst
+                _rippleIntensity = 1.0;
             }
-        }
+            else
+            {
+                // Signal is static! Cool down and decay the ripple intensity exponentially
+                // Adjust 0.85 to change decay speed (lower = calms down faster)
+                _rippleIntensity *= 0.85;
 
-        private Polygon GenerateHistoryPolygon(byte signalStrength, double widthMultiplier)
-        {
-            Polygon polygon = new Polygon();
+                // Prevent it from micro-calculating infinitely near zero
+                if (_rippleIntensity < 0.01) _rippleIntensity = 0.0;
+            }
 
-            // Map signal strength to actual rendering width
-            double calculatedWidth = signalStrength * widthMultiplier;
+            // Save current read for the next cycle comparison
+            _lastSignalStrength = signalStrength;
 
-            polygon.Fill = new SolidColorBrush(Colors.DodgerBlue);
+            // 2. HEIGHT & LAYER CALCULATIONS
+            const double MaxCanvasHeight = 60.0;
+            const double BlockHeight = 3.0;
 
-            // Optional: Uncomment this if you want stronger signals to be brighter
-            polygon.Opacity = ByteToOpacity(signalStrength);
+            double signalRatio = (double)signalStrength / 255.0;
+            double acceleratedRatio = Math.Sqrt(signalRatio);
+            double totalCalculatedHeight = acceleratedRatio * MaxCanvasHeight;
 
-            // Simple rectangle definition starting from (0,0) locally
-            polygon.Points = new PointCollection
+            int totalBlocksToDraw = (int)Math.Ceiling(totalCalculatedHeight / BlockHeight);
+
+            // System clock for baseline dynamic movement
+            double timeOffset = (DateTime.Now.Ticks / (double)TimeSpan.TicksPerMillisecond) * 0.004;
+
+            // 3. RENDER STACK LOOP
+            for (int i = 0; i < totalBlocksToDraw; i++)
+            {
+                double localProgress = totalBlocksToDraw > 1 ? (double)i / (totalBlocksToDraw - 1) : 0.0;
+
+                // --- DAMPENED RIPPLE ENGINE ---
+                double baselineScale = 0.85;
+
+                // Raw chaotic frequencies
+                double wave1 = Math.Sin((i * 0.73) - timeOffset);
+                double wave2 = Math.Sin((i * 1.37) + (timeOffset * 1.5));
+                double wave3 = Math.Cos((i * 0.29) - (timeOffset * 0.5));
+
+                // CRITICAL FIX: The entire wave payload is multiplied by our _rippleIntensity tracker.
+                // As the signal remains static, this noise modifier drops to 0, locking the column flat.
+                double combinedRandomNoise = ((wave1 * 0.12) + (wave2 * 0.08) + (wave3 * 0.10)) * _rippleIntensity;
+
+                double widthScale = baselineScale + combinedRandomNoise;
+
+                double baseWidth = signalRatio * maxSpanWidth;
+                double layerWidth = Math.Max(4.0, baseWidth * widthScale);
+
+                // B. REACTIVE BURST COLORING
+                Color blockColor;
+                double blueCeiling = 0.35 * (1.0 - (signalRatio * 0.2));
+                double goldCeiling = 0.65 * (1.0 - (signalRatio * 0.2));
+                double orangeCeiling = 0.85 * (1.0 - (signalRatio * 0.1));
+
+                if (localProgress < blueCeiling)
+                {
+                    blockColor = Colors.DodgerBlue;
+                }
+                else if (localProgress < goldCeiling)
+                {
+                    blockColor = Colors.Gold;
+                }
+                else if (localProgress < orangeCeiling)
+                {
+                    blockColor = Colors.DarkOrange;
+                }
+                else
+                {
+                    blockColor = Colors.Red;
+                }
+
+                // C. CREATE POLYGON SEGMENT
+                Polygon blockPolygon = new Polygon
+                {
+                    Fill = new SolidColorBrush(blockColor),
+                    Opacity = signalRatio,
+                    Points = new PointCollection
             {
                 new Point(0, 0),
-                new Point(calculatedWidth, 0),
-                new Point(calculatedWidth, LineHeight),
-                new Point(0, LineHeight)
-            };
+                new Point(layerWidth, 0),
+                new Point(layerWidth, BlockHeight),
+                new Point(0, BlockHeight)
+            }
+                };
 
-            return polygon;
-        }
-        private Polygon GenerateCurrentFrequencyPolygon(byte signalStrength, double heightMultiplier)
-        {
-            Polygon polygon = new Polygon();
+                // 4. POSITION THE SEGMENT
+                Canvas.SetLeft(blockPolygon, xCenter - (layerWidth / 2.0));
 
-            // Map signal strength to actual rendering width
-            double calculatedHeight = signalStrength * heightMultiplier;
+                double currentLayerBottom = i * BlockHeight;
+                Canvas.SetBottom(blockPolygon, currentLayerBottom);
 
-            polygon.Fill = new SolidColorBrush(Colors.DodgerBlue);
-
-            // Optional: Uncomment this if you want stronger signals to be brighter
-            polygon.Opacity = ByteToOpacity(signalStrength);
-
-            // Simple rectangle definition starting from (0,0) locally
-            polygon.Points = new PointCollection
-            {
-                new Point(0, 0),
-                new Point(0, calculatedHeight),
-                new Point(SimulatedWaterfall.currentBandScopeSpriteRectangleWidth ,calculatedHeight),
-                new Point(SimulatedWaterfall.currentBandScopeSpriteRectangleWidth, 0)
-            };
-
-            return polygon;
+                bandScopeCanvas.Children.Add(blockPolygon);
+            }
         }
 
         private void ClearWaterfallArea(Canvas canvas)

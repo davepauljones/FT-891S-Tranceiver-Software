@@ -614,10 +614,12 @@ namespace FT891S_CatControl
 
                     mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
-                    //byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
-                    //mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 1);
+                    byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    //mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 2);
                     //mainWindow.sprite.GenerateHistorySprite(signalStrength, 299, 2);
-
+                    //mainWindow.sprite.GenerateCombinedSignalSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 2, 2);
+                    // Make sure you are passing the actual live span variable here!
+                    mainWindow.sprite.GenerateCombinedSignalSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, SimulatedWaterfall.currentBandScopeSpriteRectangleWidth, 1 );
                     if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
                     {
                         Console.WriteLine("meterReading = " + currentRadioState.CurrentMeterReading);
@@ -631,7 +633,7 @@ namespace FT891S_CatControl
 
                     mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
-                    //signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
                     //mainWindow.sprite.GenerateBandScopeSprite(signalStrength, 295, 2);
                     //mainWindow.sprite.GenerateHistorySprite(signalStrength, 295, 2);
 
