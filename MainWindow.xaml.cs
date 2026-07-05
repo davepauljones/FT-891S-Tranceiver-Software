@@ -193,8 +193,8 @@ namespace YAESU_FT_891_Front_End
 
             _catManager.StartOutgoingDataLoop();
 
-            ApplyKnobInput3(0);
-            ApplyKnobInput4(0);
+            //ApplyKnobInput3(0);
+            //ApplyKnobInput4(0);
 
             // 1. Initialize your new class (Targeting 800x600 canvas)
             psudo3DWaterfall = new Psudo3DWaterfall(this, WaterfallImage);
@@ -509,6 +509,16 @@ namespace YAESU_FT_891_Front_End
             _lastMoveTime3 = now;
         }
 
+        public async void UpdateKnobInput3()
+        {
+            if (FT891S_CatManager.currentRadioState.RFGain == 0)
+                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+            else
+                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+            RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+        }
+
         private async void ApplyKnobInput4(double deltaY)
         {
             DateTime now = DateTime.Now;
@@ -540,6 +550,16 @@ namespace YAESU_FT_891_Front_End
             await _catManager.SendCatCommandAsync("AG", new object[] { 0, FT891S_CatManager.currentRadioState.AFGain }, _catManager.OutGoingDataLoopDelay);
 
             _lastMoveTime4 = now;
+        }
+
+        public async void UpdateKnobInput4()
+        {
+            if (FT891S_CatManager.currentRadioState.AFGain == 0)
+                AFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+            else
+                AFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+            AFGainTextBlock.Text = FT891S_CatManager.currentRadioState.AFGain.ToString() + " AF";
         }
 
         private void VFOKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -814,9 +834,10 @@ namespace YAESU_FT_891_Front_End
         private void MVButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
-            AnimateButtonClick(c, () =>
+            AnimateButtonClick(c, async () =>
             {
-                waterFallSweep.Sweep(14252500, 14380000, 500, 6);
+                // Properly await the single sweep execution path
+                await waterFallSweep.ToggleSweepOnOff(forceSingleSweep: true);
             });
         }
 
@@ -968,7 +989,7 @@ namespace YAESU_FT_891_Front_End
 
             _lastMousePos3 = pos;
         }
-        private int lastRFGain = 100;
+        public int lastRFGain = 100;
         private async void RFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             // CRITICAL FIX: These MUST happen every time the mouse is released, 
@@ -1102,7 +1123,7 @@ namespace YAESU_FT_891_Front_End
 
             _lastMousePos4 = pos;
         }
-        private int lastAFGain = 100;
+        public int lastAFGain = 100;
         private async void AFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             // CRITICAL FIX: These MUST happen every time the mouse is released, 
@@ -1409,6 +1430,9 @@ namespace YAESU_FT_891_Front_End
 
             simulatedWaterfall.ChangeSpanFrequency(Convert.ToByte(switchValue));
 
+            waterFallSweep.ClearBandScope();
+            psudo3DWaterfall.ClearWaterfall();
+
             if (ConsoleDebugLevel == ConsoleDebugLevels.All)
             {
                 Console.Write("SpanPopupWindowCanvas_MouseLeftButtonDown = ");
@@ -1428,6 +1452,25 @@ namespace YAESU_FT_891_Front_End
             {
                 Console.Write("SpeedPopupWindowCanvas_MouseLeftButtonDown = ");
                 Console.WriteLine(switchValue);
+            }
+        }
+
+        private void TimeSliceOnOffCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (waterFallSweep != null)
+            {
+                // Flip the current state to its opposite value
+                waterFallSweep.UseTimeSlicing = !waterFallSweep.UseTimeSlicing;
+
+                // Optional feedback: Update a text block or variable to show the current state
+                if (waterFallSweep.UseTimeSlicing)
+                {
+                    TimeSliceOnOffTextBlock.Text = "ON";
+                }
+                else
+                {
+                    TimeSliceOnOffTextBlock.Text = "OFF";
+                }
             }
         }
 
@@ -1586,5 +1629,6 @@ namespace YAESU_FT_891_Front_End
             Debug.WriteLine(MainViewBox.ActualWidth);
             Debug.WriteLine(MainViewBox.ActualHeight);
         }
+
     }
 }

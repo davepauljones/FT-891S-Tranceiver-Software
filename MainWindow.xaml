@@ -58,16 +58,31 @@
                         <TextBlock Width="150" Text="MULTI" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="264" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
+                    <Canvas Canvas.Left="220" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
                         <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="COM PORT" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="ComportTextBlock" Canvas.Left="68" Canvas.Top="-3" Text="COM8" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
-                        <Rectangle x:Name="ComportGreenRectangle" Canvas.Left="104" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
-                        <TextBlock Canvas.Left="142" Canvas.Top="-3" Text="RADIO ID" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="RadioIDTextBlock" Canvas.Left="192" Canvas.Top="-3" Text="??????" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
-                        <Rectangle x:Name="RadioIDAmberLED" Canvas.Left="234" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="Orange" Opacity="0.2"/>
+                        <TextBlock x:Name="ComportTextBlock" Canvas.Left="66" Canvas.Top="-3" Text="COM8" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="ComportGreenRectangle" Canvas.Left="101" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
+                        <TextBlock Canvas.Left="128" Canvas.Top="-3" Text="RADIO ID" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="RadioIDTextBlock" Canvas.Left="180" Canvas.Top="-3" Text="??????" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
+                        <Rectangle x:Name="RadioIDAmberLED" Canvas.Left="214" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="Orange" Opacity="0.2"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="686" Canvas.Top="61" Width="230" Height="10" IsHitTestVisible="False">
+                    <Canvas Canvas.Left="466" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="TimeSliceOnOffCanvas_MouseLeftButtonDown">
+                        <TextBlock Canvas.Top="-3" Text="TIME SLICE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="TimeSliceOnOffTextBlock" Canvas.Left="56" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    </Canvas>
+
+                    <Canvas Canvas.Left="550" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="ScopeOnOffCanvas_MouseLeftButtonDown">
+                        <TextBlock Canvas.Top="-3" Text="SCOPE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="ScopeOnOffTextBlock" Canvas.Left="36" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    </Canvas>
+
+                    <Canvas Canvas.Left="626" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
+                        <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    </Canvas>
+
+                    <Canvas Canvas.Left="686" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
                         <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <Rectangle x:Name="SendRedLEDRectangle" Canvas.Left="44" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="IndianRed" Opacity="0.2"/>
                         <TextBlock Canvas.Left="72" Canvas.Top="-3" Text="RECEIVE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
@@ -76,16 +91,6 @@
                         <TextBlock x:Name="FPSTextBlock" Canvas.Left="166" Canvas.Top="-3" Text="20" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
                         <TextBlock Canvas.Left="184" Canvas.Top="-3" Text="PDR" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
-                    </Canvas>
-
-                    <Canvas Canvas.Left="550" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="ScopeOnOffCanvas_MouseLeftButtonDown">
-                        <TextBlock Canvas.Top="-3" Text="SCOPE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="ScopeOnOffTextBlock" Canvas.Left="36" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
-                    </Canvas>
-
-                    <Canvas Canvas.Left="626" Canvas.Top="61" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
-                        <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
                     <Canvas x:Name="RFGainKnobAreaCanvas"
@@ -154,7 +159,7 @@
                         PreviewMouseDown="SelectionKnobAreaCanvas_PreviewMouseDown"
                         PreviewMouseMove="SelectionKnobAreaCanvas_PreviewMouseMove"
                         PreviewMouseUp="SelectionKnobAreaCanvas_PreviewMouseUp">
-                        <TextBlock x:Name="FunctionValueTextBlock" Canvas.Left="-1" Canvas.Top="43" Text="128" Width="108" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
+                        <TextBlock x:Name="FunctionValueTextBlock" Canvas.Left="-1" Canvas.Top="43" Text="0 dB" Width="108" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
                     <Canvas x:Name="QRZExpandRetractButtonAreaCanvas" Canvas.Left="140" Canvas.Top="410" Width="30" Height="20" Opacity="0.5" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="QRZExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
@@ -376,8 +381,8 @@
                             <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
                         </Viewbox>
 
-                        <Border Canvas.Left="156" Canvas.Top="5" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="130" Height="18">
-                            <Label x:Name="TabControlDescriptionLabel" Content="SIMULATED WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
+                        <Border Canvas.Left="166" Canvas.Top="5" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="18">
+                            <Label x:Name="TabControlDescriptionLabel" Content="WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
                         </Border>
 
                         <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">

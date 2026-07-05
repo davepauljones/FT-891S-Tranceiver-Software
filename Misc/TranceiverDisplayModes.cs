@@ -47,7 +47,7 @@ namespace YAESU_FT_891_Front_End
             TranceiverMode BootUp = new TranceiverMode { ID = TranceiverModes.BootUp, ShortName = "Boot Up", LongName = "Boot Up", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.BootUp, BootUp);
 
-            TranceiverMode MainWaterfall = new TranceiverMode { ID = TranceiverModes.MainWaterfall, ShortName = "Waterfall", LongName = "Main Waterfall", HasTabItem = true };
+            TranceiverMode MainWaterfall = new TranceiverMode { ID = TranceiverModes.MainWaterfall, ShortName = "Waterfall", LongName = "Waterfall", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.MainWaterfall, MainWaterfall);
 
             TranceiverMode StationScope = new TranceiverMode { ID = TranceiverModes.StationScope, ShortName = "Stations", LongName = "Station Scope", HasTabItem = true };
@@ -62,7 +62,7 @@ namespace YAESU_FT_891_Front_End
             TranceiverMode FunctionMenu = new TranceiverMode { ID = TranceiverModes.FunctionMenu, ShortName = "Function", LongName = "Function Menu", HasTabItem = false };
             TranceiverModesDictionary.Add(TranceiverModes.FunctionMenu, FunctionMenu);
 
-            TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "CAT Log", LongName = "CAT Command Log", HasTabItem = false };
+            TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "CAT Log", LongName = "CAT Log", HasTabItem = false };
             TranceiverModesDictionary.Add(TranceiverModes.CatCommandLog, CatCommandLog);
         }
 

@@ -614,9 +614,9 @@ namespace FT891S_CatControl
 
                     mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
-                    byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
-                    mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 1);
-                    mainWindow.sprite.GenerateHistorySprite(signalStrength, 299, 2);
+                    //byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    //mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 1);
+                    //mainWindow.sprite.GenerateHistorySprite(signalStrength, 299, 2);
 
                     if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
                     {
@@ -631,9 +631,9 @@ namespace FT891S_CatControl
 
                     mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
-                    signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
-                    mainWindow.sprite.GenerateBandScopeSprite(signalStrength, 295, 2);
-                    mainWindow.sprite.GenerateHistorySprite(signalStrength, 295, 2);
+                    //signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
+                    //mainWindow.sprite.GenerateBandScopeSprite(signalStrength, 295, 2);
+                    //mainWindow.sprite.GenerateHistorySprite(signalStrength, 295, 2);
 
                     if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
                     {
@@ -680,6 +680,11 @@ namespace FT891S_CatControl
             mainWindow.PowerControlLabel.Content = currentRadioState.TXPowerWatts.ToString() + "W";
             mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.TXPowerWatts.ToString() + "W";
             //PC POWER CONTROL
+
+            //mainWindow.lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
+            //mainWindow.lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
+            mainWindow.UpdateKnobInput3();
+            mainWindow.UpdateKnobInput4();
         }
 
         /// <summary>
@@ -713,27 +718,9 @@ namespace FT891S_CatControl
                         mainWindow.RadioIDTextBlock.Text = "??????";
                         mainWindow.RadioIDAmberLED.Opacity = 0.2;
                     }
-                    //DoTranceiverMode_Main();
                     break;
                 case TranceiverModes.MainWaterfall:
-                    if (serialMessageLine.StartsWith("RM"))
-                    {
-                        int rawMeterValue = currentRadioState.CurrentMeterReading;
-
-                        // Pass the raw value to the waterfall class
-                        mainWindow.psudo3DWaterfall.ProcessMeterReading(rawMeterValue);
-
-                        // Check if the class just finished a complete 64-step line
-                        // (Since we reset _currentScanIndex to 0 inside ProcessMeterReading on completion)
-                        if (mainWindow.psudo3DWaterfall.IsSweepComplete)
-                        {
-                            // Push the render straight onto the UI thread immediately
-                            _uiDispatcher.BeginInvoke(new Action(() =>
-                            {
-                                mainWindow.psudo3DWaterfall.Render3DWaterfall();
-                            }));
-                        }
-                    }
+                  
                     break;
                 case TranceiverModes.StationScope:
                     if (!(mainWindow.stationSeek.IsScanning))
@@ -859,6 +846,18 @@ namespace FT891S_CatControl
                             await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.ID }, 5);
                         }
                         break;
+                    case 6:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("AG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 7:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("RG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                        break;
                 }
 
                 if (mainWindow.waterFallSweep.ScopeOnOff == true)
@@ -878,20 +877,6 @@ namespace FT891S_CatControl
 
                         lowPriorityDateTime = DateTime.Now;
                     }
-                }
-            }
-            else
-            {
-                if (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.MainWaterfall)
-                {
-                    // Ask the waterfall class what frequency it needs next
-                    mainWindow.psudo3DWaterfall.GetNextTargetFrequency();
-
-                    // 2. Set the frequency via your structured framework system
-                    // Pass the frequency value inside the object array parameter matching your structure layout
-                    //await SendCatCommandAsync("FA", new object[] { nextFrequency }, OutGoingDataLoopDelay);
-
-                    //await SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, OutGoingDataLoopDelay);
                 }
             }
         }
