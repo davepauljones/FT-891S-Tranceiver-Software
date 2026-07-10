@@ -118,6 +118,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FilterWaveControl.xaml.cs">
+      <DependentUpon>FilterWaveControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Psudo3DWaterfall.cs" />
     <Compile Include="QrzLogBookService.cs" />
     <Compile Include="RadioMode\FT891ModeMapper.cs" />
@@ -168,6 +171,10 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
+    <Page Include="FilterWaveControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\FrequencyDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

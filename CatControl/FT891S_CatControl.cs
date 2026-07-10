@@ -600,6 +600,12 @@ namespace FT891S_CatControl
         private void DoTranceiverMode_Main()
         {
             mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+
+            if (mainWindow.waterFallSweep.UseTimeSlicing && mainWindow.waterFallSweep.ScopeOnOff)
+                mainWindow.simulatedWaterfall.ChangeSpanCenterFrequency(mainWindow.waterFallSweep.currentQsoCenterFrequency);
+            else
+                mainWindow.simulatedWaterfall.ChangeSpanCenterFrequency(currentRadioState.VfoAFrequency);
+
             mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
 
             UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);

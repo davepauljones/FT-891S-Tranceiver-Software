@@ -32,6 +32,8 @@ namespace YAESU_FT_891_Front_End
         // --- FEATURE CONFIGURATION TOGGLE ---
         public bool UseTimeSlicing { get; set; } = false;
 
+        public long currentQsoCenterFrequency;
+
         private const int TimeSliceHopDelayMs = 15;
         private const int TimeSliceListenDwellMs = 150;
 
@@ -113,7 +115,7 @@ namespace YAESU_FT_891_Front_End
             _cts = new CancellationTokenSource();
             CancellationToken token = _cts.Token;
 
-            long currentQsoCenterFrequency = FT891S_CatManager.currentRadioState.VfoAFrequency;
+            currentQsoCenterFrequency = FT891S_CatManager.currentRadioState.VfoAFrequency;
             FT891S_CatManager.currentRadioState.VfoALastFrequency = currentQsoCenterFrequency;
 
             long vfoAFreq = FT891S_CatManager.currentRadioState.VfoAFrequency;

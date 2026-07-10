@@ -738,15 +738,14 @@ namespace YAESU_FT_891_Front_End
                     UpdateCurrentFrequencyFromCursor(RedCursorCenterPosition);
                     break;
             }
-            AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 60);
+            AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 59);
         }
         public void ChangeSpanCenterFrequency(long centerFrequency)
         {
             if(currentCursorMode == CursorModes.Center)
                 mainWindow.SpanLabel3TextBlock.Text = frequencyManagement.FormatFrequency(centerFrequency);
 
-            if (frequencyManagement.lastRadioState.VfoAFrequency != frequencyManagement.GetFrequency(MemorySlot.MemorySlots.VFO_A, null))
-                AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 60);
+            AnimateRedCursorExtension(mainWindow.RedCursorCanvas, 59);
         }
 
         private const double CenterPixel = 313.0;

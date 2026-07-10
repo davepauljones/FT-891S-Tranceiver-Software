@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.FilterWaveControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="643" Height="142">
+
+    <UserControl.Resources>
+        <Style x:Key="WaveHandleStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <Ellipse Fill="#6600FFCC" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Fill="#FF00FFCC" Stroke="#FF1A1A1A" StrokeThickness="1.5" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FilterToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="85"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="4,0,4,0"/>
+            <Setter Property="Background" Value="#FF2E2E2E"/>
+            <Setter Property="Foreground" Value="#FFE2E8F5"/>
+            <Setter Property="BorderBrush" Value="#FF666666"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#3300FFCC"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#FF00FFCC"/>
+                                <Setter Property="Foreground" Value="#FF00FFCC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#FF444444">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="102"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Line X1="0" Y1="51" X2="643" Y2="51" Stroke="#FF666666" StrokeThickness="1" StrokeDashArray="4 4"/>
+
+            <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" FontSize="9" Margin="165,8,0,0" HorizontalAlignment="Left"/>
+            <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" FontSize="9" Margin="304,82,0,0" HorizontalAlignment="Left"/>
+            <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" FontSize="9" Margin="485,8,0,0" HorizontalAlignment="Left"/>
+
+            <Path Stroke="#FFFFFFFF" StrokeThickness="3" Fill="Transparent">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure x:Name="WaveFigure" StartPoint="0,51">
+                            <PathFigure.Segments>
+                                <BezierSegment x:Name="Segment1" Point1="50,51" Point2="100,51" Point3="160,51"/>
+                                <BezierSegment x:Name="Segment2" Point1="220,51" Point2="280,51" Point3="321,51"/>
+                                <BezierSegment x:Name="Segment3" Point1="360,51" Point2="420,51" Point3="480,51"/>
+                                <LineSegment x:Name="EndSegment" Point="643,51"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
+                <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="160" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
+                <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="321" Canvas.Top="45" DragDelta="WidthThumb_DragDelta" />
+                <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="480" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
+            </Canvas>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="323"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
+                <TextBlock Text="NB" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="70" TextAlignment="Center"/>
+                <TextBlock Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="100" TextAlignment="Center"/>
+                <TextBlock Text="DNR" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="90" TextAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                <ToggleButton Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding DnfEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                <ToggleButton Content="CW APF" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding ApfEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                <ToggleButton Content="CONTOUR" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding ContourEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
