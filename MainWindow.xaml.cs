@@ -3,6 +3,7 @@ using FT891S_CatControl;
 using MahApps.Metro.Controls;
 using System;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -72,6 +73,8 @@ namespace YAESU_FT_891_Front_End
         public static IModeMapper _modeMapper;
 
         public Psudo3DWaterfall psudo3DWaterfall;
+
+        public FilterWave filterWave;
 
         public MainWindow()
         {
@@ -201,6 +204,10 @@ namespace YAESU_FT_891_Front_End
 
             // 2. Assign the generated bitmap to the XAML Image control
             WaterfallImage.Source = psudo3DWaterfall.Bitmap;
+
+            filterWave = new FilterWave(this, MyFilterWave);
+
+            //filterWave.UpdateFromRadio("NB", object value)
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)

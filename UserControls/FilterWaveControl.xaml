@@ -36,13 +36,13 @@
                     <ControlTemplate TargetType="ToggleButton">
                         <Border x:Name="Border" Background="{TemplateBinding Background}" 
                                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="3">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter x:Name="Presenter" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="Border" Property="Background" Value="#3300FFCC"/>
                                 <Setter TargetName="Border" Property="BorderBrush" Value="#FF00FFCC"/>
-                                <Setter Property="Foreground" Value="#FF00FFCC"/>
+                                <Setter TargetName="Presenter" Property="TextElement.Foreground" Value="#FF00FFCC"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -93,15 +93,15 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
-                <TextBlock Text="NB" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="70" TextAlignment="Center"/>
+                <TextBlock x:Name="NbTextBlock" Text="NB" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="70" TextAlignment="Center"/>
                 <TextBlock Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="100" TextAlignment="Center"/>
-                <TextBlock Text="DNR" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="90" TextAlignment="Center"/>
+                <TextBlock x:Name="DNRTextBlock" Text="DNR" Foreground="#FFFFFFFF" FontSize="10" FontWeight="Bold" Width="90" TextAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
-                <ToggleButton Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding DnfEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                <ToggleButton Content="CW APF" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding ApfEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                <ToggleButton Content="CONTOUR" Style="{StaticResource FilterToggleStyle}" IsChecked="{Binding ContourEnabled, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="CwApfBtn" Content="CW APF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="ContourBtn" Content="CONTOUR" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
             </StackPanel>
         </Grid>
     </Grid>

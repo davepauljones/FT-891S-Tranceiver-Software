@@ -51,6 +51,10 @@ namespace FT891S_CatControl
         public long RadioID { get; set; }
         public int SMeter { get; set; }
         public ScanMode ScanMode { get; set; }
+        public NBMode NoiseBlankerMode { get; set; }
+        public int NoiseBlankerLevel { get; set; } = 0;
+        public NRMode NoiseReductionMode { get; set; }
+        public DNRValues NoiseReductionLevel { get; set; } = 0;
     }
 
     // =========================================================================
@@ -221,6 +225,12 @@ namespace FT891S_CatControl
 
     public enum ScanMode { Scan_OFF = 0, ScanUpward_ON = 1, ScanDownward_ON= 2 }
 
+    public enum NBMode { NB_OFF = 0, NB_ON = 1 }
+    public enum NRMode { NR_OFF = 0, NR_ON = 1 }
+    public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
+                            DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
+                            DNR_11 = 11, DNR_12 = 12, DNR_13 = 13, DNR_14 = 14, DNR_15 = 15 }
+
     public class AgcResult
     {
         public int MainSubSelection { get; set; }
@@ -237,6 +247,11 @@ namespace FT891S_CatControl
     {
         public int MainRX { get; set; }
         public RadioMode Mode { get; set; }
+    }
+    public class DnrResult
+    {
+        public int Fixed { get; set; }
+        public DNRValues Values { get; set; }
     }
 
     // =========================================================================
@@ -383,7 +398,46 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.ScanMode = (ScanMode)result
         );
+        public static readonly FT891S_CatCommand<int> NB = new FT891S_CatCommand<int>(
+            "NB",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.NoiseBlankerMode = (NBMode)result
+        );
+        public static readonly FT891S_CatCommand<int> NL = new FT891S_CatCommand<int>(
+            "NL",
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            new CatStructure().Expect("P1", 1).Expect("P2", 3),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.NoiseBlankerLevel = result
+        );
+        public static readonly FT891S_CatCommand<int> NR = new FT891S_CatCommand<int>(
+            "NR",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.NoiseReductionMode = (NRMode)result
+        );
+        public static readonly FT891S_CatCommand<DnrResult> RL = new FT891S_CatCommand<DnrResult>(
+            "RL",
+            // 1. Outbound layout
+            new CatStructure().Expect("P1", 1).Expect("P2", 2),
+            // 2. Inbound layout
+            new CatStructure().Expect("P1", 1).Expect("P2", 2),
 
+            // FIX: Check if P2 exists to avoid KeyNotFoundException during local state updates
+            dict => new DnrResult
+            {
+                Fixed = int.Parse(dict["P1"]),
+                Values = dict.ContainsKey("P2") ? (DNRValues)int.Parse(dict["P2"]) : 0
+            },
+            result => {
+                //Do nothing with Fixed
+                FT891S_CatManager.currentRadioState.NoiseReductionLevel = result.Values;
+            }
+        );
+       
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
             { "BY", BY },
@@ -400,7 +454,11 @@ namespace FT891S_CatControl
             { "AB", AB },
             { "BA", BA },
             { "EX", EX },
-            { "SC", SC }
+            { "SC", SC },
+            { "NB", NB },
+            { "NL", NL },
+            { "NR", NR },
+            { "RL", RL }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)

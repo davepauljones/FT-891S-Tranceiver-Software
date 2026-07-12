@@ -118,7 +118,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FilterWaveControl.xaml.cs">
+    <Compile Include="FilterWave.cs" />
+    <Compile Include="UserControls\FilterWaveControl.xaml.cs">
       <DependentUpon>FilterWaveControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Psudo3DWaterfall.cs" />
@@ -171,7 +172,7 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
-    <Page Include="FilterWaveControl.xaml">
+    <Page Include="UserControls\FilterWaveControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
