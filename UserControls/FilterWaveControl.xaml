@@ -4,21 +4,6 @@
              Width="643" Height="142">
 
     <UserControl.Resources>
-        <Style x:Key="WaveHandleStyle" TargetType="Thumb">
-            <Setter Property="Width" Value="12"/>
-            <Setter Property="Height" Value="12"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <Grid>
-                            <Ellipse Fill="#6600FFCC" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Ellipse Fill="#FF00FFCC" Stroke="#FF1A1A1A" StrokeThickness="1.5" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <Style x:Key="FilterToggleStyle" TargetType="ToggleButton">
             <Setter Property="Width" Value="85"/>
@@ -49,9 +34,100 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="WaveHandleStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="Cursor" Value="SizeNS"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <Ellipse x:Name="Glow" Fill="#4000FFCC" Width="26" Height="26" 
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                     Opacity="0.5" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                            <Ellipse x:Name="Core" Fill="#FF00FFCC" Stroke="#FF1A1A1A" StrokeThickness="2" 
+                                     Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.8" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.8" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NotchHandleStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Cursor" Value="SizeAll"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <Ellipse x:Name="Glow" Fill="#40FF007F" Width="28" Height="28" 
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                     Opacity="0.5" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                            <Polygon x:Name="Core" Points="0,0 14,0 7,14" Fill="#FFFF007F" Stroke="#FF1A1A1A" StrokeThickness="1.5"
+                                     Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0.8" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Glow" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="0.8" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Background="#141414">
         <Grid.RowDefinitions>
             <RowDefinition Height="102"/>
             <RowDefinition Height="40"/>
@@ -83,16 +159,16 @@
             <Polygon Canvas.Left="0" Canvas.Top="38" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="42" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="46" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            
+
             <Polygon Canvas.Left="0" Canvas.Top="56" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
 
             <Canvas Canvas.Left="0" Canvas.Top="67" Width="213" Height="12">
-                <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" Width="213" FontSize="12" TextAlignment="Center"/>
+                <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
 
             <Canvas Canvas.Left="0" Canvas.Top="86" Width="213" Height="12">
-                <TextBlock  x:Name="NbTextBlock" Text="NB" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
+                <TextBlock x:Name="NbTextBlock" Text="NB: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
             <Polygon Canvas.Left="213" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
@@ -107,7 +183,7 @@
             <Polygon Canvas.Left="405" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
 
             <Canvas Canvas.Left="214" Canvas.Top="10" Width="213" Height="12">
-                <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="213" FontSize="12" TextAlignment="Center"/>
+                <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
 
             <Canvas Canvas.Left="214" Canvas.Top="29" Width="213" Height="12">
@@ -160,33 +236,69 @@
             <Polygon Canvas.Left="427" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
 
             <Canvas Canvas.Left="427" Canvas.Top="67" Width="213" Height="12">
-                <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" Width="213" FontSize="12" TextAlignment="Center"/>
+                <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
 
             <Canvas Canvas.Left="427" Canvas.Top="86" Width="213" Height="12">
-                <TextBlock x:Name="DNRTextBlock" Text="RL" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
+                <TextBlock x:Name="DNRTextBlock" Text="NR: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
             <Polygon Canvas.Left="1" Canvas.Top="0" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="1" Canvas.Top="106" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
 
-            <Polygon Name="HHorizonLine" Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="White"/>
+            <Polygon Name="HHorizonLine" Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="#33FFFFFF"/>
         </Canvas>
 
         <Grid Grid.Row="0">
-            <Line X1="0" Y1="51" X2="643" Y2="51" Stroke="#FF666666" StrokeThickness="1" StrokeDashArray="4 4"/>
+            <Line X1="0" Y1="51" X2="643" Y2="51" Stroke="#44FFFFFF" StrokeThickness="1" StrokeDashArray="4 4"/>
 
-            <Path Stroke="#FFFFFFFF" StrokeThickness="3" Fill="Transparent">
+            <Path Stroke="Transparent">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="#5000FFCC" Offset="0"/>
+                        <GradientStop Color="#08000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Path.Fill>
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure x:Name="FillFigure" StartPoint="0,51">
+                            <PathFigure.Segments>
+                                <BezierSegment x:Name="FillSegment1" Point1="0,51" Point2="0,51" Point3="100.6,51"/>
+                                <BezierSegment x:Name="FillSegment2" Point1="0,51" Point2="0,51" Point3="213.3,51"/>
+                                <LineSegment x:Name="FillSegment3PointA" Point="213.3,51"/>
+                                <LineSegment x:Name="FillSegment3PointNotchLeft" Point="300,51"/>
+                                <LineSegment x:Name="FillSegment3PointNotchTip" Point="314,51"/>
+                                <LineSegment x:Name="FillSegment3PointNotchRight" Point="328,51"/>
+                                <LineSegment x:Name="FillSegment3PointB" Point="314,51"/>
+                                <LineSegment x:Name="FillSegment3PointC" Point="350,51"/>
+                                <LineSegment x:Name="FillWidthRightSegment" Point="426.6,51"/>
+                                <BezierSegment x:Name="FillEndSegment" Point1="426.6,51" Point2="426.6,51" Point3="527.3,51"/>
+                                <BezierSegment x:Name="FillDnrRightSegment" Point1="426.6,51" Point2="426.6,51" Point3="643,51"/>
+                                <LineSegment Point="643,102"/>
+                                <LineSegment Point="0,102"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <Path Stroke="#FF00FFCC" StrokeThickness="2.5">
+                <Path.Effect>
+                    <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
+                </Path.Effect>
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="WaveFigure" StartPoint="0,51">
                             <PathFigure.Segments>
                                 <BezierSegment x:Name="Segment1" Point1="0,51" Point2="0,51" Point3="100.6,51"/>
                                 <BezierSegment x:Name="Segment2" Point1="0,51" Point2="0,51" Point3="213.3,51"/>
-
-                                <BezierSegment x:Name="Segment3" Point1="213.3,51" Point2="213.3,51" Point3="314,51"/>
-                                <BezierSegment x:Name="WidthRightSegment" Point1="213.3,51" Point2="213.3,51" Point3="426.6,51"/>
-
+                                <LineSegment x:Name="Segment3PointA" Point="213.3,51"/>
+                                <LineSegment x:Name="Segment3PointNotchLeft" Point="300,51"/>
+                                <LineSegment x:Name="Segment3PointNotchTip" Point="314,51"/>
+                                <LineSegment x:Name="Segment3PointNotchRight" Point="328,51"/>
+                                <LineSegment x:Name="Segment3PointB" Point="314,51"/>
+                                <LineSegment x:Name="Segment3PointC" Point="350,51"/>
+                                <LineSegment x:Name="WidthRightSegment" Point="426.6,51"/>
                                 <BezierSegment x:Name="EndSegment" Point1="426.6,51" Point2="426.6,51" Point3="527.3,51"/>
                                 <BezierSegment x:Name="DnrRightSegment" Point1="426.6,51" Point2="426.6,51" Point3="643,51"/>
                             </PathFigure.Segments>
@@ -196,13 +308,24 @@
             </Path>
 
             <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
+                <TextBlock x:Name="NbBadge" Text="NB: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="100.6" Canvas.Top="15"/>
+                <TextBlock x:Name="WidthBadge" Text="WD: 0%" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="260" Canvas.Top="75"/>
+                <TextBlock x:Name="NotchBadge" Text="NCH: OFF" Foreground="#FFFF007F" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="340" Canvas.Top="75"/>
+                <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="527.3" Canvas.Top="15"/>
+
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="100.6" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
-                <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="314" Canvas.Top="45" DragDelta="WidthThumb_DragDelta" />
+                <Thumb x:Name="WidthThumb" 
+       Style="{StaticResource WaveHandleStyle}" 
+       Cursor="SizeWE" 
+       Canvas.Left="314" 
+       Canvas.Top="20" 
+       DragDelta="WidthThumb_DragDelta" />
+                <Thumb x:Name="NotchThumb" Style="{StaticResource NotchHandleStyle}" Canvas.Left="314" Canvas.Top="51" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="527.3" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
             </Canvas>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="#111111">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
                 <ToggleButton x:Name="CwApfBtn" Content="CW APF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>

@@ -1,5 +1,6 @@
 ﻿using FT891S_CatControl;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace YAESU_FT_891_Front_End
@@ -12,6 +13,8 @@ namespace YAESU_FT_891_Front_End
 
         private int _nbValue;
         private int _widthValue;
+        private int _notchFreq;
+        private int _notchDepth;
         private int _dnrValue;
         private bool _dnfEnabled;
         private bool _apfEnabled;
@@ -23,60 +26,72 @@ namespace YAESU_FT_891_Front_End
             this.uiControl = uiControl ?? throw new ArgumentNullException(nameof(uiControl));
             this.uiDispatcher = uiControl.Dispatcher;
 
-            // Direct internal event subscription hookup
             uiControl.UIValueChanged += OnUIValueChanged;
         }
 
-        private async void OnUIValueChanged(string parameter, object value)
+        private void OnUIValueChanged(string parameter, object value)
         {
-            switch (parameter)
+            Task.Run(async () =>
             {
-                case "NB":
-                    _nbValue = (int)value;
-                    // Add Radio CAT code out here: e.g., SendCommand($"NB{_nbValue};");
-                    Console.WriteLine("NB Changed");
-                    
-                    await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                try
+                {
+                    if (mainWindow?._catManager == null) return;
 
-                    await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                    break;
-                case "WD":
-                    _widthValue = (int)value;
-                    Console.WriteLine("WB Changed");
-                    break;
-                case "NR":
-                    _dnrValue = (int)value;
-                    Console.WriteLine("NR Changed");
-
-                    if (_dnrValue == 0)
-                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                    else
+                    switch (parameter)
                     {
-                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        case "NB":
+                            _nbValue = (int)value;
+                            await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            break;
 
-                        await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, _dnrValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        case "WD":
+                            _widthValue = (int)value;
+                            // Width is normally controlled by 'WD' command parameters
+                            // Example: await mainWindow._catManager.SendCatCommandAsync("WD", new object[] { 0, _widthValue }, ...);
+                            break;
+
+                        case "NCH_FREQ":
+                            _notchFreq = (int)value;
+                            // Map the 0-100% slider value to the actual FT-891 manual notch Hz value (10Hz - 3200Hz)
+                            int scaledHz = 10 + (int)((_notchFreq / 100.0) * 3190);
+
+                            // Send Notch Frequency Command to Radio (typically 'BP' or Notch setting)
+                            // Example: await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, scaledHz }, ...);
+                            break;
+
+                        case "NCH_DEPTH":
+                            _notchDepth = (int)value;
+                            // If NotchDepth is 0, send a command to turn OFF the manual notch.
+                            // If > 0, send a command to turn ON the manual notch filter.
+                            bool active = _notchDepth > 0;
+                            // Example: await mainWindow._catManager.SendCatCommandAsync("NT", new object[] { 0, active ? 1 : 0 }, ...);
+                            break;
+
+                        case "NR":
+                            _dnrValue = (int)value;
+                            if (_dnrValue == 0)
+                            {
+                                await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            }
+                            else
+                            {
+                                await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                                await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, _dnrValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            }
+                            break;
                     }
-
-                    break;
-                case "AUTO DNF":
-                    _dnfEnabled = (bool)value;
-                    Console.WriteLine("AUTO DNF Changed");
-                    break;
-                case "CW APF":
-                    _apfEnabled = (bool)value;
-                    Console.WriteLine("CW APF Changed");
-                    break;
-                case "CONTOUR":
-                    _contourEnabled = (bool)value;
-                    Console.WriteLine("CONTOUR Changed");
-                    break;
-            }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"CAT Error sending {parameter}: {ex.Message}");
+                }
+            });
         }
 
-        // Call this when background radio serial data threads detect state variations
         public void UpdateFromRadio(string parameter, object value)
         {
-            uiDispatcher.Invoke(() =>
+            uiDispatcher.BeginInvoke(new Action(() =>
             {
                 switch (parameter.ToUpper())
                 {
@@ -87,6 +102,15 @@ namespace YAESU_FT_891_Front_End
                     case "WD":
                         _widthValue = (int)value;
                         uiControl.SetWidthValue(_widthValue);
+                        break;
+                    case "NCH":
+                        // Expected structure: dynamic tuple or split string payload containing Freq and Depth
+                        if (value is Tuple<int, int> notchVals)
+                        {
+                            _notchFreq = notchVals.Item1;
+                            _notchDepth = notchVals.Item2;
+                            uiControl.SetNotchValues(_notchFreq, _notchDepth);
+                        }
                         break;
                     case "NR":
                         _dnrValue = (int)value;
@@ -105,7 +129,7 @@ namespace YAESU_FT_891_Front_End
                         uiControl.SetContourEnabled(_contourEnabled);
                         break;
                 }
-            });
+            }));
         }
     }
 }
