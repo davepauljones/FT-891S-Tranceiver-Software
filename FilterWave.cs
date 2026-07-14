@@ -45,10 +45,13 @@ namespace YAESU_FT_891_Front_End
                             await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
 
-                        case "WD":
+                        case "SH":
                             _widthValue = (int)value;
-                            // Width is normally controlled by 'WD' command parameters
-                            // Example: await mainWindow._catManager.SendCatCommandAsync("WD", new object[] { 0, _widthValue }, ...);
+                            // Width is normally controlled by 'WD' command parameter
+                            if (_widthValue == -1) // -1=off on P2 Range is 0-21 0=default
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, _widthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            else
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, 9 }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
 
                         case "NCH_FREQ":

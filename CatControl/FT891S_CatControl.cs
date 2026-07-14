@@ -55,6 +55,9 @@ namespace FT891S_CatControl
         public int NoiseBlankerLevel { get; set; } = 0;
         public NRMode NoiseReductionMode { get; set; }
         public DNRValues NoiseReductionLevel { get; set; } = 0;
+
+        public WidthModes WidthMode { get; set; }
+        public WidthValues WidthValue { get; set; } = 0;
     }
 
     // =========================================================================
@@ -227,9 +230,21 @@ namespace FT891S_CatControl
 
     public enum NBMode { NB_OFF = 0, NB_ON = 1 }
     public enum NRMode { NR_OFF = 0, NR_ON = 1 }
+    public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
+
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
                             DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
                             DNR_11 = 11, DNR_12 = 12, DNR_13 = 13, DNR_14 = 14, DNR_15 = 15 }
+
+    public enum WidthValues
+    {
+        WDH_00_Default = 0,
+        WDH_01 = 1, WDH_02 = 2, WDH_03 = 3, WDH_04 = 4, WDH_05 = 5,
+        WDH_06 = 6, WDH_07 = 7, WDH_08 = 8, WDH_09 = 9, WDH_10 = 10,
+        WDH_11 = 11, WDH_12 = 12, WDH_13 = 13, WDH_14 = 14, WDH_15 = 15,
+        WDH_16 = 16, WDH_17 = 17, WDH_18 = 18, WDH_19 = 19, WDH_20 = 20,
+        WDH_21 = 21
+    }
 
     public class AgcResult
     {
@@ -252,6 +267,12 @@ namespace FT891S_CatControl
     {
         public int Fixed { get; set; }
         public DNRValues Values { get; set; }
+    }
+    public class WidthResult
+    {
+        public int Fixed { get; set; }
+        public WidthModes Switch { get; set; }
+        public WidthValues Values { get; set; }
     }
 
     // =========================================================================
@@ -304,13 +325,13 @@ namespace FT891S_CatControl
             }
         );
 
-        public static readonly FT891S_CatCommand<int> SH = new FT891S_CatCommand<int>(
-            "SH",
-            new CatStructure().Expect("P1", 1).Expect("P2", 4),
-            new CatStructure().Expect("P1", 1).Expect("P2", 4),
-            dict => int.Parse(dict["P1"] + dict["P2"]),
-            result => FT891S_CatManager.currentRadioState.IfShiftHz = result
-        );
+        //public static readonly FT891S_CatCommand<int> SH = new FT891S_CatCommand<int>(
+        //    "SH",
+        //    new CatStructure().Expect("P1", 1).Expect("P2", 4),
+        //    new CatStructure().Expect("P1", 1).Expect("P2", 4),
+        //    dict => int.Parse(dict["P1"] + dict["P2"]),
+        //    result => FT891S_CatManager.currentRadioState.IfShiftHz = result
+        //);
 
         public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
             "RM",
@@ -437,14 +458,30 @@ namespace FT891S_CatControl
                 FT891S_CatManager.currentRadioState.NoiseReductionLevel = result.Values;
             }
         );
-       
+        public static readonly FT891S_CatCommand<WidthResult> SH = new FT891S_CatCommand<WidthResult>(
+            "SH",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 2),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 2),
+            
+            dict => new WidthResult
+            {
+                Fixed = int.Parse(dict["P1"]),
+                Switch = dict.ContainsKey("P2") ? (WidthModes)int.Parse(dict["P2"]) : 0,
+                Values = dict.ContainsKey("P3") ? (WidthValues)int.Parse(dict["P3"]) : 0
+            },
+            result => {
+                //Do nothing with Fixed
+                FT891S_CatManager.currentRadioState.WidthMode = result.Switch;
+                FT891S_CatManager.currentRadioState.WidthValue = result.Values;
+            }
+        );
+
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
             { "BY", BY },
             { "FA", FA },
             { "MD", MD },
             { "GT", GT },
-            { "SH", SH },
             { "RM", RM },
             { "PC", PC },
             { "ID", ID },
@@ -458,7 +495,8 @@ namespace FT891S_CatControl
             { "NB", NB },
             { "NL", NL },
             { "NR", NR },
-            { "RL", RL }
+            { "RL", RL },
+            { "SH", SH }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)

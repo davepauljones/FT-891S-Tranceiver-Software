@@ -206,6 +206,7 @@ namespace YAESU_FT_891_Front_End
             WidthBadge.Text = $"WD: {percentage:0}%";
 
             UpdateWaveform();
+            UIValueChanged?.Invoke("SH", WidthValue);
         }
 
         // Symmetrical Trapezoid Calculator
