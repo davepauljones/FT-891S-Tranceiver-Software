@@ -11,12 +11,15 @@ namespace YAESU_FT_891_Front_End
     {
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
+        private const double PeakY = 20.0;
         private bool _isUpdatingProgrammatically = false;
 
         public int NbValue { get; private set; }
         public int WidthValue { get; private set; }
         public int NotchFreq { get; private set; }
         public int NotchDepth { get; private set; }
+        public int ContourValue { get; private set; }
+        public bool ContourEnabled { get; private set; }
         public int DnrValue { get; private set; }
 
         public event Action<string, object> UIValueChanged;
@@ -56,6 +59,15 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
+        public void SetContourValues(int value, bool enabled)
+        {
+            ContourValue = value;
+            ContourEnabled = enabled;
+            ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourValue + "%";
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
         public void SetDnrValue(int value)
         {
             DnrValue = value;
@@ -67,11 +79,11 @@ namespace YAESU_FT_891_Front_End
 
         public void SetDnfEnabled(bool value) { _isUpdatingProgrammatically = true; AutoDnfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
         public void SetApfEnabled(bool value) { _isUpdatingProgrammatically = true; CwApfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
-        public void SetContourEnabled(bool value) { _isUpdatingProgrammatically = true; ContourBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
+        public void SetContourEnabled(bool value) { _isUpdatingProgrammatically = true; ContourBtn.IsChecked = value; ContourEnabled = value; UpdateWaveform(); _isUpdatingProgrammatically = false; }
 
         private void UpdateThumbPositions()
         {
-            if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null) return;
+            if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null || ContourThumb == null) return;
 
             _isUpdatingProgrammatically = true;
 
@@ -83,10 +95,9 @@ namespace YAESU_FT_891_Front_End
             // 2. Constrained Width Thumb Positioning
             const double PassbandCenterX = 320.0;
             const double border2X = 427.0;
-            const double FixedSlopeWidth = 40.0;
+            const double FixedSlopeWidth = 20.0;
             const double thumbHalfWidth = 8.0;
 
-            // The maximum X the right shoulder can reach before its base hits border2X (427.0)
             double maxShoulderX = border2X - FixedSlopeWidth;
             double minX = PassbandCenterX;
             double maxX = maxShoulderX - thumbHalfWidth;
@@ -94,13 +105,28 @@ namespace YAESU_FT_891_Front_End
             double wX = minX + ((WidthValue / 100.0) * (maxX - minX));
             Canvas.SetLeft(WidthThumb, wX);
 
+            double halfWidth = Math.Max(0, wX - PassbandCenterX);
+            double leftShoulderX = PassbandCenterX - halfWidth;
+            double rightShoulderX = PassbandCenterX + halfWidth;
+            if ((leftShoulderX - FixedSlopeWidth) < 213.0) leftShoulderX = 213.0 + FixedSlopeWidth;
+            if ((rightShoulderX + FixedSlopeWidth) > 427.0) rightShoulderX = 427.0 - FixedSlopeWidth;
+
             // 3. Notch Thumb Positioning
             double nX = 213.0 + ((NotchFreq / 100.0) * (427.0 - 213.0));
-            double nY = CenterY + ((NotchDepth / 100.0) * (CanvasHeight - 18 - CenterY));
-            Canvas.SetLeft(NotchThumb, Math.Max(213.0, Math.Min(427.0 - 18, nX - 9)));
-            Canvas.SetTop(NotchThumb, Math.Max(CenterY, Math.Min(CanvasHeight - 18, nY - 9)));
+            nX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
+            double nY = PeakY + ((NotchDepth / 100.0) * (CenterY - PeakY));
+            Canvas.SetLeft(NotchThumb, nX - 9);
+            Canvas.SetTop(NotchThumb, nY - 9);
 
-            // 4. DNR Thumb Positioning
+            // 4. Contour Thumb Positioning
+            double cX = Canvas.GetLeft(ContourThumb) + 8;
+            cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
+            double maxTravel = CenterY - 5;
+            double cY = PeakY - ((ContourValue / 100.0) * maxTravel);
+            Canvas.SetLeft(ContourThumb, cX - 8);
+            Canvas.SetTop(ContourThumb, !ContourEnabled ? PeakY - 8 : cY - 8);
+
+            // 5. DNR Thumb Positioning
             double travelSpaceDnr = CenterY - 5;
             double dnrTop = CenterY - ((DnrValue / 15.0) * travelSpaceDnr);
             Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
@@ -124,13 +150,13 @@ namespace YAESU_FT_891_Front_End
             NbBadge.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
 
             UpdateWaveform();
-            if (UIValueChanged != null) UIValueChanged("NB", NbValue);
+            UIValueChanged?.Invoke("NB", NbValue);
         }
 
         private void NotchThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             const double PassbandCenterX = 320.0;
-            const double FixedSlopeWidth = 40.0;
+            const double FixedSlopeWidth = 20.0;
 
             double currentLeft = Canvas.GetLeft(NotchThumb);
             double currentTop = Canvas.GetTop(NotchThumb);
@@ -138,15 +164,12 @@ namespace YAESU_FT_891_Front_End
             double targetCenterX = currentLeft + 9 + e.HorizontalChange;
             double targetCenterY = currentTop + 9 + e.VerticalChange;
 
-            // Get current width configuration to calculate shoulder bounds
             double wX = Canvas.GetLeft(WidthThumb) + 8;
             double halfWidth = Math.Max(0, wX - PassbandCenterX);
 
-            // The exact top-edge structural bounds of the trapezoid plateau
             double leftShoulderX = PassbandCenterX - halfWidth;
             double rightShoulderX = PassbandCenterX + halfWidth;
 
-            // Adjust for border constraints if the width forces shoulders outward
             double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
             double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
             if (currentBaseLeftX < 213.0) leftShoulderX = 213.0 + FixedSlopeWidth;
@@ -155,26 +178,72 @@ namespace YAESU_FT_891_Front_End
             if (leftShoulderX > PassbandCenterX) leftShoulderX = PassbandCenterX;
             if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
 
-            // CLAMP: The Notch center is now trapped completely between the plateau shoulders
             double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
-            double clampedTop = Math.Max(CenterY, Math.Min(CanvasHeight - 18, targetCenterY - 9));
+            double clampedTop = Math.Max(PeakY - 9, Math.Min(CanvasHeight - 18, targetCenterY - 9));
 
             Canvas.SetLeft(NotchThumb, clampedCenterX - 9);
             Canvas.SetTop(NotchThumb, clampedTop);
 
             NotchFreq = (int)(((clampedCenterX - 213.0) / (427.0 - 213.0)) * 100);
-            NotchDepth = (int)(((clampedTop + 9 - CenterY) / (CanvasHeight - 18 - CenterY)) * 100);
+            NotchDepth = (int)(((clampedTop + 9 - PeakY) / (CanvasHeight - 18 - PeakY)) * 100);
 
             if (NotchDepth < 5) NotchDepth = 0;
 
             NotchBadge.Text = NotchDepth == 0 ? "NCH: OFF" : "NCH: " + NotchFreq + "% F / " + NotchDepth + "% D";
 
             UpdateWaveform();
-            if (UIValueChanged != null)
+            UIValueChanged?.Invoke("NCH_FREQ", NotchFreq);
+            UIValueChanged?.Invoke("NCH_DEPTH", NotchDepth);
+        }
+
+        private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            const double PassbandCenterX = 320.0;
+            const double FixedSlopeWidth = 20.0;
+
+            double currentLeft = Canvas.GetLeft(ContourThumb);
+            double currentTop = Canvas.GetTop(ContourThumb);
+
+            double targetCenterX = currentLeft + 8 + e.HorizontalChange;
+            double targetCenterY = currentTop + 8 + e.VerticalChange;
+
+            double wX = Canvas.GetLeft(WidthThumb) + 8;
+            double halfWidth = Math.Max(0, wX - PassbandCenterX);
+
+            double leftShoulderX = PassbandCenterX - halfWidth;
+            double rightShoulderX = PassbandCenterX + halfWidth;
+
+            double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
+            double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
+            if (currentBaseLeftX < 213.0) leftShoulderX = 213.0 + FixedSlopeWidth;
+            if (currentBaseRightX > 427.0) rightShoulderX = 427.0 - FixedSlopeWidth;
+
+            if (leftShoulderX > PassbandCenterX) leftShoulderX = PassbandCenterX;
+            if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
+
+            double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
+            double clampedTop = Math.Max(5, Math.Min(CanvasHeight - 16, targetCenterY - 8));
+
+            Canvas.SetLeft(ContourThumb, clampedCenterX - 8);
+            Canvas.SetTop(ContourThumb, clampedTop);
+
+            double centerThumbY = clampedTop + 8;
+            if (Math.Abs(centerThumbY - PeakY) < 3)
             {
-                UIValueChanged("NCH_FREQ", NotchFreq);
-                UIValueChanged("NCH_DEPTH", NotchDepth);
+                ContourValue = 0;
+                ContourEnabled = false;
             }
+            else
+            {
+                ContourEnabled = true;
+                double maxTravel = CenterY - 5;
+                ContourValue = (int)(((PeakY - centerThumbY) / maxTravel) * 100);
+            }
+
+            ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourValue + "%";
+            
+            UpdateWaveform();
+            UIValueChanged?.Invoke("CONTOUR_VAL", ContourValue);
         }
 
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -193,30 +262,36 @@ namespace YAESU_FT_891_Front_End
             DnrBadge.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
 
             UpdateWaveform();
-            if (UIValueChanged != null) UIValueChanged("NR", DnrValue);
+            UIValueChanged?.Invoke("NR", DnrValue);
         }
 
         private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             if (_isUpdatingProgrammatically) return;
             ToggleButton btn = sender as ToggleButton;
-            if (btn != null && UIValueChanged != null)
-                UIValueChanged(btn.Content.ToString(), true);
+            if (btn != null)
+            {
+                if (btn == ContourBtn) { ContourEnabled = true; UpdateWaveform(); }
+                UIValueChanged?.Invoke(btn.Content.ToString(), true);
+            }
         }
 
         private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
             if (_isUpdatingProgrammatically) return;
             ToggleButton btn = sender as ToggleButton;
-            if (btn != null && UIValueChanged != null)
-                UIValueChanged(btn.Content.ToString(), false);
+            if (btn != null)
+            {
+                if (btn == ContourBtn) { ContourEnabled = false; UpdateWaveform(); }
+                UIValueChanged?.Invoke(btn.Content.ToString(), false);
+            }
         }
 
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             const double PassbandCenterX = 320.0;
             const double border2X = 427.0;
-            const double FixedSlopeWidth = 20.0; // Reduced from 40.0 for steeper sides
+            const double FixedSlopeWidth = 20.0; 
             const double thumbHalfWidth = 8.0;
 
             double currentLeft = Canvas.GetLeft(WidthThumb);
@@ -248,40 +323,42 @@ namespace YAESU_FT_891_Front_End
             if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
 
             double currentNotchX = Canvas.GetLeft(NotchThumb) + 9;
-
             if (currentNotchX < leftShoulderX)
             {
-                double newNotchLeft = leftShoulderX - 9;
-                Canvas.SetLeft(NotchThumb, Math.Max(213.0, Math.Min(427.0 - 18, newNotchLeft)));
+                Canvas.SetLeft(NotchThumb, leftShoulderX - 9);
                 NotchFreq = (int)(((Math.Max(213.0, leftShoulderX) - 213.0) / (427.0 - 213.0)) * 100);
             }
             else if (currentNotchX > rightShoulderX)
             {
-                double newNotchLeft = rightShoulderX - 9;
-                Canvas.SetLeft(NotchThumb, Math.Max(213.0, Math.Min(427.0 - 18, newNotchLeft)));
+                Canvas.SetLeft(NotchThumb, rightShoulderX - 9);
                 NotchFreq = (int)(((Math.Min(427.0, rightShoulderX) - 213.0) / (427.0 - 213.0)) * 100);
+            }
+
+            double currentContourX = Canvas.GetLeft(ContourThumb) + 8;
+            if (currentContourX < leftShoulderX)
+            {
+                Canvas.SetLeft(ContourThumb, leftShoulderX - 8);
+            }
+            else if (currentContourX > rightShoulderX)
+            {
+                Canvas.SetLeft(ContourThumb, rightShoulderX - 8);
             }
 
             NotchBadge.Text = NotchDepth == 0 ? "NCH: OFF" : "NCH: " + NotchFreq + "% F / " + NotchDepth + "% D";
 
             UpdateWaveform();
-            if (UIValueChanged != null) UIValueChanged("SH", WidthValue);
-            if (UIValueChanged != null) UIValueChanged("NCH_FREQ", NotchFreq);
+            UIValueChanged?.Invoke("SH", WidthValue);
+            UIValueChanged?.Invoke("NCH_FREQ", NotchFreq);
         }
 
-        // --- CONSTRAINED FIXED-SLOPE TRAPEZOID MATH ---
         private double GetPassbandY(double x, double wX)
         {
             const double PassbandCenterX = 320.0;
-            const double PeakY = 20.0;
-            const double CenterY = 51.0;
-            const double FixedSlopeWidth = 20.0; // Reduced from 40.0 for steeper sides
-
+            const double FixedSlopeWidth = 20.0;
             const double border1X = 213.0;
             const double border2X = 427.0;
 
             double halfWidth = Math.Max(0, wX - PassbandCenterX);
-
             double leftShoulderX = PassbandCenterX - halfWidth;
             double rightShoulderX = PassbandCenterX + halfWidth;
 
@@ -303,12 +380,9 @@ namespace YAESU_FT_891_Front_End
             if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
 
             if (x < baseLeftX || x > baseRightX) return CenterY;
+            if (x >= leftShoulderX && x <= rightShoulderX) return PeakY;
 
-            if (x >= leftShoulderX && x <= rightShoulderX)
-            {
-                return PeakY;
-            }
-            else if (x < leftShoulderX)
+            if (x < leftShoulderX)
             {
                 double pct = (x - baseLeftX) / FixedSlopeWidth;
                 return CenterY - (pct * (CenterY - PeakY));
@@ -322,18 +396,17 @@ namespace YAESU_FT_891_Front_End
 
         private void UpdateWaveform()
         {
-            if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null ||
-    Segment1 == null || Segment2 == null || EndSegment == null ||
-    DnrRightFigure == null || DnrRightSegment == null || DnrRightSegment2 == null ||
-    FillDnrRightFigure == null || FillDnrRightSegment == null || FillDnrRightSegment2 == null ||
-    Segment3PointC == null || FillSegment3PointC == null)
+            if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null || ContourThumb == null ||
+                Segment1 == null || Segment2 == null || EndSegment == null ||
+                DnrRightFigure == null || DnrRightSegment == null || DnrRightSegment2 == null ||
+                FillDnrRightFigure == null || FillDnrRightSegment == null || FillDnrRightSegment2 == null ||
+                Segment3PointC == null || FillSegment3PointC == null ||
+                Segment3PointD == null || Segment3PointE == null || Segment3PointF == null ||
+                FillSegment3PointD == null || FillSegment3PointE == null || FillSegment3PointF == null)
                 return;
 
-            const double CenterY = 51.0;
-            const double PeakY = 20.0;
             const double PassbandCenterX = 320.0;
             const double FixedSlopeWidth = 20.0;
-
             const double border0X = 0.0;
             const double border1X = 213.0;
             const double border2X = 427.0;
@@ -343,28 +416,23 @@ namespace YAESU_FT_891_Front_End
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
             double wX = Canvas.GetLeft(WidthThumb) + 8;
-            double wY = PeakY;
-            Canvas.SetTop(WidthThumb, wY - 8);
+            Canvas.SetTop(WidthThumb, PeakY - 8);
 
             double dnrX = Canvas.GetLeft(DnrThumb) + 8;
             double dnrY = Canvas.GetTop(DnrThumb) + 8;
 
-            // 1. Compute Symmetrical Shoulder Positions
             double halfWidth = Math.Max(0, wX - PassbandCenterX);
             double leftShoulderX = PassbandCenterX - halfWidth;
             double rightShoulderX = PassbandCenterX + halfWidth;
 
-            // 2. Derive Base Footing Positions
             double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
             double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
 
-            // Hard clamp constraints at the absolute borders to prevent overlap glitches
             if (currentBaseLeftX < border1X)
             {
                 currentBaseLeftX = border1X;
                 leftShoulderX = currentBaseLeftX + FixedSlopeWidth;
             }
-            // Leave a mandatory 1-pixel structural gap before border2X to completely eliminate the rendering glitch
             if (currentBaseRightX > border2X - 1.0)
             {
                 currentBaseRightX = border2X - 1.0;
@@ -374,19 +442,19 @@ namespace YAESU_FT_891_Front_End
             if (leftShoulderX > PassbandCenterX) leftShoulderX = PassbandCenterX;
             if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
 
-            // 3. Fetch and Clamp Notch Coordinate Positioning
             double nX = Canvas.GetLeft(NotchThumb) + 9;
             double nY = Canvas.GetTop(NotchThumb) + 9;
             nX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
+            Canvas.SetLeft(NotchThumb, nX - 9);
 
-            double passbandBaselineY = GetPassbandY(nX, wX);
-            if (nY < passbandBaselineY)
-            {
-                nY = passbandBaselineY;
-                Canvas.SetTop(NotchThumb, passbandBaselineY - 9);
-            }
+            double cX = Canvas.GetLeft(ContourThumb) + 8;
+            double cY = Canvas.GetTop(ContourThumb) + 8;
+            cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
+            Canvas.SetLeft(ContourThumb, cX - 8);
 
-            // Badge positioning updates
+            if (NotchDepth == 0) { nY = PeakY; Canvas.SetTop(NotchThumb, PeakY - 9); }
+            if (!ContourEnabled) { cY = PeakY; Canvas.SetTop(ContourThumb, PeakY - 8); }
+
             Canvas.SetLeft(NbBadge, nbX - 22);
             Canvas.SetTop(NbBadge, nbY - 22);
             Canvas.SetLeft(WidthBadge, border1X + 15);
@@ -396,7 +464,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetLeft(DnrBadge, dnrX - 22);
             Canvas.SetTop(DnrBadge, dnrY - 22);
 
-            // 4. Noise Blanker Curve (Left Side - Symmetrical Baseline Standard)
+            // Left Noise Blanker Segment 
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
             Segment1.Point2 = new Point(nbX - (nbX - border0X) * 0.1, nbY);
             Segment1.Point3 = new Point(nbX, nbY);
@@ -405,69 +473,71 @@ namespace YAESU_FT_891_Front_End
             Segment2.Point2 = new Point(border1X - (border1X - nbX) * 0.5, CenterY);
             Segment2.Point3 = new Point(border1X, CenterY);
 
-            // 5. Trapezoid Passband
+            // Passband Framework Coordinates
             Point pA = new Point(currentBaseLeftX, CenterY);
             Point pB = new Point(currentBaseRightX, CenterY);
-
             Segment3PointA.Point = pA;
             WidthRightSegment.Point = pB;
 
-            Point pLeftShoulder = new Point(leftShoulderX, PeakY);
-            Point pRightShoulder = new Point(rightShoulderX, PeakY);
+            List<Point> midPoints = new List<Point>
+            {
+                new Point(leftShoulderX, PeakY),
+                new Point(rightShoulderX, PeakY)
+            };
 
             if (NotchDepth > 0)
             {
-                double notchLeftX = Math.Max(leftShoulderX, nX - 12);
-                double notchRightX = Math.Min(rightShoulderX, nX + 12);
-
-                double notchLeftY = GetPassbandY(notchLeftX, wX);
-                double notchRightY = GetPassbandY(notchRightX, wX);
-
-                Point pNotchLeft = new Point(notchLeftX, notchLeftY);
-                Point pNotchTip = new Point(nX, nY);
-                Point pNotchRight = new Point(notchRightX, notchRightY);
-
-                List<Point> midPoints = new List<Point> { pLeftShoulder, pNotchLeft, pNotchTip, pNotchRight, pRightShoulder };
-                midPoints.Sort((pt1, pt2) => pt1.X.CompareTo(pt2.X));
-
-                Segment3PointNotchLeft.Point = midPoints[0];
-                Segment3PointNotchTip.Point = midPoints[1];
-                Segment3PointNotchRight.Point = midPoints[2];
-                Segment3PointB.Point = midPoints[3];
-                Segment3PointC.Point = midPoints[4];
+                midPoints.Add(new Point(Math.Max(leftShoulderX, nX - 12), PeakY));
+                midPoints.Add(new Point(nX, nY));
+                midPoints.Add(new Point(Math.Min(rightShoulderX, nX + 12), PeakY));
             }
             else
             {
-                Segment3PointNotchLeft.Point = pLeftShoulder;
-                Segment3PointNotchTip.Point = pLeftShoulder;
-                Segment3PointNotchRight.Point = pRightShoulder;
-                Segment3PointB.Point = pRightShoulder;
-                Segment3PointC.Point = pRightShoulder;
+                midPoints.Add(new Point(leftShoulderX, PeakY));
+                midPoints.Add(new Point(leftShoulderX, PeakY));
+                midPoints.Add(new Point(leftShoulderX, PeakY));
             }
 
-            // 6. FIXED: Force a flat horizontal line from the moving foot to the partition wall (border2X).
-            // Point1 starts exactly at the moving right foot (currentBaseRightX) locked to the floor (CenterY).
+            if (ContourEnabled)
+            {
+                midPoints.Add(new Point(Math.Max(leftShoulderX, cX - 30), PeakY));
+                midPoints.Add(new Point(cX, cY));
+                midPoints.Add(new Point(Math.Min(rightShoulderX, cX + 30), PeakY));
+            }
+            else
+            {
+                midPoints.Add(new Point(rightShoulderX, PeakY));
+                midPoints.Add(new Point(rightShoulderX, PeakY));
+                midPoints.Add(new Point(rightShoulderX, PeakY));
+            }
+
+            // Un-loopable pipeline sorting engine
+            midPoints.Sort((pt1, pt2) => pt1.X.CompareTo(pt2.X));
+
+            Segment3PointNotchLeft.Point = midPoints[0];
+            Segment3PointNotchTip.Point = midPoints[1];
+            Segment3PointNotchRight.Point = midPoints[2];
+            Segment3PointB.Point = midPoints[3];
+            Segment3PointC.Point = midPoints[4];
+            Segment3PointD.Point = midPoints[5];
+            Segment3PointE.Point = midPoints[6];
+            Segment3PointF.Point = midPoints[7];
+
             EndSegment.Point1 = new Point(currentBaseRightX, CenterY);
-            // Point2 keeps the line perfectly flat as it travels to the border wall.
             EndSegment.Point2 = new Point(border2X, CenterY);
-            // Point3 lands exactly at the fixed border2X wall (427.0), flat on the floor.
             EndSegment.Point3 = new Point(border2X, CenterY);
 
-            // 7. FIXED: Decoupled DNR side (Left slope up to thumb, right slope down to edge)
+            // Standalone Decoupled DNR Path Segment mapping
             DnrRightFigure.StartPoint = new Point(border2X, CenterY);
-
-            // Curve 1: From the partition wall (border2X) UP to the DNR Thumb (dnrX, dnrY)
             DnrRightSegment.Point1 = new Point(border2X + (dnrX - border2X) * 0.5, CenterY);
             DnrRightSegment.Point2 = new Point(dnrX - (dnrX - border2X) * 0.1, dnrY);
             DnrRightSegment.Point3 = new Point(dnrX, dnrY);
 
-            // Curve 2: From the DNR Thumb (dnrX, dnrY) DOWN to the right window edge (border3X, CenterY)
             DnrRightSegment2.Point1 = new Point(dnrX + (border3X - dnrX) * 0.1, dnrY);
             DnrRightSegment2.Point2 = new Point(border3X - (border3X - dnrX) * 0.5, CenterY);
             DnrRightSegment2.Point3 = new Point(border3X, CenterY);
 
-
-            // 8. Synchronize Vector Fill Paths
+            // Sync Path Fills together
             FillSegment1.Point1 = Segment1.Point1;
             FillSegment1.Point2 = Segment1.Point2;
             FillSegment1.Point3 = Segment1.Point3;
@@ -482,18 +552,19 @@ namespace YAESU_FT_891_Front_End
             FillSegment3PointNotchRight.Point = Segment3PointNotchRight.Point;
             FillSegment3PointB.Point = Segment3PointB.Point;
             FillSegment3PointC.Point = Segment3PointC.Point;
+            FillSegment3PointD.Point = Segment3PointD.Point;
+            FillSegment3PointE.Point = Segment3PointE.Point;
+            FillSegment3PointF.Point = Segment3PointF.Point;
             FillWidthRightSegment.Point = WidthRightSegment.Point;
 
             FillEndSegment.Point1 = EndSegment.Point1;
             FillEndSegment.Point2 = EndSegment.Point2;
             FillEndSegment.Point3 = EndSegment.Point3;
 
-            // Sync the new DNR standalone paths
             FillDnrRightFigure.StartPoint = DnrRightFigure.StartPoint;
             FillDnrRightSegment.Point1 = DnrRightSegment.Point1;
             FillDnrRightSegment.Point2 = DnrRightSegment.Point2;
             FillDnrRightSegment.Point3 = DnrRightSegment.Point3;
-
             FillDnrRightSegment2.Point1 = DnrRightSegment2.Point1;
             FillDnrRightSegment2.Point2 = DnrRightSegment2.Point2;
             FillDnrRightSegment2.Point3 = DnrRightSegment2.Point3;

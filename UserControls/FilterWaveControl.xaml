@@ -135,6 +135,7 @@
                 RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True"
                 TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
 
+            <!-- Background Grid Blocks -->
             <Polygon Canvas.Left="0" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
             <Polygon Canvas.Left="21" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="43" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
@@ -157,14 +158,12 @@
             <Polygon Canvas.Left="0" Canvas.Top="38" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="42" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="46" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-
             <Polygon Canvas.Left="0" Canvas.Top="56" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="0" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
 
             <Canvas Canvas.Left="0" Canvas.Top="67" Width="213" Height="12">
                 <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
-
             <Canvas Canvas.Left="0" Canvas.Top="86" Width="213" Height="12">
                 <TextBlock x:Name="NbTextBlock" Text="NB: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
@@ -173,8 +172,8 @@
             <Polygon Canvas.Left="235" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="256" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="277" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="299" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#FF00FFCC"/>
+            <Polygon Canvas.Left="299" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#FF00FFCC"/>
+            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="341" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="363" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="384" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
@@ -183,7 +182,6 @@
             <Canvas Canvas.Left="214" Canvas.Top="10" Width="213" Height="12">
                 <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
-
             <Canvas Canvas.Left="214" Canvas.Top="29" Width="213" Height="12">
                 <TextBlock x:Name="WidthNotchTextBlock" Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
@@ -228,7 +226,6 @@
             <Polygon Canvas.Left="427" Canvas.Top="42" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="427" Canvas.Top="45" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="427" Canvas.Top="48" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-
             <Polygon Canvas.Left="427" Canvas.Top="54" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="427" Canvas.Top="57" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="427" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
@@ -236,14 +233,12 @@
             <Canvas Canvas.Left="427" Canvas.Top="67" Width="213" Height="12">
                 <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
             </Canvas>
-
             <Canvas Canvas.Left="427" Canvas.Top="86" Width="213" Height="12">
                 <TextBlock x:Name="DNRTextBlock" Text="NR: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
             <Polygon Canvas.Left="1" Canvas.Top="0" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="1" Canvas.Top="106" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
-
             <Polygon Name="HHorizonLine" Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="#33FFFFFF"/>
         </Canvas>
 
@@ -270,9 +265,11 @@
                                 <LineSegment x:Name="FillSegment3PointNotchRight" Point="328,51"/>
                                 <LineSegment x:Name="FillSegment3PointB" Point="314,51"/>
                                 <LineSegment x:Name="FillSegment3PointC" Point="350,51"/>
+                                <LineSegment x:Name="FillSegment3PointD" Point="350,51"/>
+                                <LineSegment x:Name="FillSegment3PointE" Point="350,51"/>
+                                <LineSegment x:Name="FillSegment3PointF" Point="350,51"/>
                                 <LineSegment x:Name="FillWidthRightSegment" Point="426.6,51"/>
                                 <BezierSegment x:Name="FillEndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
-                                <!-- Anchor points to close the main fill container shape -->
                                 <LineSegment Point="427,102"/>
                                 <LineSegment Point="0,102"/>
                             </PathFigure.Segments>
@@ -294,7 +291,6 @@
                         <PathFigure x:Name="FillDnrRightFigure" StartPoint="427,51">
                             <PathFigure.Segments>
                                 <BezierSegment x:Name="FillDnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
-                                <!-- NEW: Second half of the fill curve -->
                                 <BezierSegment x:Name="FillDnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
                                 <LineSegment Point="643,102"/>
                                 <LineSegment Point="427,102"/>
@@ -304,7 +300,7 @@
                 </Path.Data>
             </Path>
 
-            <!-- 3. THE GLOWING TOP NEON LINE (Trunkated main path) -->
+            <!-- 3. THE GLOWING TOP NEON LINE -->
             <Path Stroke="#FF00FFCC" StrokeThickness="2.5">
                 <Path.Effect>
                     <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
@@ -321,6 +317,9 @@
                                 <LineSegment x:Name="Segment3PointNotchRight" Point="328,51"/>
                                 <LineSegment x:Name="Segment3PointB" Point="314,51"/>
                                 <LineSegment x:Name="Segment3PointC" Point="350,51"/>
+                                <LineSegment x:Name="Segment3PointD" Point="350,51"/>
+                                <LineSegment x:Name="Segment3PointE" Point="350,51"/>
+                                <LineSegment x:Name="Segment3PointF" Point="350,51"/>
                                 <LineSegment x:Name="WidthRightSegment" Point="426.6,51"/>
                                 <BezierSegment x:Name="EndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
                             </PathFigure.Segments>
@@ -339,7 +338,6 @@
                         <PathFigure x:Name="DnrRightFigure" StartPoint="427,51">
                             <PathFigure.Segments>
                                 <BezierSegment x:Name="DnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
-                                <!-- NEW: Second half of the stroke curve -->
                                 <BezierSegment x:Name="DnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
@@ -347,19 +345,23 @@
                 </Path.Data>
             </Path>
 
+            <!-- Interactives Overlaid Canvas Area -->
             <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
                 <TextBlock x:Name="NbBadge" Text="NB: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="100.6" Canvas.Top="15"/>
                 <TextBlock x:Name="WidthBadge" Text="WD: 0%" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="260" Canvas.Top="75"/>
                 <TextBlock x:Name="NotchBadge" Text="NCH: OFF" Foreground="#FFFF007F" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="340" Canvas.Top="75"/>
+                <TextBlock x:Name="ContourBadge" Text="CNT: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="214" Canvas.Top="75"/>
                 <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="527.3" Canvas.Top="15"/>
 
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="100.6" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
                 <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta" />
                 <Thumb x:Name="NotchThumb" Style="{StaticResource NotchHandleStyle}" Canvas.Left="314" Canvas.Top="51" DragDelta="NotchThumb_DragDelta" />
+                <Thumb x:Name="ContourThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta" />
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="527.3" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
             </Canvas>
         </Grid>
 
+        <!-- Dynamic Control Bottom Panel Options -->
         <Grid Grid.Row="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
