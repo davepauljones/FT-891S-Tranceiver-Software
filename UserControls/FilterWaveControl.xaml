@@ -4,7 +4,6 @@
              Width="643" Height="142">
 
     <UserControl.Resources>
-
         <Style x:Key="FilterToggleStyle" TargetType="ToggleButton">
             <Setter Property="Width" Value="85"/>
             <Setter Property="Height" Value="22"/>
@@ -124,7 +123,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
 
     <Grid>
@@ -252,6 +250,7 @@
         <Grid Grid.Row="0">
             <Line X1="0" Y1="51" X2="643" Y2="51" Stroke="#44FFFFFF" StrokeThickness="1" StrokeDashArray="4 4"/>
 
+            <!-- 1. THE GRADIENT BACKGROUND FILL -->
             <Path Stroke="Transparent">
                 <Path.Fill>
                     <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -263,8 +262,8 @@
                     <PathGeometry>
                         <PathFigure x:Name="FillFigure" StartPoint="0,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="FillSegment1" Point1="0,51" Point2="0,51" Point3="100.6,51"/>
-                                <BezierSegment x:Name="FillSegment2" Point1="0,51" Point2="0,51" Point3="213.3,51"/>
+                                <BezierSegment x:Name="FillSegment1" Point1="25,51" Point2="75,51" Point3="100.6,51"/>
+                                <BezierSegment x:Name="FillSegment2" Point1="125,51" Point2="185,51" Point3="213.3,51"/>
                                 <LineSegment x:Name="FillSegment3PointA" Point="213.3,51"/>
                                 <LineSegment x:Name="FillSegment3PointNotchLeft" Point="300,51"/>
                                 <LineSegment x:Name="FillSegment3PointNotchTip" Point="314,51"/>
@@ -272,9 +271,9 @@
                                 <LineSegment x:Name="FillSegment3PointB" Point="314,51"/>
                                 <LineSegment x:Name="FillSegment3PointC" Point="350,51"/>
                                 <LineSegment x:Name="FillWidthRightSegment" Point="426.6,51"/>
-                                <BezierSegment x:Name="FillEndSegment" Point1="426.6,51" Point2="426.6,51" Point3="527.3,51"/>
-                                <BezierSegment x:Name="FillDnrRightSegment" Point1="426.6,51" Point2="426.6,51" Point3="643,51"/>
-                                <LineSegment Point="643,102"/>
+                                <BezierSegment x:Name="FillEndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
+                                <!-- Anchor points to close the main fill container shape -->
+                                <LineSegment Point="427,102"/>
                                 <LineSegment Point="0,102"/>
                             </PathFigure.Segments>
                         </PathFigure>
@@ -282,6 +281,30 @@
                 </Path.Data>
             </Path>
 
+            <!-- 2. THE STANDALONE FILL FOR DNR SECTION -->
+            <Path Stroke="Transparent">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="#5000FFCC" Offset="0"/>
+                        <GradientStop Color="#08000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Path.Fill>
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure x:Name="FillDnrRightFigure" StartPoint="427,51">
+                            <PathFigure.Segments>
+                                <BezierSegment x:Name="FillDnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
+                                <!-- NEW: Second half of the fill curve -->
+                                <BezierSegment x:Name="FillDnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
+                                <LineSegment Point="643,102"/>
+                                <LineSegment Point="427,102"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- 3. THE GLOWING TOP NEON LINE (Trunkated main path) -->
             <Path Stroke="#FF00FFCC" StrokeThickness="2.5">
                 <Path.Effect>
                     <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
@@ -290,8 +313,8 @@
                     <PathGeometry>
                         <PathFigure x:Name="WaveFigure" StartPoint="0,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="Segment1" Point1="0,51" Point2="0,51" Point3="100.6,51"/>
-                                <BezierSegment x:Name="Segment2" Point1="0,51" Point2="0,51" Point3="213.3,51"/>
+                                <BezierSegment x:Name="Segment1" Point1="25,51" Point2="75,51" Point3="100.6,51"/>
+                                <BezierSegment x:Name="Segment2" Point1="125,51" Point2="185,51" Point3="213.3,51"/>
                                 <LineSegment x:Name="Segment3PointA" Point="213.3,51"/>
                                 <LineSegment x:Name="Segment3PointNotchLeft" Point="300,51"/>
                                 <LineSegment x:Name="Segment3PointNotchTip" Point="314,51"/>
@@ -299,8 +322,25 @@
                                 <LineSegment x:Name="Segment3PointB" Point="314,51"/>
                                 <LineSegment x:Name="Segment3PointC" Point="350,51"/>
                                 <LineSegment x:Name="WidthRightSegment" Point="426.6,51"/>
-                                <BezierSegment x:Name="EndSegment" Point1="426.6,51" Point2="426.6,51" Point3="527.3,51"/>
-                                <BezierSegment x:Name="DnrRightSegment" Point1="426.6,51" Point2="426.6,51" Point3="643,51"/>
+                                <BezierSegment x:Name="EndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- 4. THE STANDALONE TOP NEON DNR LINE -->
+            <Path Stroke="#FF00FFCC" StrokeThickness="2.5">
+                <Path.Effect>
+                    <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
+                </Path.Effect>
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure x:Name="DnrRightFigure" StartPoint="427,51">
+                            <PathFigure.Segments>
+                                <BezierSegment x:Name="DnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
+                                <!-- NEW: Second half of the stroke curve -->
+                                <BezierSegment x:Name="DnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -314,12 +354,7 @@
                 <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="527.3" Canvas.Top="15"/>
 
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="100.6" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
-                <Thumb x:Name="WidthThumb" 
-       Style="{StaticResource WaveHandleStyle}" 
-       Cursor="SizeWE" 
-       Canvas.Left="314" 
-       Canvas.Top="20" 
-       DragDelta="WidthThumb_DragDelta" />
+                <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta" />
                 <Thumb x:Name="NotchThumb" Style="{StaticResource NotchHandleStyle}" Canvas.Left="314" Canvas.Top="51" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="527.3" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
             </Canvas>

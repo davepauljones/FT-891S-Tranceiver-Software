@@ -23,7 +23,7 @@ namespace YAESU_FT_891_Front_End
         public FilterWave(MainWindow mainWindow, FilterWaveControl uiControl)
         {
             this.mainWindow = mainWindow;
-            this.uiControl = uiControl ?? throw new ArgumentNullException(nameof(uiControl));
+            this.uiControl = uiControl ?? throw new ArgumentNullException("uiControl");
             this.uiDispatcher = uiControl.Dispatcher;
 
             uiControl.UIValueChanged += OnUIValueChanged;
@@ -35,7 +35,7 @@ namespace YAESU_FT_891_Front_End
             {
                 try
                 {
-                    if (mainWindow?._catManager == null) return;
+                    if (mainWindow == null || mainWindow._catManager == null) return;
 
                     switch (parameter)
                     {
@@ -47,8 +47,7 @@ namespace YAESU_FT_891_Front_End
 
                         case "SH":
                             _widthValue = (int)value;
-                            // Width is normally controlled by 'WD' command parameter
-                            if (_widthValue == -1) // -1=off on P2 Range is 0-21 0=default
+                            if (_widthValue == -1)
                                 await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, _widthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             else
                                 await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, 9 }, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -56,17 +55,12 @@ namespace YAESU_FT_891_Front_End
 
                         case "NCH_FREQ":
                             _notchFreq = (int)value;
-                            // Map the 0-100% slider value to the actual FT-891 manual notch Hz value (10Hz - 3200Hz)
                             int scaledHz = 10 + (int)((_notchFreq / 100.0) * 3190);
-
-                            // Send Notch Frequency Command to Radio (typically 'BP' or Notch setting)
                             // Example: await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, scaledHz }, ...);
                             break;
 
                         case "NCH_DEPTH":
                             _notchDepth = (int)value;
-                            // If NotchDepth is 0, send a command to turn OFF the manual notch.
-                            // If > 0, send a command to turn ON the manual notch filter.
                             bool active = _notchDepth > 0;
                             // Example: await mainWindow._catManager.SendCatCommandAsync("NT", new object[] { 0, active ? 1 : 0 }, ...);
                             break;
@@ -87,7 +81,7 @@ namespace YAESU_FT_891_Front_End
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"CAT Error sending {parameter}: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine("CAT Error sending " + parameter + ": " + ex.Message);
                 }
             });
         }
@@ -107,8 +101,8 @@ namespace YAESU_FT_891_Front_End
                         uiControl.SetWidthValue(_widthValue);
                         break;
                     case "NCH":
-                        // Expected structure: dynamic tuple or split string payload containing Freq and Depth
-                        if (value is Tuple<int, int> notchVals)
+                        Tuple<int, int> notchVals = value as Tuple<int, int>;
+                        if (notchVals != null)
                         {
                             _notchFreq = notchVals.Item1;
                             _notchDepth = notchVals.Item2;
