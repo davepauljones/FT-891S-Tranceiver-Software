@@ -86,6 +86,7 @@ namespace YAESU_FT_891_Front_End
             const double FixedSlopeWidth = 40.0;
             const double thumbHalfWidth = 8.0;
 
+            // The maximum X the right shoulder can reach before its base hits border2X (427.0)
             double maxShoulderX = border2X - FixedSlopeWidth;
             double minX = PassbandCenterX;
             double maxX = maxShoulderX - thumbHalfWidth;
@@ -137,12 +138,15 @@ namespace YAESU_FT_891_Front_End
             double targetCenterX = currentLeft + 9 + e.HorizontalChange;
             double targetCenterY = currentTop + 9 + e.VerticalChange;
 
+            // Get current width configuration to calculate shoulder bounds
             double wX = Canvas.GetLeft(WidthThumb) + 8;
             double halfWidth = Math.Max(0, wX - PassbandCenterX);
 
+            // The exact top-edge structural bounds of the trapezoid plateau
             double leftShoulderX = PassbandCenterX - halfWidth;
             double rightShoulderX = PassbandCenterX + halfWidth;
 
+            // Adjust for border constraints if the width forces shoulders outward
             double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
             double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
             if (currentBaseLeftX < 213.0) leftShoulderX = 213.0 + FixedSlopeWidth;
@@ -151,6 +155,7 @@ namespace YAESU_FT_891_Front_End
             if (leftShoulderX > PassbandCenterX) leftShoulderX = PassbandCenterX;
             if (rightShoulderX < PassbandCenterX) rightShoulderX = PassbandCenterX;
 
+            // CLAMP: The Notch center is now trapped completely between the plateau shoulders
             double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
             double clampedTop = Math.Max(CenterY, Math.Min(CanvasHeight - 18, targetCenterY - 9));
 
@@ -211,7 +216,7 @@ namespace YAESU_FT_891_Front_End
         {
             const double PassbandCenterX = 320.0;
             const double border2X = 427.0;
-            const double FixedSlopeWidth = 20.0;
+            const double FixedSlopeWidth = 20.0; // Reduced from 40.0 for steeper sides
             const double thumbHalfWidth = 8.0;
 
             double currentLeft = Canvas.GetLeft(WidthThumb);
@@ -264,12 +269,13 @@ namespace YAESU_FT_891_Front_End
             if (UIValueChanged != null) UIValueChanged("NCH_FREQ", NotchFreq);
         }
 
+        // --- CONSTRAINED FIXED-SLOPE TRAPEZOID MATH ---
         private double GetPassbandY(double x, double wX)
         {
             const double PassbandCenterX = 320.0;
             const double PeakY = 20.0;
             const double CenterY = 51.0;
-            const double FixedSlopeWidth = 20.0;
+            const double FixedSlopeWidth = 20.0; // Reduced from 40.0 for steeper sides
 
             const double border1X = 213.0;
             const double border2X = 427.0;
@@ -352,11 +358,13 @@ namespace YAESU_FT_891_Front_End
             double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
             double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
 
+            // Hard clamp constraints at the absolute borders to prevent overlap glitches
             if (currentBaseLeftX < border1X)
             {
                 currentBaseLeftX = border1X;
                 leftShoulderX = currentBaseLeftX + FixedSlopeWidth;
             }
+            // Leave a mandatory 1-pixel structural gap before border2X to completely eliminate the rendering glitch
             if (currentBaseRightX > border2X - 1.0)
             {
                 currentBaseRightX = border2X - 1.0;
@@ -388,7 +396,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetLeft(DnrBadge, dnrX - 22);
             Canvas.SetTop(DnrBadge, dnrY - 22);
 
-            // 4. Noise Blanker Curve
+            // 4. Noise Blanker Curve (Left Side - Symmetrical Baseline Standard)
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
             Segment1.Point2 = new Point(nbX - (nbX - border0X) * 0.1, nbY);
             Segment1.Point3 = new Point(nbX, nbY);
@@ -437,9 +445,12 @@ namespace YAESU_FT_891_Front_End
                 Segment3PointC.Point = pRightShoulder;
             }
 
-            // 6. Main path landing target right at the partition wall
+            // 6. FIXED: Force a flat horizontal line from the moving foot to the partition wall (border2X).
+            // Point1 starts exactly at the moving right foot (currentBaseRightX) locked to the floor (CenterY).
             EndSegment.Point1 = new Point(currentBaseRightX, CenterY);
+            // Point2 keeps the line perfectly flat as it travels to the border wall.
             EndSegment.Point2 = new Point(border2X, CenterY);
+            // Point3 lands exactly at the fixed border2X wall (427.0), flat on the floor.
             EndSegment.Point3 = new Point(border2X, CenterY);
 
             // 7. FIXED: Decoupled DNR side (Left slope up to thumb, right slope down to edge)
