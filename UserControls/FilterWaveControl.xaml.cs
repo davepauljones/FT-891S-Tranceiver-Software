@@ -27,7 +27,7 @@ namespace YAESU_FT_891_Front_End
         public int ContourValue { get; private set; }
         public bool ContourEnabled { get; private set; }
         public int DnrValue { get; private set; }
-        public double ShiftValue { get; private set; } // Tracks passband shift engine updates
+        public double ShiftValue { get; private set; }
 
         public event Action<string, object> UIValueChanged;
 
@@ -35,8 +35,8 @@ namespace YAESU_FT_891_Front_End
         {
             InitializeComponent();
             Loaded += (s, e) => {
-                UpdateThumbPositions();
-                UpdateWaveform();
+                UpdateThumbPositions(); // 1. Calculate and place the thumbs physically
+                UpdateWaveform();       // 2. Draw the visual trapezoid matching those positions
             };
         }
 
@@ -99,7 +99,7 @@ namespace YAESU_FT_891_Front_End
             double nbTop = CenterY - ((NbValue / 10.0) * travelSpaceNb);
             Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
-            // 2. Constrained Width Position based on Active Shifts
+            // 2. Width Position
             double currentCenter = BaseCenter + ShiftValue;
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             const double thumbHalfWidth = 8.0;
@@ -112,8 +112,20 @@ namespace YAESU_FT_891_Front_End
             double halfWidth = Math.Max(0, wX - currentCenter);
             double leftShoulderX = currentCenter - halfWidth;
             double rightShoulderX = currentCenter + halfWidth;
-            if ((leftShoulderX - FixedSlopeWidth) < border1X) leftShoulderX = border1X + FixedSlopeWidth;
-            if ((rightShoulderX + FixedSlopeWidth) > border2X) rightShoulderX = border2X - FixedSlopeWidth;
+
+            double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
+            double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
+
+            if (currentBaseLeftX < border1X)
+            {
+                currentBaseLeftX = border1X;
+                leftShoulderX = currentBaseLeftX + FixedSlopeWidth;
+            }
+            if (currentBaseRightX > border2X - 1.0)
+            {
+                currentBaseRightX = border2X - 1.0;
+                rightShoulderX = currentBaseRightX - FixedSlopeWidth;
+            }
 
             // 3. Notch Position
             double nX = border1X + ((NotchFreq / 100.0) * (border2X - border1X));
@@ -135,8 +147,8 @@ namespace YAESU_FT_891_Front_End
             double dnrTop = CenterY - ((DnrValue / 15.0) * travelSpaceDnr);
             Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
 
-            // 6. Anchor Shift Controller Thumb to Moving Passband Shoulder
-            Canvas.SetLeft(ShiftThumb, rightShoulderX - 8);
+            // 6. Shift Position - Set cleanly from the synchronized baseline edge data point
+            Canvas.SetLeft(ShiftThumb, currentBaseRightX);
             Canvas.SetTop(ShiftThumb, CenterY - 8);
 
             _isUpdatingProgrammatically = false;
@@ -162,7 +174,6 @@ namespace YAESU_FT_891_Front_End
             double newLeftShoulder = targetCenter - halfWidth;
             double newRightShoulder = targetCenter + halfWidth;
 
-            // Contain parameters within shifting windows
             double currentNotchX = Canvas.GetLeft(NotchThumb) + 9;
             if (currentNotchX < newLeftShoulder) currentNotchX = newLeftShoulder;
             if (currentNotchX > newRightShoulder) currentNotchX = newRightShoulder;
@@ -174,11 +185,7 @@ namespace YAESU_FT_891_Front_End
             if (currentContourX > newRightShoulder) currentContourX = newRightShoulder;
             Canvas.SetLeft(ContourThumb, currentContourX - 8);
 
-            _isUpdatingProgrammatically = true;
-            Canvas.SetLeft(WidthThumb, targetCenter + halfWidth - 8);
-            Canvas.SetLeft(ShiftThumb, newRightShoulder - 8);
-            _isUpdatingProgrammatically = false;
-
+            UpdateThumbPositions();
             UpdateWaveform();
             UIValueChanged?.Invoke("SHIFT", (int)ShiftValue);
         }
@@ -198,39 +205,14 @@ namespace YAESU_FT_891_Front_End
             if (newLeft < minX) newLeft = minX;
             if (newLeft > maxX) newLeft = maxX;
 
-            Canvas.SetLeft(WidthThumb, newLeft);
-
             double percentage = ((newLeft - minX) / (maxX - minX)) * 100;
             WidthValue = (int)Math.Round(percentage);
             if (WidthBadge != null) WidthBadge.Text = "WD: " + WidthValue + "%";
 
-            double halfWidth = Math.Max(0, newLeft - currentCenter);
-            double leftShoulderX = currentCenter - halfWidth;
-            double rightShoulderX = currentCenter + halfWidth;
-
-            if ((leftShoulderX - FixedSlopeWidth) < border1X) leftShoulderX = border1X + FixedSlopeWidth;
-            if ((rightShoulderX + FixedSlopeWidth) > border2X) rightShoulderX = border2X - FixedSlopeWidth;
-
-            double currentNotchX = Canvas.GetLeft(NotchThumb) + 9;
-            if (currentNotchX < leftShoulderX)
-            {
-                Canvas.SetLeft(NotchThumb, leftShoulderX - 9);
-                NotchFreq = (int)(((leftShoulderX - border1X) / (border2X - border1X)) * 100);
-            }
-            else if (currentNotchX > rightShoulderX)
-            {
-                Canvas.SetLeft(NotchThumb, rightShoulderX - 9);
-                NotchFreq = (int)(((rightShoulderX - border1X) / (border2X - border1X)) * 100);
-            }
-
-            double currentContourX = Canvas.GetLeft(ContourThumb) + 8;
-            if (currentContourX < leftShoulderX) Canvas.SetLeft(ContourThumb, leftShoulderX - 8);
-            else if (currentContourX > rightShoulderX) Canvas.SetLeft(ContourThumb, rightShoulderX - 8);
-
-            Canvas.SetLeft(ShiftThumb, rightShoulderX - 8);
-            if (NotchBadge != null) NotchBadge.Text = NotchDepth == 0 ? "NCH: OFF" : "NCH: " + NotchFreq + "% F / " + NotchDepth + "% D";
-
+            // Run updates in absolute sequence via data properties
+            UpdateThumbPositions();
             UpdateWaveform();
+
             UIValueChanged?.Invoke("WIDTH", WidthValue);
         }
 
@@ -388,8 +370,13 @@ namespace YAESU_FT_891_Front_End
             double nbX = 42.0;
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
+            // Mathematical Sync Path - Computes wX purely from data values instead of querying Canvas UI layouts
             double currentCenter = BaseCenter + ShiftValue;
-            double wX = Canvas.GetLeft(WidthThumb) + 8;
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double minX = currentCenter;
+            double maxX = currentCenter + maxHalfWidth - 8.0;
+
+            double wX = minX + ((WidthValue / 100.0) * (maxX - minX)) + 8.0;
             Canvas.SetTop(WidthThumb, PeakY - 8);
 
             double dnrX = 598.0;
@@ -431,7 +418,7 @@ namespace YAESU_FT_891_Front_End
             if (WidthBadge != null) { Canvas.SetLeft(WidthBadge, border1X + 15); Canvas.SetTop(WidthBadge, 75); }
             if (NotchBadge != null) { Canvas.SetLeft(NotchBadge, border2X - 110); Canvas.SetTop(NotchBadge, 75); }
             if (DnrBadge != null) { Canvas.SetLeft(DnrBadge, dnrX - 22); Canvas.SetTop(DnrBadge, dnrY - 22); }
-            if (ShiftBadge != null) { Canvas.SetLeft(ShiftBadge, currentCenter - 15); }
+            if (ShiftBadge != null) { Canvas.SetLeft(ShiftBadge, currentBaseRightX - 15); }
 
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
             Segment1.Point2 = new Point(nbX - (nbX - border0X) * 0.1, nbY);
