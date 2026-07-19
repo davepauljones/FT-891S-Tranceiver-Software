@@ -135,106 +135,98 @@
                 RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True"
                 TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
 
-            <!-- Background Grid Blocks -->
+            <!-- ================= AREA 1: NOISE BLANKER (NB) ================= -->
             <Polygon Canvas.Left="0" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
             <Polygon Canvas.Left="21" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="43" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="64" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="85" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="107" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#FF00FFCC"/>
-            <Polygon Canvas.Left="128" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="149" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="171" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="192" Canvas.Top="0" Points="0,0 0,60 1,60 1,1" Fill="#33FFFFFF"/>
 
-            <Polygon Canvas.Left="0" Canvas.Top="6"  Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="10" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="14" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="18" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="22" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="26" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="30" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="34" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="38" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="42" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="46" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="56" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="0" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="6"  Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="10" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="14" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="18" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="22" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="26" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="30" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="34" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="38" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="42" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="46" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="56" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="0" Canvas.Top="60" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
 
-            <Canvas Canvas.Left="0" Canvas.Top="67" Width="213" Height="12">
-                <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
+            <Canvas Canvas.Left="0" Canvas.Top="67" Width="84" Height="12">
+                <TextBlock Text="MAX BLANK" Foreground="#FFA0AABF" Width="84" FontSize="9" TextAlignment="Center"/>
             </Canvas>
-            <Canvas Canvas.Left="0" Canvas.Top="86" Width="213" Height="12">
-                <TextBlock x:Name="NbTextBlock" Text="NB: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
+            <Canvas Canvas.Left="0" Canvas.Top="86" Width="84" Height="12">
+                <TextBlock x:Name="NbTextBlock" Text="NB: OFF" Foreground="#FFFFFFFF" Width="84" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
-            <Polygon Canvas.Left="213" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
+            <!-- ================= AREA 2: FILTER PASSBAND (CENTER) ================= -->
+            <Polygon Canvas.Left="84" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
+            <Polygon Canvas.Left="107" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="149" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="192" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="235" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="256" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="277" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="299" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#FF00FFCC"/>
-            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="341" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#FF00FFCC"/>
             <Polygon Canvas.Left="363" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="384" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="405" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="448" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="491" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="533" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
 
-            <Canvas Canvas.Left="214" Canvas.Top="10" Width="213" Height="12">
-                <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
+            <Canvas Canvas.Left="84" Canvas.Top="10" Width="472" Height="12">
+                <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="472" FontSize="11" TextAlignment="Center"/>
             </Canvas>
-            <Canvas Canvas.Left="214" Canvas.Top="29" Width="213" Height="12">
-                <TextBlock x:Name="WidthNotchTextBlock" Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
+            <Canvas Canvas.Left="84" Canvas.Top="29" Width="472" Height="12">
+                <TextBlock x:Name="WidthNotchTextBlock" Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" Width="472" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
-            <Polygon Canvas.Left="213" Canvas.Top="55" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="59" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="63" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="67" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="71" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="75" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="79" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="83" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="87" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="91" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="95" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="213" Canvas.Top="99" Points="0,0 214,0 214,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="55" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="59" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="63" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="67" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="71" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="75" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="79" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="83" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="87" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="91" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="95" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="99" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
 
-            <Polygon Canvas.Left="427" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
-            <Polygon Canvas.Left="448" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="469" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="491" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="512" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="533" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#FF00FFCC"/>
-            <Polygon Canvas.Left="555" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
+            <!-- ================= AREA 3: DIGITAL NOISE REDUCTION (NR) ================= -->
+            <Polygon Canvas.Left="556" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
             <Polygon Canvas.Left="576" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="597" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="619" Canvas.Top="6" Points="0,0 0,55 1,55 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="640" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
 
-            <Polygon Canvas.Left="427" Canvas.Top="6"  Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="9"  Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="12" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="15" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="18" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="21" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="24" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="27" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="30" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="33" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="36" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="39" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="42" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="45" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="48" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="54" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="57" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="427" Canvas.Top="60" Points="0,0 213,0 213,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="6"  Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="9"  Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="12" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="15" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="18" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="21" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="24" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="27" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="30" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="33" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="36" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="39" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="42" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="45" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="48" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="54" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="57" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="556" Canvas.Top="60" Points="0,0 84,0 84,1 0,1" Fill="Gray"/>
 
-            <Canvas Canvas.Left="427" Canvas.Top="67" Width="213" Height="12">
-                <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" Width="213" FontSize="11" TextAlignment="Center"/>
+            <Canvas Canvas.Left="556" Canvas.Top="67" Width="84" Height="12">
+                <TextBlock Text="MAX DNR" Foreground="#FFA0AABF" Width="84" FontSize="9" TextAlignment="Center"/>
             </Canvas>
-            <Canvas Canvas.Left="427" Canvas.Top="86" Width="213" Height="12">
-                <TextBlock x:Name="DNRTextBlock" Text="NR: OFF" Foreground="#FFFFFFFF" Width="213" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
+            <Canvas Canvas.Left="556" Canvas.Top="86" Width="84" Height="12">
+                <TextBlock x:Name="DNRTextBlock" Text="NR: OFF" Foreground="#FFFFFFFF" Width="84" FontSize="11" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
             <Polygon Canvas.Left="1" Canvas.Top="0" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
@@ -257,9 +249,9 @@
                     <PathGeometry>
                         <PathFigure x:Name="FillFigure" StartPoint="0,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="FillSegment1" Point1="25,51" Point2="75,51" Point3="100.6,51"/>
-                                <BezierSegment x:Name="FillSegment2" Point1="125,51" Point2="185,51" Point3="213.3,51"/>
-                                <LineSegment x:Name="FillSegment3PointA" Point="213.3,51"/>
+                                <BezierSegment x:Name="FillSegment1" Point1="10,51" Point2="30,51" Point3="42,51"/>
+                                <BezierSegment x:Name="FillSegment2" Point1="50,51" Point2="75,51" Point3="84,51"/>
+                                <LineSegment x:Name="FillSegment3PointA" Point="84,51"/>
                                 <LineSegment x:Name="FillSegment3PointNotchLeft" Point="300,51"/>
                                 <LineSegment x:Name="FillSegment3PointNotchTip" Point="314,51"/>
                                 <LineSegment x:Name="FillSegment3PointNotchRight" Point="328,51"/>
@@ -268,9 +260,9 @@
                                 <LineSegment x:Name="FillSegment3PointD" Point="350,51"/>
                                 <LineSegment x:Name="FillSegment3PointE" Point="350,51"/>
                                 <LineSegment x:Name="FillSegment3PointF" Point="350,51"/>
-                                <LineSegment x:Name="FillWidthRightSegment" Point="426.6,51"/>
-                                <BezierSegment x:Name="FillEndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
-                                <LineSegment Point="427,102"/>
+                                <LineSegment x:Name="FillWidthRightSegment" Point="556,51"/>
+                                <BezierSegment x:Name="FillEndSegment" Point1="556,51" Point2="556,51" Point3="556,51"/>
+                                <LineSegment Point="556,102"/>
                                 <LineSegment Point="0,102"/>
                             </PathFigure.Segments>
                         </PathFigure>
@@ -288,12 +280,12 @@
                 </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure x:Name="FillDnrRightFigure" StartPoint="427,51">
+                        <PathFigure x:Name="FillDnrRightFigure" StartPoint="556,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="FillDnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
+                                <BezierSegment x:Name="FillDnrRightSegment" Point1="570,51" Point2="620,51" Point3="643,51"/>
                                 <BezierSegment x:Name="FillDnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
                                 <LineSegment Point="643,102"/>
-                                <LineSegment Point="427,102"/>
+                                <LineSegment Point="556,102"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -309,9 +301,9 @@
                     <PathGeometry>
                         <PathFigure x:Name="WaveFigure" StartPoint="0,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="Segment1" Point1="25,51" Point2="75,51" Point3="100.6,51"/>
-                                <BezierSegment x:Name="Segment2" Point1="125,51" Point2="185,51" Point3="213.3,51"/>
-                                <LineSegment x:Name="Segment3PointA" Point="213.3,51"/>
+                                <BezierSegment x:Name="Segment1" Point1="10,51" Point2="30,51" Point3="42,51"/>
+                                <BezierSegment x:Name="Segment2" Point1="50,51" Point2="75,51" Point3="84,51"/>
+                                <LineSegment x:Name="Segment3PointA" Point="84,51"/>
                                 <LineSegment x:Name="Segment3PointNotchLeft" Point="300,51"/>
                                 <LineSegment x:Name="Segment3PointNotchTip" Point="314,51"/>
                                 <LineSegment x:Name="Segment3PointNotchRight" Point="328,51"/>
@@ -320,8 +312,8 @@
                                 <LineSegment x:Name="Segment3PointD" Point="350,51"/>
                                 <LineSegment x:Name="Segment3PointE" Point="350,51"/>
                                 <LineSegment x:Name="Segment3PointF" Point="350,51"/>
-                                <LineSegment x:Name="WidthRightSegment" Point="426.6,51"/>
-                                <BezierSegment x:Name="EndSegment" Point1="450,51" Point2="500,51" Point3="527.3,51"/>
+                                <LineSegment x:Name="WidthRightSegment" Point="556,51"/>
+                                <BezierSegment x:Name="EndSegment" Point1="556,51" Point2="556,51" Point3="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -335,9 +327,9 @@
                 </Path.Effect>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure x:Name="DnrRightFigure" StartPoint="427,51">
+                        <PathFigure x:Name="DnrRightFigure" StartPoint="556,51">
                             <PathFigure.Segments>
-                                <BezierSegment x:Name="DnrRightSegment" Point1="450,51" Point2="600,51" Point3="643,51"/>
+                                <BezierSegment x:Name="DnrRightSegment" Point1="570,51" Point2="620,51" Point3="643,51"/>
                                 <BezierSegment x:Name="DnrRightSegment2" Point1="643,51" Point2="643,51" Point3="643,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
@@ -345,23 +337,27 @@
                 </Path.Data>
             </Path>
 
-            <!-- Interactives Overlaid Canvas Area -->
+            <!-- Interactives Canvas -->
             <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
-                <TextBlock x:Name="NbBadge" Text="NB: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="100.6" Canvas.Top="15"/>
-                <TextBlock x:Name="WidthBadge" Text="WD: 0%" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="260" Canvas.Top="75"/>
-                <TextBlock x:Name="NotchBadge" Text="NCH: OFF" Foreground="#FFFF007F" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="340" Canvas.Top="75"/>
-                <TextBlock x:Name="ContourBadge" Text="CNT: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="214" Canvas.Top="75"/>
-                <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="527.3" Canvas.Top="15"/>
+                <TextBlock x:Name="NbBadge" Text="NB: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="42" Canvas.Top="15"/>
+                <TextBlock x:Name="WidthBadge" Text="WD: 0%" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="105" Canvas.Top="75"/>
+                <TextBlock x:Name="NotchBadge" Text="NCH: OFF" Foreground="#FFFF007F" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="430" Canvas.Top="75"/>
+                <TextBlock x:Name="ContourBadge" Text="CNT: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="86" Canvas.Top="75"/>
+                <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="598" Canvas.Top="15"/>
 
-                <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="100.6" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
+                <!-- added tracking readout label for slider adjustments -->
+                <TextBlock x:Name="ShiftBadge" Text="SF: 0" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="320" Canvas.Top="75"/>
+
+                <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="35" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
                 <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta" />
                 <Thumb x:Name="NotchThumb" Style="{StaticResource NotchHandleStyle}" Canvas.Left="314" Canvas.Top="51" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="ContourThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta" />
-                <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="527.3" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
+                <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
+                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta"/>
             </Canvas>
         </Grid>
 
-        <!-- Dynamic Control Bottom Panel Options -->
+        <!-- Control Panel Options -->
         <Grid Grid.Row="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
