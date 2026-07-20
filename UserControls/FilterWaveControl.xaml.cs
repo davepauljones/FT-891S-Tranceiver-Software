@@ -148,7 +148,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
 
             // 6. Shift Position - Set cleanly from the synchronized baseline edge data point
-            Canvas.SetLeft(ShiftThumb, currentBaseRightX);
+            Canvas.SetLeft(ShiftThumb, currentBaseRightX );
             Canvas.SetTop(ShiftThumb, CenterY - 8);
 
             _isUpdatingProgrammatically = false;
