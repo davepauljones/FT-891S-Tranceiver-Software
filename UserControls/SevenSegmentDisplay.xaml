@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
              mc:Ignorable="d" 
              d:DesignHeight="166" d:DesignWidth="110" Background="#AA444444"
+             Focusable="True"
+             KeyDown="SevenSegmentUserControl_KeyDown"
              MouseLeftButtonDown="SevenSegmentUserControl_MouseLeftButtonDown"
              MouseWheel="SevenSegmentUserControl_MouseWheel"
              MouseLeave="SevenSegmentUserControl_MouseLeave">

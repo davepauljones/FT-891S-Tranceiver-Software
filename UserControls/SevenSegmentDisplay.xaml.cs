@@ -324,6 +324,8 @@ namespace YAESU_FT_891_Front_End
                 this.Background = new SolidColorBrush(Colors.Orange);
                 ScrollWheelEnabled = true;
                 IsEditing = true; // <-- Added: We are editing now!
+                                  // Clicking the control gives it focus so Arrow keys start working immediately
+                this.Focus();
             }
         }
 
@@ -363,5 +365,36 @@ namespace YAESU_FT_891_Front_End
             ScrollWheelEnabled = false;
             IsEditing = false; // <-- Added: Done editing!
         }
+
+        private void SevenSegmentUserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (ScrollWheelEnabled)
+            {
+
+                if (e.Key == Key.Up)
+                {
+                    if ((int)HexDigit < 9)
+                        HexDigit++;
+                    else
+                        HexDigit = 0;
+
+                    e.Handled = true; // Prevent the event from bubbling/scrolling parent containers
+                }
+                else if (e.Key == Key.Down)
+                {
+                    if (HexDigit > 0)
+                        HexDigit--;
+                    else
+                        HexDigit = (HexDigits)9;
+
+                    e.Handled = true;
+                }
+
+                // --- CRITICAL STEP: Push the update directly up to the parent container binding ---
+                var bindingExpression = this.GetBindingExpression(HexDigitProperty);
+                bindingExpression?.UpdateSource();
+            }
+        }
+
     }
 }
