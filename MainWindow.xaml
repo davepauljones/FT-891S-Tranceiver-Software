@@ -11,9 +11,9 @@
         xmlns:modeUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:frequencyDisplay="clr-namespace:YAESU_FT_891_Front_End"
         mc:Ignorable="d"
-        WindowStartupLocation="CenterScreen" Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
+        Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
         ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
-        Title="YAESU FT-891 Front End by David G7UIV" Height="Auto" Width="Auto" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
+        Title="YAESU FT-891 Front End by David G7UIV" Height="452" Width="1349" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <Window.Resources>
         <local:HeightToParentConverter x:Key="ListViewConverter"/>
     </Window.Resources>
