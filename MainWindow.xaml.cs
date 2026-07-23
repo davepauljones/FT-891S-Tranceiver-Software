@@ -20,6 +20,7 @@ using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using static YAESU_FT_891_Front_End.SevenSegmentDisplay;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 
 namespace YAESU_FT_891_Front_End
@@ -1640,5 +1641,25 @@ namespace YAESU_FT_891_Front_End
             Debug.WriteLine(MainViewBox.ActualHeight);
         }
 
+        private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!stationSeek.IsScanning)
+            {
+
+                if (e.Key == Key.Down)
+                {
+                    LargeFrequencyDisplay.Frequency -= 1000;
+
+                    e.Handled = true; // Prevent the event from bubbling/scrolling parent containers
+                }
+                else if (e.Key == Key.Up)
+                {
+                    LargeFrequencyDisplay.Frequency += 1000;
+
+                    e.Handled = true;
+                }
+
+            }
+        }
     }
 }
