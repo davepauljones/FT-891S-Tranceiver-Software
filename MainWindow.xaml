@@ -440,7 +440,7 @@
                             <Label Content="DNR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
 
-                        <Border x:Name="FastNormalGrid" Canvas.Left="306" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                        <Border x:Name="FastNormalBorder" Canvas.Left="306" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
                             <Label Content="FAST" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
 

@@ -58,6 +58,7 @@ namespace FT891S_CatControl
 
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
+        public FastStep FastStep { get; set; }
     }
 
     // =========================================================================
@@ -274,6 +275,7 @@ namespace FT891S_CatControl
         public WidthModes Switch { get; set; }
         public WidthValues Values { get; set; }
     }
+    public enum FastStep { FastStep_OFF = 0, FastStep_ON = 1 }
 
     // =========================================================================
     // 4. THE YAESU CONFIGURATION REGISTRY WITH GLOBAL ROUTER
@@ -475,6 +477,13 @@ namespace FT891S_CatControl
                 FT891S_CatManager.currentRadioState.WidthValue = result.Values;
             }
         );
+        public static readonly FT891S_CatCommand<int> FS = new FT891S_CatCommand<int>(
+            "FS",
+            new CatStructure().Expect("P1", 1),
+            new CatStructure().Expect("P1", 1),
+            dict => int.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.FastStep = (FastStep)result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -496,7 +505,8 @@ namespace FT891S_CatControl
             { "NL", NL },
             { "NR", NR },
             { "RL", RL },
-            { "SH", SH }
+            { "SH", SH },
+            { "FS", FS }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
@@ -789,6 +799,21 @@ namespace FT891S_CatControl
             //mainWindow.lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
             mainWindow.UpdateKnobInput3();
             mainWindow.UpdateKnobInput4();
+
+            if (currentRadioState.NoiseBlankerMode == NBMode.NB_OFF)
+                mainWindow.NBLabelBorder.Visibility = Visibility.Hidden;
+            else
+                mainWindow.NBLabelBorder.Visibility = Visibility.Visible;
+
+            if (currentRadioState.NoiseReductionMode == NRMode.NR_OFF)
+                mainWindow.DNRLabelBorder.Visibility = Visibility.Hidden;
+            else
+                mainWindow.DNRLabelBorder.Visibility = Visibility.Visible;
+
+            if (currentRadioState.FastStep == FastStep.FastStep_OFF)
+                mainWindow.FastNormalBorder.Visibility = Visibility.Hidden;
+            else
+                mainWindow.FastNormalBorder.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -962,6 +987,26 @@ namespace FT891S_CatControl
                             await SendCatCommandAsync("RG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                         break;
+                    case 8:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("NB", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                            await SendCatCommandAsync("NL", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 9:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("NR", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                            await SendCatCommandAsync("RL", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 10:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("FS", mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                        break;
                 }
 
                 if (mainWindow.waterFallSweep.ScopeOnOff == true)
@@ -994,7 +1039,7 @@ namespace FT891S_CatControl
 
             while (!token.IsCancellationRequested)
             {
-                if (packet == 8)
+                if (packet == 11)
                     packet = 0;
 
                 await MainWaterfallOutGoingData(packet);

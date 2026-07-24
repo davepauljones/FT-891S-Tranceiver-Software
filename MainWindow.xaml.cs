@@ -139,7 +139,7 @@ namespace YAESU_FT_891_Front_End
             centerX = Canvas.GetLeft(FingerIndentImage);
             centerY = Canvas.GetTop(FingerIndentImage);
 
-            FastNormalGrid.Visibility = Visibility.Hidden;
+            FastNormalBorder.Visibility = Visibility.Hidden;
 
             _blurTimer = new DispatcherTimer();
             _blurTimer.Interval = TimeSpan.FromMilliseconds(16); // ~60 FPS
@@ -698,20 +698,22 @@ namespace YAESU_FT_891_Front_End
             });
         }
 
-        private void FastButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void FastButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
-            AnimateButtonClick(c, () =>
+            AnimateButtonClick(c, async () =>
             {
                 if (tuningStep == 10)
                 {
                     tuningStep = 100;
-                    FastNormalGrid.Visibility = Visibility.Visible;
+                    FastNormalBorder.Visibility = Visibility.Visible;
+                    await _catManager.SendCatCommandAsync("FS", new object[] { (int)FastStep.FastStep_ON }, _catManager.OutGoingDataLoopDelay);
                 }
                 else
                 {
                     tuningStep = 10;
-                    FastNormalGrid.Visibility = Visibility.Hidden;
+                    FastNormalBorder.Visibility = Visibility.Hidden;
+                    await _catManager.SendCatCommandAsync("FS", new object[] { (int)FastStep.FastStep_OFF }, _catManager.OutGoingDataLoopDelay);
                 }
             });
         }
