@@ -359,8 +359,12 @@ namespace YAESU_FT_891_Front_End
                     }
                     break;
                 case SimulatedWaterfallButtons.START:
+                    mainWindow.waterFallSweep.ScopeOnOff = false;
+                    mainWindow.waterFallSweep.ToggleSweepOnOff();
                     break;
                 case SimulatedWaterfallButtons.STOP:
+                    mainWindow.waterFallSweep.ScopeOnOff = true;
+                    mainWindow.waterFallSweep.ToggleSweepOnOff();
                     break;
                 default:
 
