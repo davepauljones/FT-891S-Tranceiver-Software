@@ -41,10 +41,18 @@ namespace YAESU_FT_891_Front_End
                     {
                         case "NB":
                             _nbValue = (int)value;
+
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (_nbValue == 0)
+                                    mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                                else
+                                    mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            });
+                           
                             await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
-
                         case "SH":
                             _widthValue = (int)value;
                             if (_widthValue == -1)
@@ -67,6 +75,15 @@ namespace YAESU_FT_891_Front_End
 
                         case "NR":
                             _dnrValue = (int)value;
+
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (_dnrValue == 0)
+                                    mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                                else
+                                    mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            });
+
                             if (_dnrValue == 0)
                             {
                                 await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);

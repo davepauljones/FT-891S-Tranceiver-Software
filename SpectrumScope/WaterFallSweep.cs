@@ -11,9 +11,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using YAESU_FT_891_Front_End.Models;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
-using YAESU_FT_891_Front_End.Models;
+using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -136,107 +137,165 @@ namespace YAESU_FT_891_Front_End
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, mainWindow._catManager.OutGoingDataLoopDelay);
             }
 
-            double canvasCurrentPosition = canvasFullLeftPos;
             double totalCanvasWidth = canvasFullRightPos - canvasFullLeftPos;
             long totalSpanHz = mainWindow.simulatedWaterfall.GetSpanHz(SimulatedWaterfall.currentFrequencySpan);
             if (totalSpanHz <= 0) totalSpanHz = 50000;
 
             double pixelStep = ((double)step / (double)totalSpanHz) * totalCanvasWidth;
-            bandScopeCanvas.Children.Clear();
 
-            canvas.Visibility = Visibility.Visible;
-
-            List<byte> currentLineData = new List<byte>();
-            double currentLevelSetting = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenu.Level].currentValue;
+            // Track sweep direction: true = forward (start to end), false = backward (end to start)
+            bool sweepForward = true;
 
             try
             {
-                for (long freq = startFreq; freq <= endFreq; freq += step)
+                while (!token.IsCancellationRequested && ScopeOnOff)
                 {
-                    if (token.IsCancellationRequested || !ScopeOnOff)
+                    // Set initial position based on direction
+                    double canvasCurrentPosition = sweepForward ? canvasFullLeftPos : canvasFullRightPos;
+                    bandScopeCanvas.Children.Clear();
+                    canvas.Visibility = Visibility.Visible;
+
+                    List<byte> currentLineData = new List<byte>();
+                    double currentLevelSetting = FunctionMenuClass.FunctionMenuMinMaxScaleTypeList[FunctionMenu.Level].currentValue;
+
+                    // Define loop boundaries based on current direction
+                    long loopStart = sweepForward ? startFreq : endFreq;
+                    long loopEnd = sweepForward ? endFreq : startFreq;
+                    long currentStep = sweepForward ? step : -step;
+
+                    for (long freq = loopStart; sweepForward ? freq <= loopEnd : freq >= loopEnd; freq += currentStep)
                     {
-                        break;
-                    }
-
-                    Canvas.SetLeft(canvas, canvasCurrentPosition);
-
-                    int rawMeterReading = 0;
-
-                    if (UseTimeSlicing)
-                    {
-                        // Hop out to sample frequency
-                        await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, TimeSliceHopDelayMs);
-
-                        // Query S-Meter
-                        await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, TimeSliceHopDelayMs);
-                        rawMeterReading = FT891S_CatManager.currentRadioState.CurrentMeterReading;
-
-                        // Hop straight back to QSO audio center
-                        await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { currentQsoCenterFrequency }, TimeSliceHopDelayMs);
-                    }
-                    else
-                    {
-                        // High-Speed Mode
-                        await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
-                        await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
-                        rawMeterReading = FT891S_CatManager.currentRadioState.CurrentMeterReading;
-                    }
-
-                    // --- PROCESS & DRAW DATAPOINT ---
-                    double baseSignal = rawMeterReading * 2.5;
-                    double colorScaleShift = currentLevelSetting * 4.25;
-                    int adjustedSignal = (int)(baseSignal + colorScaleShift);
-                    byte finalizedSignal = (byte)Math.Max(0, Math.Min(255, adjustedSignal));
-                    currentLineData.Add(finalizedSignal);
-
-                    if (UseTimeSlicing)
-                    {
-                        mainWindow.frequencyManagement.SetFrequencyUIForBandScope(freq, mainWindow.MainFrequencyTextBlock);
-                    }
-                    else
-                    {
-                        mainWindow.frequencyManagement.SetFrequencyUIForBandScope(freq, mainWindow.MainFrequencyTextBlock);
-                        mainWindow.LargeFrequencyDisplay.Frequency = freq;
-                    }
-
-                    if (!(freq == startFreq))
-                    {
-                        Double height = Convert.ToDouble(MainWindow.GetSMeterIntegerForBandScope(rawMeterReading));
-                        height += currentLevelSetting;
-                        height = Math.Max(0, height);
-
-                        Rectangle r = new Rectangle { Width = SimulatedWaterfall.currentFrequencySpanRectangleWidth, Height = height, Fill = new SolidColorBrush(Colors.DodgerBlue) };
-                        bandScopeCanvas.Children.Add(r);
-
-                        Canvas.SetLeft(r, canvasCurrentPosition - 14);
-                        Canvas.SetBottom(r, 0);
-
-                        if (canvasCurrentPosition < canvasFullRightPos)
-                        {
-                            canvasCurrentPosition += pixelStep;
-                        }
-                        else
+                        if (token.IsCancellationRequested || !ScopeOnOff)
                         {
                             break;
                         }
-                    }
 
-                    if (freq == endFreq)
-                    {
                         Canvas.SetLeft(canvas, canvasCurrentPosition);
+
+                        int rawMeterReading = 0;
+
+                        if (UseTimeSlicing)
+                        {
+                            await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, TimeSliceHopDelayMs);
+                            await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, TimeSliceHopDelayMs);
+                            rawMeterReading = FT891S_CatManager.currentRadioState.CurrentMeterReading;
+                            await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { currentQsoCenterFrequency }, TimeSliceHopDelayMs);
+                        }
+                        else
+                        {
+                            await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
+                            await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
+                            rawMeterReading = FT891S_CatManager.currentRadioState.CurrentMeterReading;
+                        }
+
+                        // --- PROCESS & DRAW DATAPOINT ---
+                        double baseSignal = rawMeterReading * 2.5;
+                        double colorScaleShift = currentLevelSetting * 4.25;
+                        int adjustedSignal = (int)(baseSignal + colorScaleShift);
+                        byte finalizedSignal = (byte)Math.Max(0, Math.Min(255, adjustedSignal));
+                        currentLineData.Add(finalizedSignal);
+
+                        if (UseTimeSlicing)
+                        {
+                            mainWindow.frequencyManagement.SetFrequencyUIForBandScope(freq, mainWindow.MainFrequencyTextBlock);
+                        }
+                        else
+                        {
+                            mainWindow.frequencyManagement.SetFrequencyUIForBandScope(freq, mainWindow.MainFrequencyTextBlock);
+                            mainWindow.LargeFrequencyDisplay.Frequency = freq;
+                        }
+
+                        if (freq != loopStart)
+                        {
+                            Double height = Convert.ToDouble(MainWindow.GetSMeterIntegerForBandScope(rawMeterReading));
+                            height += currentLevelSetting;
+                            height = Math.Max(0, height);
+
+                            Rectangle r = new Rectangle { Width = SimulatedWaterfall.currentFrequencySpanRectangleWidth, Height = height, Fill = new SolidColorBrush(Colors.DodgerBlue) };
+                            bandScopeCanvas.Children.Add(r);
+
+                            // Adjust placement offset based on sweep direction
+                            double rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 19;
+
+                            switch (SimulatedWaterfall.currentFrequencySpan)
+                            {
+                                case FrequencySpans._1K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 290;
+                                    break;
+                                case FrequencySpans._2K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 151;
+                                    break;
+                                case FrequencySpans._5K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 69;
+                                    break;
+                                case FrequencySpans._10K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 41;
+                                    break;
+                                case FrequencySpans._20K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 28;
+                                    break;
+                                case FrequencySpans._50K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 19;
+                                    break;
+                                case FrequencySpans._100K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 17;
+                                    break;
+                                case FrequencySpans._200K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 15;
+                                    break;
+                                case FrequencySpans._500K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 14;
+                                    break;
+                                case FrequencySpans._1000K:
+                                    rectPosition = sweepForward ? canvasCurrentPosition - 14 : canvasCurrentPosition - 13;
+                                    break;
+                            }
+                            
+                            Canvas.SetLeft(r, rectPosition);
+                            Canvas.SetBottom(r, 1);
+
+                            if (sweepForward)
+                            {
+                                if (canvasCurrentPosition < canvasFullRightPos) canvasCurrentPosition += pixelStep;
+                                else break;
+                            }
+                            else
+                            {
+                                if (canvasCurrentPosition > canvasFullLeftPos) canvasCurrentPosition -= pixelStep;
+                                else break;
+                            }
+                        }
+
+                        if (freq == loopEnd)
+                        {
+                            Canvas.SetLeft(canvas, canvasCurrentPosition);
+                        }
+
+                        if (UseTimeSlicing)
+                        {
+                            await Task.Delay(TimeSliceListenDwellMs, token);
+                        }
                     }
 
-                    if (UseTimeSlicing)
+                    if (!token.IsCancellationRequested && ScopeOnOff && mainWindow.psudo3DWaterfall != null && currentLineData.Count > 0)
                     {
-                        await Task.Delay(TimeSliceListenDwellMs);
-                    }
-                }
+                        // If sweeping backward, reverse the data array so the waterfall aligns correctly left-to-right
+                        if (!sweepForward)
+                        {
+                            currentLineData.Reverse();
+                        }
 
-                if (!token.IsCancellationRequested && ScopeOnOff && mainWindow.psudo3DWaterfall != null && currentLineData.Count > 0)
-                {
-                    mainWindow.psudo3DWaterfall.AddSweepToHistory(currentLineData.ToArray());
-                    mainWindow.psudo3DWaterfall.Render3DWaterfall();
+                        mainWindow.psudo3DWaterfall.AddSweepToHistory(currentLineData.ToArray());
+                        mainWindow.psudo3DWaterfall.Render3DWaterfall();
+                    }
+
+                    // Toggle direction for the next iteration
+                    sweepForward = !sweepForward;
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected when cancellation is requested
             }
             catch (Exception ex)
             {
@@ -259,9 +318,11 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.fT891S_SerialPort.SendCAT(mainWindow.fT891S_SerialPort._port, "SQ015");
                 }
 
-                _cts.Dispose();
+                _cts?.Dispose();
                 _cts = null;
                 SweepActive = false;
+                ScopeOnOff = false;
+                mainWindow.ScopeOnOffTextBlock.Text = "OFF";
                 canvas.Visibility = Visibility.Collapsed;
             }
 

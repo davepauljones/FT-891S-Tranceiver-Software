@@ -93,7 +93,7 @@
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="CornerRadius" Value="2"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="Margin" Value="2"/>
+        <Setter Property="Margin" Value="1"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 

@@ -32,7 +32,7 @@ namespace YAESU_FT_891_Front_End
         public void GenerateCombinedSignalSprite(byte signalStrength, double xCenter, double maxSpanWidth, double heightMultiplier)
         {
             // 1. Clear old elements from UI
-            bandScopeCanvas.Children.Clear();
+            //bandScopeCanvas.Children.Clear();
             ClearWaterfallArea(bandScopeCanvas);
 
             if (signalStrength == 0)
@@ -137,7 +137,7 @@ namespace YAESU_FT_891_Front_End
                 Canvas.SetLeft(blockPolygon, xCenter - (layerWidth / 2.0));
 
                 double currentLayerBottom = i * BlockHeight;
-                Canvas.SetBottom(blockPolygon, currentLayerBottom);
+                Canvas.SetBottom(blockPolygon, currentLayerBottom + 1);
 
                 bandScopeCanvas.Children.Add(blockPolygon);
             }

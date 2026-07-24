@@ -966,21 +966,21 @@ namespace FT891S_CatControl
 
                 if (mainWindow.waterFallSweep.ScopeOnOff == true)
                 {
-                    if (DateTime.Now > lowPriorityDateTime + lowPriorityCATCommandsTimeSpan)
-                    {
-                        if (mainWindow.Dispatcher.CheckAccess())
-                        {
-                            // We are already on the UI thread! Run it directly.
-                            mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6);
-                        }
-                        else
-                        {
-                            // We are on a background thread. Marshal it over.
-                            await mainWindow.Dispatcher.BeginInvoke(new Action(() => mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6)));
-                        }
+                    //if (DateTime.Now > lowPriorityDateTime + lowPriorityCATCommandsTimeSpan)
+                    //{
+                    //    if (mainWindow.Dispatcher.CheckAccess())
+                    //    {
+                    //        // We are already on the UI thread! Run it directly.
+                    //        mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6);
+                    //    }
+                    //    else
+                    //    {
+                    //        // We are on a background thread. Marshal it over.
+                    //        await mainWindow.Dispatcher.BeginInvoke(new Action(() => mainWindow.waterFallSweep.Sweep(14252500, 14380000, 500, 6)));
+                    //    }
 
-                        lowPriorityDateTime = DateTime.Now;
-                    }
+                    //    lowPriorityDateTime = DateTime.Now;
+                    //}
                 }
             }
         }

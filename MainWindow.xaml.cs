@@ -260,12 +260,6 @@ namespace YAESU_FT_891_Front_End
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Init_Startup();
-
-            Left = (SystemParameters.WorkArea.Width - Width) / 2 + SystemParameters.WorkArea.Left;
-            Top = (SystemParameters.WorkArea.Height - Height) / 2 + SystemParameters.WorkArea.Top;
-
-            this.Top = 0;
-            //this.Left = this.Left - 120;
         }
 
         public void UpdateMeter(Rectangle rectangle, int catValue)

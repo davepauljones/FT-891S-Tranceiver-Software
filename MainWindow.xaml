@@ -13,7 +13,7 @@
         mc:Ignorable="d"
         Focusable="True"
         KeyDown="MetroWindow_KeyDown"
-        Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0"
+        Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0" SaveWindowPosition="True"
         ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
         Title="YAESU FT-891 Front End by David G7UIV" Height="452" Width="1349" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <Window.Resources>
@@ -379,12 +379,13 @@
                     </Border>
 
                     <Canvas x:Name="DefaultCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
+                        
                         <Viewbox x:Name="AnalogueSignalMeterViewbox" Visibility="Visible" Stretch="Uniform" Canvas.Left="-160" Canvas.Top="-45" Width="500" Height="110">
                             <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
                         </Viewbox>
 
-                        <Border Canvas.Left="166" Canvas.Top="5" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="18">
-                            <Label x:Name="TabControlDescriptionLabel" Content="WATERFALL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
+                        <Border Canvas.Left="261" Canvas.Top="71" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
+                            <Label x:Name="TabControlDescriptionLabel" Content="SPECTRUM SCOPE" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
                         </Border>
 
                         <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
@@ -393,9 +394,9 @@
                             </TextBlock.Effect>
                         </TextBlock>
 
-                        <local:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="3" Frequency="27555000" Height="40"/>
+                        <local:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="2" Frequency="14252000" Height="40"/>
 
-                        <frequencyDisplay:FrequencyDisplay x:Name="SubLargeFrequencyDisplay" Canvas.Left="394" Canvas.Top="44" Frequency="14252500" Width="180"/>
+                        <frequencyDisplay:FrequencyDisplay x:Name="SubLargeFrequencyDisplay" Canvas.Left="390" Canvas.Top="44" Frequency="7150000" Width="180"/>
                         
                         <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
                             <TextBlock.Effect>
@@ -403,36 +404,45 @@
                             </TextBlock.Effect>
                         </TextBlock>
 
-                        <Border Canvas.Left="570" Canvas.Top="47" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="18">
-                            <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,1,0,0"/>
+                        <Border Canvas.Left="570" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="13">
+                            <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
                         </Border>
 
-                        <Border x:Name="MainVFOABLabelBorder" Canvas.Left="286" Canvas.Top="3" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
+                        <Border x:Name="MainVFOABLabelBorder" Canvas.Left="282" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
                             <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
                         </Border>
 
-                        <Border x:Name="MainRigModeLabelBorder" Canvas.Left="286" Canvas.Top="23" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
+                        <Border x:Name="MainRigModeLabelBorder" Canvas.Left="282" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
                             <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                         </Border>
 
-                        <Border x:Name="FastNormalGrid" Canvas.Left="310" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
-                            <Label Content="FINE" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
-
-                        <Border x:Name="SubVFOABLabelBorder" Canvas.Left="342" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
+                        <Border x:Name="SubVFOABLabelBorder" Canvas.Left="338" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
                             <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
                         </Border>
 
-                        <Border x:Name="SubRigModeLabelBorder" Canvas.Left="342" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
+                        <Border x:Name="SubPowerControlLabelBorder" Canvas.Left="294" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="ForestGreen">
+                            <Label x:Name="SubPowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharSmallLabelStyle}"/>
+                        </Border>
+                        
+                        <Border x:Name="SubRigModeLabelBorder" Canvas.Left="338" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
                             <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
 
-                        <Border x:Name="PowerControlLabelBorder" Canvas.Left="230" Canvas.Top="23" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                        <Border x:Name="PowerControlLabelBorder" Canvas.Left="226" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
                             <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                         </Border>
 
-                        <TextBlock x:Name="NBTextBlock" Canvas.Left="288" Canvas.Top="55" Text="NB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="20"/>
-                        <TextBlock x:Name="DNRTextBlock" Canvas.Left="311" Canvas.Top="55" Text="DNR" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="30"/>
+                        <Border x:Name="NBLabelBorder" Canvas.Left="242" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="NB" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+                        
+                        <Border x:Name="DNRLabelBorder" Canvas.Left="274" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="DNR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="FastNormalGrid" Canvas.Left="306" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="FAST" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
 
                         <TextBlock x:Name="TuneTextBlock" Canvas.Left="90" Canvas.Top="68" Text="TUNE" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="IndianRed" Width="60"/>
                         
@@ -731,7 +741,6 @@
 
                     <Canvas x:Name="TabControlCanvas" Canvas.Left="274" Canvas.Top="182" Style="{StaticResource TabCanvasStyle}">
                         <TabControl x:Name="TabControlTabControl" Padding="0" Background="Transparent">
-
                             <TabControl.Template>
                                 <ControlTemplate TargetType="TabControl">
                                     <Grid>
@@ -871,7 +880,7 @@
                                     <Polygon Canvas.Left="140" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
                                     <Polygon Canvas.Left="200" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
                                     <Polygon Canvas.Left="260" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
-                                    
+
                                     <Polygon Canvas.Left="320" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
 
                                     <Polygon Canvas.Left="380" Canvas.Top="0" Points="0,0 0,55 1,55 1,1" Fill="Gray"/>
@@ -921,7 +930,7 @@
                                         <Polygon Canvas.Left="0.5" Canvas.Top="0" Points="0,0 14,0 7,11 0,0" Fill="Red"/>
                                         <Polygon x:Name="RedCursorVerticalPolygon" Canvas.Left="7" Canvas.Top="10" Points="0,0 0,35 1,35 1,0" Fill="Red"/>
                                     </Canvas>
-                                    <!--Red & Green Cursors--> 
+                                    <!--Red & Green Cursors-->
 
                                     <Polygon Name="SpanFrequencyLine" Canvas.Left="1" Canvas.Top="115" Points="0,0 640,0 640,1 0,1" Fill="White"/>
 
@@ -932,6 +941,8 @@
                                         <TextBlock x:Name="SpanLabel4TextBlock" Canvas.Left="414" Canvas.Top="-1" Padding="0" Text="+10k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
                                         <TextBlock x:Name="SpanLabel5TextBlock" Canvas.Left="532" Canvas.Top="-1" Padding="0" Text="+20k" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" FontSize="10" Foreground="White"/>
                                     </Canvas>
+
+                                    <Border Canvas.Left="-1" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="20" CornerRadius="0,0,0,24" BorderThickness="0"/>
 
                                     <Border Tag="0" Canvas.Left="20" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="SimulatedWaterfall_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
@@ -973,6 +984,8 @@
                                             <TextBlock Text="STOP" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
+
+                                    <Border Canvas.Left="620" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="21" CornerRadius="0,0,24,0" BorderThickness="0"/>
 
                                 </Canvas>
 

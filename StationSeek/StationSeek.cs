@@ -59,36 +59,34 @@ namespace YAESU_FT_891_Front_End
 
             mainWindow._catManager.StopOutgoingDataLoop();
 
-            //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
+            await Task.Delay(100);
+
             await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+            await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { startFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+            await Task.Delay(100);
+
+            if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+            {
+                await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, mainWindow._catManager.OutGoingDataLoopDelay);
+            }
+
+            await Task.Delay(100);
 
             Int32 PositionInTheList = 1;
 
             for (long freq = startFrequency; freq <= endFrequency; freq += freqStep)
             {
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, freq);
-                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
-                
-                //mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, FrequencyLocations.RXFrequencyHz, FT891S_CatManager.currentRadioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
-                //mainWindow.frequencyManagement.SetFrequency(freq);
-                //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
+                if (freq != startFrequency) await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { freq }, 5);
 
                 mainWindow.frequencyManagement.SetFrequencyUI(MemorySlot.MemorySlots.VFO_A, freq, mainWindow.MainFrequencyTextBlock);
                 mainWindow.LargeFrequencyDisplay.Frequency = freq;
 
-                //await mainWindow._catManager.SendCatCommandAsync("FA", mainWindow._catManager.OutGoingDataLoopDelay);
-                //mainWindow._catManager.SendReadQuery("FA");
-                //await Task.Delay(mainWindow._catManager.OutGoingDataLoopDelay);
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-                //await Task.Delay(10);
-
                 if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                 {
-                    await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
+                    if (freq != startFrequency) await mainWindow._catManager.SendCatCommandAsync("RM", new object[] { (int)MeterTypes.DependsOnFrontPanelMETER }, 5);
                 }
-
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
-                //await Task.Delay(20);
 
                 window.RigBlurVFOCanvas.Visibility = Visibility.Visible;
                 window.RigBlurVFOCanvasBlurEffect.Radius = 4;
@@ -112,7 +110,6 @@ namespace YAESU_FT_891_Front_End
 
                 if (RequestToStopScanning)
                 {
-                    //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
                     await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
                     mainWindow._catManager.StartOutgoingDataLoop();
@@ -126,7 +123,6 @@ namespace YAESU_FT_891_Front_End
             }
 
             if (RigMode != RadioMode.FM)
-                //mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
             else
                 mainWindow.fT891S_SerialPort.SendCAT(_port, "SQ015");

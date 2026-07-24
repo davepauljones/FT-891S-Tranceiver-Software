@@ -44,25 +44,25 @@ namespace YAESU_FT_891_Front_End
 
         private void SetupTranceiverModes()
         {
-            TranceiverMode BootUp = new TranceiverMode { ID = TranceiverModes.BootUp, ShortName = "Boot Up", LongName = "Boot Up", HasTabItem = true };
+            TranceiverMode BootUp = new TranceiverMode { ID = TranceiverModes.BootUp, ShortName = "BOOT UP", LongName = "BOOT UP", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.BootUp, BootUp);
 
-            TranceiverMode MainWaterfall = new TranceiverMode { ID = TranceiverModes.MainWaterfall, ShortName = "Waterfall", LongName = "Waterfall", HasTabItem = true };
+            TranceiverMode MainWaterfall = new TranceiverMode { ID = TranceiverModes.MainWaterfall, ShortName = "SPEC SCOPE", LongName = "SPECTRUM SCOPE", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.MainWaterfall, MainWaterfall);
 
-            TranceiverMode StationScope = new TranceiverMode { ID = TranceiverModes.StationScope, ShortName = "Stations", LongName = "Station Scope", HasTabItem = true };
+            TranceiverMode StationScope = new TranceiverMode { ID = TranceiverModes.StationScope, ShortName = "STA SCOPE", LongName = "STATION SCOPE", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.StationScope, StationScope);
 
-            TranceiverMode NoiseFilters = new TranceiverMode { ID = TranceiverModes.NoiseFilters, ShortName = "Filters", LongName = "Noise Filters", HasTabItem = true };
+            TranceiverMode NoiseFilters = new TranceiverMode { ID = TranceiverModes.NoiseFilters, ShortName = "FILTERS", LongName = "NOISE FILTERS", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.NoiseFilters, NoiseFilters);
 
-            TranceiverMode MorseCode = new TranceiverMode { ID = TranceiverModes.MorseCode, ShortName = "Morse", LongName = "Morse Code", HasTabItem = true };
+            TranceiverMode MorseCode = new TranceiverMode { ID = TranceiverModes.MorseCode, ShortName = "DECODER", LongName = "CW DECODER", HasTabItem = true };
             TranceiverModesDictionary.Add(TranceiverModes.MorseCode, MorseCode);
 
-            TranceiverMode FunctionMenu = new TranceiverMode { ID = TranceiverModes.FunctionMenu, ShortName = "Function", LongName = "Function Menu", HasTabItem = false };
+            TranceiverMode FunctionMenu = new TranceiverMode { ID = TranceiverModes.FunctionMenu, ShortName = "FUNCTION", LongName = "FUNCTION MENU", HasTabItem = false };
             TranceiverModesDictionary.Add(TranceiverModes.FunctionMenu, FunctionMenu);
 
-            TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "CAT Log", LongName = "CAT Log", HasTabItem = false };
+            TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "EVENT LOG", LongName = "EVENT LOG", HasTabItem = false };
             TranceiverModesDictionary.Add(TranceiverModes.CatCommandLog, CatCommandLog);
         }
 
