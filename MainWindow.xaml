@@ -172,6 +172,10 @@
                         <TextBlock Text="RIG" Width="30" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
+                    <Canvas x:Name="SettingsCanvas" Canvas.Left="166" Canvas.Top="386" ToolTip="Settings" Width="20" Height="20" Opacity="0.5" Background="#11666666" Panel.ZIndex="1" MouseLeftButtonDown="SettingsCanvas_MouseLeftButtonDown">
+                        <fa:FontAwesome Icon="Cogs" FontSize="18" Foreground="White" IsHitTestVisible="False"/>
+                    </Canvas>
+
                     <Canvas Width="62" Height="191" Canvas.Left="184" Canvas.Top="144">
                         <Canvas.Background>
                             <ImageBrush ImageSource="pack://application:,,,/Images/Window.png" Stretch="None" AlignmentY="Top" AlignmentX="Left" Opacity="0.9"/>
@@ -735,6 +739,65 @@
                                     <TextBlock Text="BACK" Style="{StaticResource FunctionMenuTextBlockStyle}" Foreground="Orange" Margin="0,9,0,0"/>
                                 </StackPanel>
                             </Border>
+
+                        </Grid>
+                    </Canvas>
+
+                    <Canvas x:Name="SettingsTabCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}" Background="Transparent" Visibility="Hidden">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="162"/>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="330"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="SETTINGS" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,4,0">
+                                <TextBlock Text="COM PORT" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
+                                <TextBlock Text="CALL SIGN" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+                                <TextBlock x:Name="ComPortNameTextBlock" Text="COM8" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Left" Margin="4,0,0,0"/>
+                                <TextBlock x:Name="CallSignTextBlock" Text="G7UIV" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Left" Margin="4,0,0,0"/>
+                            </StackPanel>
+
+                            <ScrollViewer Grid.Row="1" Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="IcComPorts">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <!-- Template for each COM Port "Icon Tile" -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource TransparentButtonStyle}" Width="75" Height="65" Margin="5" Click="ComPortTile_Click" Tag="{Binding}">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <!-- Simple vector icon or symbol resembling a device/port -->
+                                                    <TextBlock Text="🔌" FontSize="20" HorizontalAlignment="Center" Foreground="Yellow"/>
+                                                    <TextBlock Text="{Binding}" FontSize="12" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
+                                <Button Content="REFRESH PORTS" Style="{StaticResource FilterButtonStyle}" Click="BtnRefresh_Click"/>
+                                <Button Content="CALL SIGN" Style="{StaticResource FilterButtonStyle}" Click="SaveButton_Click"/>
+                            </StackPanel>
+
+                            <Button x:Name="SaveButton" Grid.Row="2" Grid.Column="3" Content="SAVE" Style="{StaticResource FilterButtonStyle}" Click="SaveButton_Click"/>
 
                         </Grid>
                     </Canvas>

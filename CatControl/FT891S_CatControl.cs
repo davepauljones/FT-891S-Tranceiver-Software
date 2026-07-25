@@ -59,6 +59,8 @@ namespace FT891S_CatControl
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
         public FastStep FastStep { get; set; }
+
+        public String ComPort { get; set; }
     }
 
     // =========================================================================
@@ -905,13 +907,27 @@ namespace FT891S_CatControl
         }
         public void StopOutgoingDataLoop()
         {
-            if (!(OutGoingDataLoop_IsRunning)) return;
-
-            mainWindow.SendOnOffTextBlock.Text = "OFF";
+            if (!OutGoingDataLoop_IsRunning) return;
 
             OutGoingDataLoop_IsRunning = false;
+            _serialCts?.Cancel();
 
-            _serialCts?.Cancel();   
+            // Safely update UI only if the dispatcher is still alive
+            var dispatcher = mainWindow?.Dispatcher;
+            if (dispatcher != null && !dispatcher.HasShutdownStarted)
+            {
+                try
+                {
+                    dispatcher.Invoke(() =>
+                    {
+                        mainWindow.SendOnOffTextBlock.Text = "OFF";
+                    });
+                }
+                catch (TaskCanceledException)
+                {
+                    // App is closing, safe to ignore
+                }
+            }
         }
 
         DateTime lowPriorityDateTime = DateTime.Now;

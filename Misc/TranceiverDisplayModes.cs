@@ -19,6 +19,7 @@ namespace YAESU_FT_891_Front_End
         public const int MorseCode = 4;
         public const int FunctionMenu = 10;
         public const int CatCommandLog = 11;
+        public const int Settings = 12;
     }
     public class TranceiverMode
     {
@@ -64,6 +65,9 @@ namespace YAESU_FT_891_Front_End
 
             TranceiverMode CatCommandLog = new TranceiverMode { ID = TranceiverModes.CatCommandLog, ShortName = "EVENT LOG", LongName = "EVENT LOG", HasTabItem = false };
             TranceiverModesDictionary.Add(TranceiverModes.CatCommandLog, CatCommandLog);
+
+            TranceiverMode Settings = new TranceiverMode { ID = TranceiverModes.Settings, ShortName = "SETTINGS", LongName = "SETTINGS", HasTabItem = false };
+            TranceiverModesDictionary.Add(TranceiverModes.Settings, Settings);
         }
 
         public void SwitchToTranceiverMode(int tranceiverMode)

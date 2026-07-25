@@ -1,0 +1,46 @@
+﻿<Window x:Class="Event_Horizon.EventHorizonRequesterInformation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+        mc:Ignorable="d" Name="OracleNotificationWindow" AllowsTransparency="True" Topmost="True" BorderBrush="#d7d8df" BorderThickness="2,2,2,2"
+        Background="White" WindowStyle="None" MouseDown="Window_MouseDown"
+        Title="Event Horizon Notification" Height="210" Width="530">
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard BeginTime="0" Duration="Forever">
+                        <DoubleAnimation Storyboard.TargetName="OracleNotificationWindow" Storyboard.TargetProperty="Opacity" From="0" To="1" BeginTime="0:0:0" Duration="0:0:0.1"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+    </Window.Triggers>
+    <Grid RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="47"/>
+            <RowDefinition Height="28"/>
+            <RowDefinition Height="74"/>
+            <RowDefinition Height="56"/>
+        </Grid.RowDefinitions>
+
+        <!--<Image Grid.Row="0" Source="pack://application:,,/Images/EventHorizonLogoNewSmall.png" Stretch="UniformToFill" Width="189" Height="34" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,10,0,0"
+            RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled"/>-->
+
+        <TextBlock x:Name="MessageTitleTextBlock" Grid.Row="1" Text="Could not connect to a database" FontSize="18" FontWeight="Medium" Foreground="Black" HorizontalAlignment="Left" Margin="56,0,0,0"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <fa:FontAwesome x:Name="MessageFontAwesome" Icon="Warning" Width="50" Height="50" FontSize="30" Foreground="DodgerBlue" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1,0,0"/>
+            <TextBlock x:Name="InformationTextBlock" Text="You have a few options, you can browse for the database, create a new database or close Oracle and seek IT Support." FontSize="15" FontWeight="Normal" Foreground="LightSlateGray" Width="450" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Background="#f7f8f9">
+            <StackPanel Orientation="Horizontal" Background="#f7f8f9" Margin="0,0,24,0" HorizontalAlignment="Right">
+                <Button Tag="1" x:Name="YesButton" Content="Yes" FontSize="16" Width="80" Height="30" Margin="0,0,0,0" Style="{DynamicResource OracleButtonStyle }" Click="TreeView_ButtonClick"/>
+                <Button Tag="0" x:Name="NoButton" Content="No" IsDefault="True" FontSize="16" Width="80" Height="30" Margin="16,0,0,0" Style="{DynamicResource OracleButtonStyle }" Click="TreeView_ButtonClick"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

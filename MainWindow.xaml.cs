@@ -1,4 +1,5 @@
 ﻿using CWDecoder;
+using Event_Horizon;
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
 using System;
@@ -126,7 +127,7 @@ namespace YAESU_FT_891_Front_End
         }
         void Init_Startup()
         {
-            fT891S_SerialPort = new FT891S_SerialPort(this, "COM8");
+            fT891S_SerialPort = new FT891S_SerialPort(this);
 
             memorySlot = new MemorySlot(this);
 
@@ -177,7 +178,12 @@ namespace YAESU_FT_891_Front_End
 
             cATCommandLog = new CATCommandLog(this);
 
-            fT891S_SerialPort.OpenPort("COM8");
+            // Load the saved state or defaults
+            FT891S_CatManager.currentRadioState = RadioStateManager.LoadState();
+            // Apply values to your UI elements / radio binding here
+            //FT891S_CatManager.currentRadioState.ComPort = "COM8";
+
+            fT891S_SerialPort.OpenPort(FT891S_CatManager.currentRadioState.ComPort);
 
             sprite = new Sprite(this, WaterfallCanvas, BandScopeCanvas);
 
@@ -255,6 +261,9 @@ namespace YAESU_FT_891_Front_End
             }
 
             _catManager.StopOutgoingDataLoop();
+
+            // Save the current state back to disk
+            RadioStateManager.SaveState(FT891S_CatManager.currentRadioState);
         }
         
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -1656,6 +1665,67 @@ namespace YAESU_FT_891_Front_End
                 }
 
             }
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            fT891S_SerialPort.LoadComPorts();
+        }
+
+        private void ComPortTile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string selectedPort)
+            {
+                ComPortNameTextBlock.Text = selectedPort;
+                FT891S_CatManager.currentRadioState.ComPort = selectedPort;
+                ComportTextBlock.Text = selectedPort;
+
+                // The user clicked a specific COM port tile
+                System.Diagnostics.Debug.WriteLine($"Selected Port: {selectedPort}");
+
+                // TODO: Highlight the active selection visually or initiate connection to the FT-891
+            }
+        }
+
+        private void SettingsCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (tranceiverDisplayModes.CurrentTranceiverMode.ID != TranceiverModes.Settings)
+            {
+                TabControlCanvas.Visibility = Visibility.Hidden;
+                DefaultCanvas.Visibility = Visibility.Hidden;
+                FunctioMenuTabCanvas.Visibility = Visibility.Hidden;
+                SettingsTabCanvas.Visibility = Visibility.Visible;
+
+                tranceiverDisplayModes.LastTranceiverMode = tranceiverDisplayModes.CurrentTranceiverMode;
+
+                tranceiverDisplayModes.ToggleTranceiverMode(TranceiverModes.Settings);
+
+                fT891S_SerialPort.LoadComPorts();
+            }
+            else if (tranceiverDisplayModes.CurrentTranceiverMode.ID == TranceiverModes.Settings)
+            {
+                TabControlCanvas.Visibility = Visibility.Visible;
+                DefaultCanvas.Visibility = Visibility.Visible;
+                FunctioMenuTabCanvas.Visibility = Visibility.Hidden;
+                SettingsTabCanvas.Visibility = Visibility.Hidden;
+
+                tranceiverDisplayModes.SwitchToTranceiverMode(tranceiverDisplayModes.LastTranceiverMode.ID);
+            }
+
+            // --- WE CLICKED ---
+            if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.WriteLine("SettingsCanvas_MouseLeftButtonDown");
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Save the current state back to disk
+            RadioStateManager.SaveState(FT891S_CatManager.currentRadioState);
+
+            EventHorizonRequesterNotification msg = new EventHorizonRequesterNotification(this, new OracleCustomMessage { MessageTitleTextBlock = "FT891S Information", InformationTextBlock = "You will have to restart FT891S for changes to take affect!" }, RequesterTypes.OK);
+            msg.ShowDialog();
         }
     }
 }
