@@ -6,7 +6,7 @@
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         mc:Ignorable="d" Name="OracleNotificationWindow" AllowsTransparency="True" Topmost="True" BorderBrush="#d7d8df" BorderThickness="2,2,2,2"
         Background="White" WindowStyle="None" MouseDown="Window_MouseDown"
-        Title="Event Horizon Notification" Height="210" Width="530">
+        Title="Event Horizon Notification" Height="250" Width="530">
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <EventTrigger.Actions>
@@ -22,7 +22,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="47"/>
             <RowDefinition Height="28"/>
-            <RowDefinition Height="74"/>
+            <RowDefinition Height="114"/>
             <RowDefinition Height="56"/>
         </Grid.RowDefinitions>
 
@@ -33,7 +33,10 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <fa:FontAwesome x:Name="MessageFontAwesome" Icon="Warning" Width="50" Height="50" FontSize="30" Foreground="DodgerBlue" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1,0,0"/>
-            <TextBlock x:Name="InformationTextBlock" Text="You have a few options, you can browse for the database, create a new database or close Oracle and seek IT Support." FontSize="15" FontWeight="Normal" Foreground="LightSlateGray" Width="450" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0"/>
+            <StackPanel Orientation="Vertical" Width="450">
+                <TextBlock x:Name="InformationTextBlock" Text="You have a few options, you can browse for the database, create a new database or close Oracle and seek IT Support." FontSize="15" FontWeight="Normal" Foreground="LightSlateGray" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,0,0,0"/>
+                <TextBox x:Name="InputTextBox" FontSize="14" Height="28" Margin="6,10,12,0" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+            </StackPanel>
         </StackPanel>
 
         <Grid Grid.Row="3" Background="#f7f8f9">

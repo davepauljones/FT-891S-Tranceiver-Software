@@ -16,11 +16,13 @@ namespace Event_Horizon
     {
         public String MessageTitleTextBlock = string.Empty;
         public String InformationTextBlock = string.Empty;
+        public String InputDefaultText = string.Empty;
     }
     public struct RequesterTypes
     {
         public const int NoYes = 0;
         public const int OK = 1;
+        public const int Input = 2;
     }
     public partial class EventHorizonRequesterNotification : Window
     {
@@ -28,6 +30,8 @@ namespace Event_Horizon
         OracleCustomMessage oracleCustomMessage;
         int requesterType;
         bool overrideNotificationSound;
+
+        public string InputResult { get; private set; } = string.Empty;
 
         public EventHorizonRequesterNotification(MainWindow mw, OracleCustomMessage oracleCustomMessage, int requesterType, bool overrideNotificationSound = true)
         {
@@ -54,11 +58,21 @@ namespace Event_Horizon
                 case RequesterTypes.NoYes:
                     NoButton.Content = "No";
                     YesButton.Content = "Yes";
+                    InputTextBox.Visibility = Visibility.Collapsed;
                     break;
                 case RequesterTypes.OK:
                     NoButton.Content = "";
                     NoButton.Visibility = Visibility.Hidden;
                     YesButton.Content = "Ok";
+                    InputTextBox.Visibility = Visibility.Collapsed;
+                    break;
+                case RequesterTypes.Input:
+                    NoButton.Content = "Cancel";
+                    NoButton.Visibility = Visibility.Visible;
+                    YesButton.Content = "Enter";
+                    InputTextBox.Text = oracleCustomMessage.InputDefaultText;
+                    InputTextBox.Visibility = Visibility.Visible;
+                    InputTextBox.Focus();
                     break;
             }
 
@@ -106,7 +120,6 @@ namespace Event_Horizon
 
             if (button != null && success)
             {
-
                 switch (buttonID)
                 {
                     case 0:
@@ -114,6 +127,10 @@ namespace Event_Horizon
                         Close();
                         break;
                     case 1:
+                        if (requesterType == RequesterTypes.Input)
+                        {
+                            InputResult = InputTextBox.Text;
+                        }
                         DialogResult = true;
                         Close();
                         break;

@@ -60,7 +60,12 @@
                         <TextBlock Width="150" Text="MULTI" FontSize="15" FontWeight="Bold" Foreground="White" TextAlignment ="Center" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="220" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
+                    <Canvas Canvas.Left="206" Canvas.Top="63" Width="90" Height="10" Background="#22444444" IsHitTestVisible="False" MouseLeftButtonDown="TimeSliceOnOffCanvas_MouseLeftButtonDown">
+                        <TextBlock Canvas.Top="-3" Text="DEVELOPER MODE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="DeveloperModeOnOffTextBlock" Canvas.Left="94" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    </Canvas>
+                    
+                    <Canvas Canvas.Left="316" Canvas.Top="63" Width="230" Height="10" IsHitTestVisible="False">
                         <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="COM PORT" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="ComportTextBlock" Canvas.Left="66" Canvas.Top="-3" Text="COM8" Width="34" FontSize="10" Foreground="White" Opacity="0.6" TextAlignment="Left" HorizontalAlignment="Left"/>
                         <Rectangle x:Name="ComportGreenRectangle" Canvas.Left="101" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="LightGreen" Opacity="0.2"/>
@@ -69,22 +74,22 @@
                         <Rectangle x:Name="RadioIDAmberLED" Canvas.Left="214" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="Orange" Opacity="0.2"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="466" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="TimeSliceOnOffCanvas_MouseLeftButtonDown">
+                    <Canvas Canvas.Left="560" Canvas.Top="63" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="TimeSliceOnOffCanvas_MouseLeftButtonDown">
                         <TextBlock Canvas.Top="-3" Text="TIME SLICE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="TimeSliceOnOffTextBlock" Canvas.Left="56" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="550" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="ScopeOnOffCanvas_MouseLeftButtonDown">
+                    <Canvas Canvas.Left="644" Canvas.Top="63" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="ScopeOnOffCanvas_MouseLeftButtonDown">
                         <TextBlock Canvas.Top="-3" Text="SCOPE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="ScopeOnOffTextBlock" Canvas.Left="36" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="626" Canvas.Top="62" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
+                    <Canvas Canvas.Left="710" Canvas.Top="63" Width="52" Height="10" Background="#22444444" MouseLeftButtonDown="SendOnOffCanvas_MouseLeftButtonDown">
                         <TextBlock Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="SendOnOffTextBlock" Canvas.Left="32" Canvas.Top="-3" Text="OFF" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="686" Canvas.Top="62" Width="230" Height="10" IsHitTestVisible="False">
+                    <Canvas Canvas.Left="756" Canvas.Top="63" Width="230" Height="10" IsHitTestVisible="False">
                         <TextBlock Canvas.Left="12" Canvas.Top="-3" Text="SEND" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <Rectangle x:Name="SendRedLEDRectangle" Canvas.Left="44" Canvas.Top="-1" Height="10" Width="20" StrokeThickness="0" Stroke="Black" Fill="IndianRed" Opacity="0.2"/>
                         <TextBlock Canvas.Left="72" Canvas.Top="-3" Text="RECEIVE" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
@@ -297,7 +302,7 @@
                 Canvas.Top="8"
                 Background="Transparent"
                 Panel.ZIndex="1"
-                ToolTip="POWER OFF"
+                ToolTip="SHORT PRESS TOGGLE SOFTWARE ON/OFF | LONG PRESS TOGGLES RIG ON/OFF ALSO"
                 MouseDown="PowerOffButtonCanvas_MouseDown"/>
 
                     <Canvas x:Name="VFOKnobAreaCanvas"
@@ -751,9 +756,9 @@
                                 <RowDefinition Height="40"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="90"/>
-                                <ColumnDefinition Width="330"/>
+                                <ColumnDefinition Width="310"/>
                                 <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
 
@@ -762,11 +767,13 @@
                             <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,4,0">
                                 <TextBlock Text="COM PORT" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
                                 <TextBlock Text="CALL SIGN" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
+                                <TextBlock Text="DEVELOPER MODE" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
                                 <TextBlock x:Name="ComPortNameTextBlock" Text="COM8" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Left" Margin="4,0,0,0"/>
                                 <TextBlock x:Name="CallSignTextBlock" Text="G7UIV" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Left" Margin="4,0,0,0"/>
+                                <TextBlock x:Name="DeveloperModeTextBlock" Text="OFF" Canvas.Left="10" Canvas.Top="20" FontWeight="Bold" Foreground="White" TextAlignment="Left" Margin="4,0,0,0"/>
                             </StackPanel>
 
                             <ScrollViewer Grid.Row="1" Grid.Column="2" VerticalScrollBarVisibility="Auto">
@@ -794,7 +801,8 @@
 
                             <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
                                 <Button Content="REFRESH PORTS" Style="{StaticResource FilterButtonStyle}" Click="BtnRefresh_Click"/>
-                                <Button Content="CALL SIGN" Style="{StaticResource FilterButtonStyle}" Click="SaveButton_Click"/>
+                                <Button Content="CALL SIGN" Style="{StaticResource FilterButtonStyle}" Click="CallSignButton_Click"/>
+                                <Button Content="DEVELOPER MODE" Style="{StaticResource FilterButtonStyle}" Width="96" Click="DeveloperModeButton_Click"/>
                             </StackPanel>
 
                             <Button x:Name="SaveButton" Grid.Row="2" Grid.Column="3" Content="SAVE" Style="{StaticResource FilterButtonStyle}" Click="SaveButton_Click"/>
@@ -817,7 +825,7 @@
 
                                 <Canvas x:Name="BootUpTabCanvas" Style="{StaticResource TabCanvasStyle}">
                                     <TextBlock Text="Welcome To G7UIV's FT891S Software" Width="642" Height="155" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
-                                    <TextBlock Text="G7UIV" Width="642" Height="155" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="0,50,0,0"/>
+                                    <TextBlock x:Name="UsersCallSignTextBlock" Text="G7UIV" Width="642" Height="155" FontSize="30" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="0,50,0,0"/>
                                 </Canvas>
 
                             </TabItem>

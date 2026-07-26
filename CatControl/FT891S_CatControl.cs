@@ -61,6 +61,10 @@ namespace FT891S_CatControl
         public FastStep FastStep { get; set; }
 
         public String ComPort { get; set; }
+        public int DeveloperMode { get; set; } = (int)DeveloperModes.DeveloperMode_OFF;
+        public String CallSign { get; set; }
+
+        public PowerSwitchModes PowerSwitch { get; set; } = (int)PowerSwitchModes.PowerSwitchMode_OFF;
     }
 
     // =========================================================================
@@ -279,6 +283,9 @@ namespace FT891S_CatControl
     }
     public enum FastStep { FastStep_OFF = 0, FastStep_ON = 1 }
 
+    public enum DeveloperModes { DeveloperMode_OFF = 0, DeveloperMode_ON = 1 }
+    public enum PowerSwitchModes { PowerSwitchMode_OFF = 0, PowerSwitchMode_ON = 1 }
+
     // =========================================================================
     // 4. THE YAESU CONFIGURATION REGISTRY WITH GLOBAL ROUTER
     // =========================================================================
@@ -486,6 +493,13 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.FastStep = (FastStep)result
         );
+        public static readonly FT891S_CatCommand<int> PS = new FT891S_CatCommand<int>(
+            "PS",
+            new CatStructure().Expect("P1", 1),
+            new CatStructure().Expect("P1", 1),
+            dict => int.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.PowerSwitch = (PowerSwitchModes)result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -508,7 +522,8 @@ namespace FT891S_CatControl
             { "NR", NR },
             { "RL", RL },
             { "SH", SH },
-            { "FS", FS }
+            { "FS", FS },
+            { "PS", PS }
         };
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)

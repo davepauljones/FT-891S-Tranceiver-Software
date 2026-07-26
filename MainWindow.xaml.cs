@@ -125,7 +125,7 @@ namespace YAESU_FT_891_Front_End
                 _catManager.StartOutgoingDataLoop();
             }
         }
-        void Init_Startup()
+        async void Init_Startup()
         {
             fT891S_SerialPort = new FT891S_SerialPort(this);
 
@@ -197,11 +197,17 @@ namespace YAESU_FT_891_Front_End
             tranceiverDisplayModes = new TranceiverDisplayModes(this);
 
             tranceiverDisplayModes.SwitchToTranceiverMode(TranceiverModes.BootUp);
-
+            UsersCallSignTextBlock.Text = FT891S_CatManager.currentRadioState.CallSign;
+            CallSignTextBlock.Text = FT891S_CatManager.currentRadioState.CallSign;
+            SetDeveloperMode(true);
+            
             _modeMapper = new FT891ModeMapper();
             modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
 
             _catManager.StartOutgoingDataLoop();
+
+            //Ask rig for Power Switch Status
+            await _catManager.SendCatCommandAsync("PS", _catManager.OutGoingDataLoopDelay);
 
             //ApplyKnobInput3(0);
             //ApplyKnobInput4(0);
@@ -727,14 +733,74 @@ namespace YAESU_FT_891_Front_End
             });
         }
 
-        private void PowerOffButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void PowerOffButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
-            AnimateButtonClick(c, () =>
+
+            // Duration required to qualify as a long press (e.g., 1000 milliseconds)
+            int holdDurationMs = 1000;
+            int elapsedMs = 0;
+            int pollIntervalMs = 50;
+
+            // Monitor the mouse state while it's held down
+            while (e.ButtonState == MouseButtonState.Pressed && elapsedMs < holdDurationMs)
             {
-                _catManager.StopOutgoingDataLoop();
-                Application.Current.Shutdown();
-            });
+                await Task.Delay(pollIntervalMs);
+                elapsedMs += pollIntervalMs;
+
+                // Optional safety: check if the mouse cursor drifted outside the control boundaries
+                var position = Mouse.GetPosition(c);
+                if (position.X < 0 || position.Y < 0 || position.X > c.ActualWidth || position.Y > c.ActualHeight)
+                {
+                    // Dragged outside, cancel the press
+                    return;
+                }
+            }
+
+            // Check if the user held it long enough
+            if (elapsedMs >= holdDurationMs)
+            {
+                // --- LONG PRESS ACTION ---
+                AnimateButtonClick(c, async () =>
+                {
+                    if (FT891S_CatManager.currentRadioState.PowerSwitch == PowerSwitchModes.PowerSwitchMode_OFF)
+                    {
+                        await _catManager.SendCatCommandAsync("PS", new object[] { (int)PowerSwitchModes.PowerSwitchMode_ON }, _catManager.OutGoingDataLoopDelay);
+
+                        await Task.Delay(1200);
+
+                        await _catManager.SendCatCommandAsync("PS", new object[] { (int)PowerSwitchModes.PowerSwitchMode_ON }, _catManager.OutGoingDataLoopDelay);
+                    }
+                    else if (FT891S_CatManager.currentRadioState.PowerSwitch == PowerSwitchModes.PowerSwitchMode_ON)
+                    {
+                        await _catManager.SendCatCommandAsync("PS", new object[] { (int)PowerSwitchModes.PowerSwitchMode_OFF }, _catManager.OutGoingDataLoopDelay);
+
+                        await Task.Delay(1200);
+
+                        await _catManager.SendCatCommandAsync("PS", new object[] { (int)PowerSwitchModes.PowerSwitchMode_OFF }, _catManager.OutGoingDataLoopDelay);
+
+                        _catManager.StopOutgoingDataLoop();
+
+                        Application.Current.Shutdown();
+                    }
+                    else
+                    {
+                        //do nothing
+                    }
+                });
+            }
+            else
+            {
+                // --- SHORT PRESS ACTION (Released early) ---
+                AnimateButtonClick(c, async () =>
+                {
+                   
+                    _catManager.StopOutgoingDataLoop();
+
+                    Application.Current.Shutdown();
+                   
+                });
+            }
         }
 
         public int stationScopeListViewSelectedItem;
@@ -1726,6 +1792,69 @@ namespace YAESU_FT_891_Front_End
 
             EventHorizonRequesterNotification msg = new EventHorizonRequesterNotification(this, new OracleCustomMessage { MessageTitleTextBlock = "FT891S Information", InformationTextBlock = "You will have to restart FT891S for changes to take affect!" }, RequesterTypes.OK);
             msg.ShowDialog();
+        }
+
+        private void DeveloperModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetDeveloperMode();
+        }
+
+        private void SetDeveloperMode(bool ReadModeOnly = false)
+        {
+            if (!(ReadModeOnly))
+            {
+                if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_OFF)
+                {
+                    FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_ON;
+                    DeveloperModeTextBlock.Text = "ON";
+                    DeveloperModeOnOffTextBlock.Text = "ON";
+                }
+                else if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+                {
+                    FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
+                    DeveloperModeTextBlock.Text = "OFF";
+                    DeveloperModeOnOffTextBlock.Text = "OFF";
+                }
+                else
+                {
+                    FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
+                    DeveloperModeTextBlock.Text = "OFF";
+                    DeveloperModeOnOffTextBlock.Text = "OFF";
+                }
+            }
+            else
+            {
+                if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_OFF)
+                {
+                    DeveloperModeTextBlock.Text = "OFF";
+                    DeveloperModeOnOffTextBlock.Text = "OFF";
+                }
+                else if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+                {
+                    DeveloperModeTextBlock.Text = "ON";
+                    DeveloperModeOnOffTextBlock.Text = "ON";
+                }
+                else
+                {
+                    FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
+                    DeveloperModeTextBlock.Text = "OFF";
+                    DeveloperModeOnOffTextBlock.Text = "OFF";
+                }
+            }
+        }
+
+        private void CallSignButton_Click(object sender, RoutedEventArgs e)
+        {
+            EventHorizonRequesterNotification msg = new EventHorizonRequesterNotification(this, new OracleCustomMessage { MessageTitleTextBlock = "FT891S Information Request", InformationTextBlock = "Please enter a valid call sign!" }, RequesterTypes.Input);
+            //msg.ShowDialog();
+
+            // Show the dialog and check if the user clicked "Enter" (true)
+            if (msg.ShowDialog() == true)
+            {
+                // Retrieve the text entered by the user
+                FT891S_CatManager.currentRadioState.CallSign = msg.InputResult;
+                CallSignTextBlock.Text = msg.InputResult;
+            }
         }
     }
 }
