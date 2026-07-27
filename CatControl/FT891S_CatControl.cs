@@ -859,6 +859,11 @@ namespace FT891S_CatControl
                         mainWindow.RadioIDTextBlock.Text = "FT-891";
                         mainWindow.RadioIDAmberLED.Opacity = 0.5;
                     }
+                    else if (currentRadioState.RadioID == 800)
+                    {
+                        mainWindow.RadioIDTextBlock.Text = "FT-710";
+                        mainWindow.RadioIDAmberLED.Opacity = 0.5;
+                    }
                     else if (currentRadioState.RadioID > 0 && currentRadioState.RadioID < 9999)
                     {
                         mainWindow.RadioIDTextBlock.Text = "??????";
