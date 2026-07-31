@@ -125,7 +125,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Background="#cc000000">
         <Grid.RowDefinitions>
             <RowDefinition Height="102"/>
             <RowDefinition Height="40"/>
@@ -245,6 +245,7 @@
                         <GradientStop Color="#08000000" Offset="1"/>
                     </LinearGradientBrush>
                 </Path.Fill>
+                
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="FillFigure" StartPoint="0,51">
