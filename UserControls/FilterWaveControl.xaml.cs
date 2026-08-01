@@ -356,12 +356,8 @@ namespace YAESU_FT_891_Front_End
         private void UpdateWaveform()
         {
             if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null || ContourThumb == null || ShiftThumb == null ||
-                Segment1 == null || Segment2 == null || EndSegment == null ||
-                DnrRightFigure == null || DnrRightSegment == null || DnrRightSegment2 == null ||
-                FillDnrRightFigure == null || FillDnrRightSegment == null || FillDnrRightSegment2 == null ||
-                Segment3PointC == null || FillSegment3PointC == null ||
-                Segment3PointD == null || Segment3PointE == null || Segment3PointF == null ||
-                FillSegment3PointD == null || FillSegment3PointE == null || FillSegment3PointF == null)
+                Segment1 == null || Segment2 == null || PathFigureEndPoint == null ||
+                DnrRightFigure == null || DnrRightSegment == null || DnrRightSegment2 == null || Segment3PointC == null || Segment3PointD == null || Segment3PointE == null || Segment3PointF == null)
                 return;
 
             const double border0X = 0.0;
@@ -420,6 +416,7 @@ namespace YAESU_FT_891_Front_End
             if (DnrBadge != null) { Canvas.SetLeft(DnrBadge, dnrX - 22); Canvas.SetTop(DnrBadge, dnrY - 22); }
             if (ShiftBadge != null) { Canvas.SetLeft(ShiftBadge, currentBaseRightX - 15); }
 
+            //NB Section
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
             Segment1.Point2 = new Point(nbX - (nbX - border0X) * 0.1, nbY);
             Segment1.Point3 = new Point(nbX, nbY);
@@ -427,11 +424,14 @@ namespace YAESU_FT_891_Front_End
             Segment2.Point1 = new Point(nbX + (border1X - nbX) * 0.1, nbY);
             Segment2.Point2 = new Point(border1X - (border1X - nbX) * 0.5, CenterY);
             Segment2.Point3 = new Point(border1X, CenterY);
+            //NB Section
 
             Point pA = new Point(currentBaseLeftX, CenterY);
             Point pB = new Point(currentBaseRightX, CenterY);
-            Segment3PointA.Point = pA;
-            WidthRightSegment.Point = pB;
+            
+            LH_TrapezoidSide.Point = pA;
+
+            RH_TrapezoidSide.Point = pB;
 
             List<Point> midPoints = new List<Point>
             {
@@ -467,18 +467,17 @@ namespace YAESU_FT_891_Front_End
 
             midPoints.Sort((pt1, pt2) => pt1.X.CompareTo(pt2.X));
 
-            Segment3PointNotchLeft.Point = midPoints[0];
-            Segment3PointNotchTip.Point = midPoints[1];
-            Segment3PointNotchRight.Point = midPoints[2];
+            NotchLeftLineSegment.Point = midPoints[0];
+            NotchTipLineSegment.Point = midPoints[1];
+            NotchRightLineSegment.Point = midPoints[2];
+
             Segment3PointB.Point = midPoints[3];
             Segment3PointC.Point = midPoints[4];
             Segment3PointD.Point = midPoints[5];
             Segment3PointE.Point = midPoints[6];
             Segment3PointF.Point = midPoints[7];
 
-            EndSegment.Point1 = new Point(currentBaseRightX, CenterY);
-            EndSegment.Point2 = new Point(border2X, CenterY);
-            EndSegment.Point3 = new Point(border2X, CenterY);
+            PathFigureEndPoint.Point = new Point(border2X, CenterY);
 
             DnrRightFigure.StartPoint = new Point(border2X, CenterY);
             DnrRightSegment.Point1 = new Point(border2X + (dnrX - border2X) * 0.5, CenterY);
@@ -488,39 +487,6 @@ namespace YAESU_FT_891_Front_End
             DnrRightSegment2.Point1 = new Point(dnrX + (border3X - dnrX) * 0.1, dnrY);
             DnrRightSegment2.Point2 = new Point(border3X - (border3X - dnrX) * 0.5, CenterY);
             DnrRightSegment2.Point3 = new Point(border3X, CenterY);
-
-            FillSegment1.Point1 = Segment1.Point1;
-            FillSegment1.Point2 = Segment1.Point2;
-            FillSegment1.Point3 = Segment1.Point3;
-            FillSegment2.Point1 = Segment2.Point1;
-            FillSegment2.Point2 = Segment2.Point2;
-            FillSegment2.Point3 = Segment2.Point3;
-
-            FillSegment3PointA.Point = Segment3PointA.Point;
-            FillSegment3PointNotchLeft.Point = Segment3PointNotchLeft.Point;
-            FillSegment3PointNotchTip.Point = Segment3PointNotchTip.Point;
-            FillSegment3PointNotchRight.Point = Segment3PointNotchRight.Point;
-            FillSegment3PointB.Point = Segment3PointB.Point;
-            FillSegment3PointC.Point = Segment3PointC.Point;
-            FillSegment3PointD.Point = Segment3PointD.Point;
-            FillSegment3PointE.Point = Segment3PointE.Point;
-            FillSegment3PointF.Point = Segment3PointF.Point;
-            FillWidthRightSegment.Point = WidthRightSegment.Point;
-
-            FillEndSegment.Point1 = EndSegment.Point1;
-            FillEndSegment.Point2 = EndSegment.Point2;
-            FillEndSegment.Point3 = EndSegment.Point3;
-
-            FillDnrRightFigure.StartPoint = DnrRightFigure.StartPoint;
-            FillDnrRightSegment.Point1 = DnrRightSegment.Point1;
-            FillDnrRightSegment.Point2 = DnrRightSegment.Point2;
-            FillDnrRightSegment.Point3 = DnrRightSegment.Point3;
-            FillDnrRightSegment2.Point1 = DnrRightSegment2.Point1;
-            FillDnrRightSegment2.Point2 = DnrRightSegment2.Point2;
-            FillDnrRightSegment2.Point3 = DnrRightSegment2.Point3;
-
-            ((LineSegment)FillDnrRightFigure.Segments[2]).Point = new Point(639.0, 102);
-            ((LineSegment)FillFigure.Segments[13]).Point = new Point(639.0, 102);
         }
     }
 }
