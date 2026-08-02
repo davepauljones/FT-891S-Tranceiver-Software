@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -7,7 +9,89 @@ using System.Windows.Media;
 
 namespace YAESU_FT_891_Front_End
 {
-    public partial class FilterWaveControl : UserControl
+
+    // FT-891 CAT filter parameter enums/ranges.
+    // These describe CAT protocol values; they are not UI-specific values.
+    public enum Ft891OnOff
+    {
+        Off = 0,
+        On = 1
+    }
+
+    public enum Ft891ManualNotchParameter
+    {
+        Enable = 0,
+        Frequency = 1
+    }
+
+    public enum Ft891ContourParameter
+    {
+        ContourOnOff = 0,
+        ContourFrequency = 1,
+        ApfOnOff = 2,
+        ApfFrequency = 3
+    }
+
+    public enum Ft891IfShiftState
+    {
+        Off = 0,
+        On = 1
+    }
+
+    public enum Ft891IfShiftDirection
+    {
+        Minus = -1,
+        Zero = 0,
+        Plus = 1
+    }
+
+    public enum Ft891WidthCode
+    {
+        Code00 = 0,
+        Code01 = 1,
+        Code02 = 2,
+        Code03 = 3,
+        Code04 = 4,
+        Code05 = 5,
+        Code06 = 6,
+        Code07 = 7,
+        Code08 = 8,
+        Code09 = 9,
+        Code10 = 10,
+        Code11 = 11,
+        Code12 = 12,
+        Code13 = 13,
+        Code14 = 14,
+        Code15 = 15,
+        Code16 = 16,
+        Code17 = 17,
+        Code18 = 18,
+        Code19 = 19,
+        Code20 = 20,
+        Code21 = 21
+    }
+
+    public static class Ft891FilterRanges
+    {
+        public const int NotchFrequencyMinHz = 10;
+        public const int NotchFrequencyMaxHz = 3200;
+        public const int NotchFrequencyStepHz = 10;
+
+        public const int ContourFrequencyMinHz = 10;
+        public const int ContourFrequencyMaxHz = 3200;
+        public const int ContourFrequencyStepHz = 10;
+
+        public const int IfShiftMinHz = -1200;
+        public const int IfShiftMaxHz = 1200;
+        public const int IfShiftStepHz = 20;
+        public const int IfShiftMagnitudeMinHz = 0;
+        public const int IfShiftMagnitudeMaxHz = 1200;
+
+        public const int WidthCodeMin = 0;
+        public const int WidthCodeMax = 21;
+    }
+
+    public partial class FilterWaveControl : UserControl, INotifyPropertyChanged
     {
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
@@ -20,16 +104,162 @@ namespace YAESU_FT_891_Front_End
         private const double border2X = 556.0;
         private const double FixedSlopeWidth = 20.0;
 
-        public int NbValue { get; private set; }
-        public int WidthValue { get; private set; }
-        public int NotchFreq { get; private set; }
-        public int NotchDepth { get; private set; }
-        public int ContourValue { get; private set; }
-        public bool ContourEnabled { get; private set; }
-        public int DnrValue { get; private set; }
-        public double ShiftValue { get; private set; }
-
+        public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string, object> UIValueChanged;
+
+        public int NbValue { get; private set; }
+        public Ft891WidthCode WidthCode { get; private set; } = Ft891WidthCode.Code00;
+        public int WidthValue { get { return (int)WidthCode; } }
+
+        public bool WidthEnabled { get; private set; } = true;
+
+        public int NotchFrequency { get; private set; } = Ft891FilterRanges.NotchFrequencyMinHz;
+        public Ft891OnOff NotchState { get; private set; } = Ft891OnOff.Off;
+        public bool NotchEnabled { get { return NotchState == Ft891OnOff.On; } }
+
+        // Compatibility aliases for existing consumers.
+        public int NotchFreq { get { return NotchFrequency; } }
+        [Obsolete("FT-891 CAT has no notch-depth parameter. Use NotchEnabled/NotchState instead.")]
+        public int NotchDepth { get { return NotchEnabled ? 100 : 0; } }
+
+        public int ContourFrequency { get; private set; } = 1600;
+        public int ContourValue { get { return ContourFrequency; } }
+        public bool ContourEnabled { get; private set; }
+
+        // IF SHIFT is a signed value. CAT sends magnitude plus a separate +/- direction.
+        public int ShiftValue { get; private set; }
+        public Ft891IfShiftState ShiftState { get; private set; } = Ft891IfShiftState.On;
+        public Ft891IfShiftDirection ShiftDirection
+        {
+            get
+            {
+                if (ShiftValue < 0) return Ft891IfShiftDirection.Minus;
+                if (ShiftValue > 0) return Ft891IfShiftDirection.Plus;
+                return Ft891IfShiftDirection.Zero;
+            }
+        }
+        public int ShiftMagnitude { get { return Math.Abs(ShiftValue); } }
+
+        public int DnrValue { get; private set; }
+
+        private double _notchVisualDepth = 0.0;
+        private double _contourVisualOffset = 0.0;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private static int Clamp(int value, int min, int max)
+        {
+            return Math.Max(min, Math.Min(max, value));
+        }
+
+        // The CAT IF-SHIFT value is in Hz; the drawing uses pixels.
+        // This mapping is deliberately UI-only. The CAT value remains -1200..+1200 Hz.
+        private static double ShiftToPixels(int shiftHz)
+        {
+            const double maxPixelShift = ((border2X - border1X) / 2.0) - FixedSlopeWidth;
+            return (shiftHz / (double)Ft891FilterRanges.IfShiftMaxHz) * maxPixelShift;
+        }
+
+        private static int SnapToStep(int value, int min, int max, int step)
+        {
+            value = Clamp(value, min, max);
+            int steps = (int)Math.Round((value - min) / (double)step);
+            return Clamp(min + (steps * step), min, max);
+        }
+
+        private void SetWidthCodeInternal(int value)
+        {
+            value = Clamp(value, Ft891FilterRanges.WidthCodeMin, Ft891FilterRanges.WidthCodeMax);
+            WidthCode = (Ft891WidthCode)value;
+            OnPropertyChanged(nameof(WidthCode));
+            OnPropertyChanged(nameof(WidthValue));
+        }
+
+        private void SetNotchFrequencyInternal(int value)
+        {
+            value = SnapToStep(value, Ft891FilterRanges.NotchFrequencyMinHz,
+                Ft891FilterRanges.NotchFrequencyMaxHz, Ft891FilterRanges.NotchFrequencyStepHz);
+
+            if (NotchFrequency == value) return;
+            NotchFrequency = value;
+            OnPropertyChanged(nameof(NotchFrequency));
+            OnPropertyChanged(nameof(NotchFreq));
+        }
+
+        private void SetContourFrequencyInternal(int value)
+        {
+            value = SnapToStep(value, Ft891FilterRanges.ContourFrequencyMinHz,
+                Ft891FilterRanges.ContourFrequencyMaxHz, Ft891FilterRanges.ContourFrequencyStepHz);
+
+            if (ContourFrequency == value) return;
+            ContourFrequency = value;
+            OnPropertyChanged(nameof(ContourFrequency));
+            OnPropertyChanged(nameof(ContourValue));
+        }
+
+        private void SetShiftValueInternal(int value)
+        {
+            value = SnapToStep(value, Ft891FilterRanges.IfShiftMinHz,
+                Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
+
+            if (ShiftValue == value) return;
+            ShiftValue = value;
+            OnPropertyChanged(nameof(ShiftValue));
+            OnPropertyChanged(nameof(ShiftDirection));
+            OnPropertyChanged(nameof(ShiftMagnitude));
+        }
+
+        private void SetNotchEnabledInternal(bool enabled)
+        {
+            Ft891OnOff newState = enabled ? Ft891OnOff.On : Ft891OnOff.Off;
+            if (NotchState == newState) return;
+            NotchState = newState;
+            OnPropertyChanged(nameof(NotchState));
+            OnPropertyChanged(nameof(NotchEnabled));
+            OnPropertyChanged(nameof(NotchDepth));
+        }
+
+        public void SetWidthEnabled(bool value)
+        {
+            if (WidthEnabled == value) return;
+            WidthEnabled = value;
+            OnPropertyChanged(nameof(WidthEnabled));
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
+        public void SetNotchFrequency(int value)
+        {
+            SetNotchFrequencyInternal(value);
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
+        public void SetNotchEnabled(bool value)
+        {
+            SetNotchEnabledInternal(value);
+            _notchVisualDepth = value ? 1.0 : 0.0;
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
+        public void SetContourFrequency(int value)
+        {
+            SetContourFrequencyInternal(value);
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
+        public void SetShiftValue(int value)
+        {
+            SetShiftValueInternal(value);
+            UpdateThumbPositions();
+            UpdateWaveform();
+        }
+
 
         public FilterWaveControl()
         {
@@ -42,55 +272,82 @@ namespace YAESU_FT_891_Front_End
 
         public void SetNbValue(int value)
         {
-            NbValue = value;
-            if (NbTextBlock != null) NbTextBlock.Text = value == 0 ? "NB: OFF" : "NB: " + NbValue;
-            if (NbBadge != null) NbBadge.Text = value == 0 ? "NB: OFF" : "NB: " + NbValue;
+            NbValue = Clamp(value, 0, 10);
+            OnPropertyChanged(nameof(NbValue));
+            if (NbTextBlock != null) NbTextBlock.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
+            if (NbBadge != null) NbBadge.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
+        // CAT SH P3 is a 00-21 code, not a percentage.
         public void SetWidthValue(int value)
         {
-            WidthValue = value;
-            if (WidthBadge != null) WidthBadge.Text = "WD: " + WidthValue + "%";
+            SetWidthCodeInternal(value);
+            if (WidthBadge != null) WidthBadge.Text = "WD: " + ((int)WidthCode).ToString("D2");
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
+        // Compatibility method: the old "depth" argument is now treated as ON/OFF
+        // because the FT-891 BP command has no notch-depth parameter.
         public void SetNotchValues(int freq, int depth)
         {
-            NotchFreq = freq;
-            NotchDepth = depth;
-            if (NotchBadge != null) NotchBadge.Text = NotchDepth == 0 ? "NCH: OFF" : "NCH: " + NotchFreq + "% F / " + NotchDepth + "% D";
+            SetNotchFrequencyInternal(freq);
+            SetNotchEnabledInternal(depth != 0);
+            _notchVisualDepth = depth != 0 ? 1.0 : 0.0;
+
+            if (NotchBadge != null)
+                NotchBadge.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
+
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
+        // value is the FT-891 CO contour frequency in Hz.
         public void SetContourValues(int value, bool enabled)
         {
-            ContourValue = value;
+            SetContourFrequencyInternal(value);
             ContourEnabled = enabled;
-            if (ContourBadge != null) ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourValue + "%";
+            OnPropertyChanged(nameof(ContourEnabled));
+
+            if (ContourBadge != null)
+                ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
         public void SetDnrValue(int value)
         {
-            DnrValue = value;
-            if (DNRTextBlock != null) DNRTextBlock.Text = value == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
-            if (DnrBadge != null) DnrBadge.Text = value == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
+            DnrValue = Clamp(value, 0, 15);
+            OnPropertyChanged(nameof(DnrValue));
+            if (DNRTextBlock != null) DNRTextBlock.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
+            if (DnrBadge != null) DnrBadge.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
         public void SetDnfEnabled(bool value) { _isUpdatingProgrammatically = true; if (AutoDnfBtn != null) AutoDnfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
         public void SetApfEnabled(bool value) { _isUpdatingProgrammatically = true; if (CwApfBtn != null) CwApfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
-        public void SetContourEnabled(bool value) { _isUpdatingProgrammatically = true; if (ContourBtn != null) ContourBtn.IsChecked = value; ContourEnabled = value; UpdateWaveform(); _isUpdatingProgrammatically = false; }
+        public void SetContourEnabled(bool value)
+        {
+            _isUpdatingProgrammatically = true;
+            if (ContourBtn != null) ContourBtn.IsChecked = value;
+            if (ContourEnabled != value)
+            {
+                ContourEnabled = value;
+                OnPropertyChanged(nameof(ContourEnabled));
+            }
+            UpdateThumbPositions();
+            UpdateWaveform();
+            _isUpdatingProgrammatically = false;
+        }
 
         private void UpdateThumbPositions()
         {
-            if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null || ContourThumb == null || ShiftThumb == null) return;
+            if (NbThumb == null || WidthThumb == null || NotchThumb == null ||
+                DnrThumb == null || ContourThumb == null || ShiftThumb == null) return;
 
             _isUpdatingProgrammatically = true;
 
@@ -99,14 +356,15 @@ namespace YAESU_FT_891_Front_End
             double nbTop = CenterY - ((NbValue / 10.0) * travelSpaceNb);
             Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
-            // 2. Width Position
-            double currentCenter = BaseCenter + ShiftValue;
+            // 2. WIDTH: SH P3 is a discrete 00-21 CAT code.
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             const double thumbHalfWidth = 8.0;
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - thumbHalfWidth;
 
-            double wX = minX + ((WidthValue / 100.0) * (maxX - minX));
+            double widthRatio = (int)WidthCode / (double)Ft891FilterRanges.WidthCodeMax;
+            double wX = minX + (widthRatio * (maxX - minX));
             Canvas.SetLeft(WidthThumb, wX);
 
             double halfWidth = Math.Max(0, wX - currentCenter);
@@ -127,46 +385,64 @@ namespace YAESU_FT_891_Front_End
                 rightShoulderX = currentBaseRightX - FixedSlopeWidth;
             }
 
-            // 3. Notch Position (Clamped between PeakY for fully up and CenterY for fully down)
-            double nX = border1X + ((NotchFreq / 100.0) * (border2X - border1X));
+            // 3. MANUAL NOTCH: BP frequency is 10-3200 Hz in 10 Hz steps.
+            double notchRatio =
+                (NotchFrequency - Ft891FilterRanges.NotchFrequencyMinHz) /
+                (double)(Ft891FilterRanges.NotchFrequencyMaxHz - Ft891FilterRanges.NotchFrequencyMinHz);
 
-            // Check if the notch is outside the active passband shoulders and force it to clamp
+            double nX = border1X + (notchRatio * (border2X - border1X));
             double clampedNotchX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
-            if (nX != clampedNotchX)
-            {
-                // If the passband width reduction forced the notch to move, 
-                // update its frequency percentage to match its new physical boundary!
-                nX = clampedNotchX;
-                NotchFreq = (int)(((nX - border1X) / (border2X - border1X)) * 100);
-            }
+            // The CAT frequency is not changed merely because the visual passband
+            // is narrower. The thumb is visually clamped, but the CAT value remains
+            // the value supplied by the radio/user.
+            nX = clampedNotchX;
 
-            double nY = PeakY + ((NotchDepth / 100.0) * (CenterY - PeakY));
+            double nY = NotchEnabled
+                ? PeakY + (_notchVisualDepth * (CenterY - PeakY))
+                : PeakY;
+
             Canvas.SetLeft(NotchThumb, nX - 9);
             Canvas.SetTop(NotchThumb, nY - 9);
 
-            // 4. Contour Position
-            double cX = Canvas.GetLeft(ContourThumb) + 8;
-            double clampedContourX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
-            if (cX != clampedContourX)
-            {
-                cX = clampedContourX;
-                // Optional: Recalculate or keep valid bounds if needed, but keeping X clamped prevents desync
-            }
+            // 4. CONTOUR: CO P3 is a 10-3200 Hz frequency.
+            double contourRatio =
+                (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
+                (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
+
+            double cX = border1X + (contourRatio * (border2X - border1X));
+            cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
             Canvas.SetLeft(ContourThumb, cX - 8);
 
-            if (!ContourEnabled)
-            {
-                Canvas.SetTop(ContourThumb, PeakY - 8);
-            }
+            double contourCenterY = PeakY + _contourVisualOffset;
+            if (!ContourEnabled) contourCenterY = PeakY;
+            Canvas.SetTop(ContourThumb, contourCenterY - 8);
 
             // 5. DNR Position
             double travelSpaceDnr = CenterY - 5;
             double dnrTop = CenterY - ((DnrValue / 15.0) * travelSpaceDnr);
             Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
 
-            // 6. Shift Position
+            // 6. IF SHIFT:
+            // The Shift thumb is the handle for the RH side of the active
+            // passband.  It must sit on the bottom-right trapezoid edge,
+            // NOT at an absolute position representing the signed CAT value.
+            //
+            // ShiftValue remains the CAT value (-1200..+1200 Hz); only the
+            // visual position is tied to the current passband geometry.
             Canvas.SetLeft(ShiftThumb, currentBaseRightX);
             Canvas.SetTop(ShiftThumb, CenterY - 8);
+
+            if (WidthBadge != null)
+                WidthBadge.Text = "WD: " + ((int)WidthCode).ToString("D2");
+
+            if (NotchBadge != null)
+                NotchBadge.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
+
+            if (ContourBadge != null)
+                ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+
+            if (ShiftBadge != null)
+                ShiftBadge.Text = "SF: " + (ShiftValue > 0 ? "+" : "") + ShiftValue;
 
             _isUpdatingProgrammatically = false;
         }
@@ -175,43 +451,52 @@ namespace YAESU_FT_891_Front_End
         {
             if (_isUpdatingProgrammatically) return;
 
-            double wX = Canvas.GetLeft(WidthThumb) + 8;
-            double currentCenter = BaseCenter + ShiftValue;
-            double halfWidth = Math.Max(0, wX - currentCenter);
+            // The thumb is attached to the RH trapezoid side.  Its drag is
+            // therefore translated into movement of the passband centre.
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
 
-            double minAllowedCenter = border1X + FixedSlopeWidth + halfWidth;
-            double maxAllowedCenter = border2X - FixedSlopeWidth - halfWidth;
+            // Keep the existing passband width while moving its centre.
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double halfWidth = Math.Max(0.0, Canvas.GetLeft(WidthThumb) + 8.0 - currentCenter);
 
-            double targetCenter = currentCenter + e.HorizontalChange;
-            targetCenter = Math.Max(minAllowedCenter, Math.Min(maxAllowedCenter, targetCenter));
+            // The RH trapezoid side is centre + half-width + slope.
+            // A dragged RH edge therefore moves the centre by the same amount.
+            double currentBaseRightX = currentCenter + halfWidth + FixedSlopeWidth;
+            double targetBaseRightX = currentBaseRightX + e.HorizontalChange;
 
-            ShiftValue = targetCenter - BaseCenter;
-            if (ShiftBadge != null) ShiftBadge.Text = "SF: " + (int)ShiftValue;
+            // Keep the complete trapezoid inside the filter section.
+            double minBaseRightX = border1X + (2.0 * FixedSlopeWidth);
+            double maxBaseRightX = border2X - 1.0;
 
-            double newLeftShoulder = targetCenter - halfWidth;
-            double newRightShoulder = targetCenter + halfWidth;
+            // Also retain the current width when determining the centre limits.
+            double minCenter = border1X + FixedSlopeWidth + halfWidth;
+            double maxCenter = border2X - FixedSlopeWidth - halfWidth;
 
-            double currentNotchX = Canvas.GetLeft(NotchThumb) + 9;
-            if (currentNotchX < newLeftShoulder) currentNotchX = newLeftShoulder;
-            if (currentNotchX > newRightShoulder) currentNotchX = newRightShoulder;
-            Canvas.SetLeft(NotchThumb, currentNotchX - 9);
-            NotchFreq = (int)(((currentNotchX - border1X) / (border2X - border1X)) * 100);
+            double targetCenter = targetBaseRightX - halfWidth - FixedSlopeWidth;
+            targetCenter = Math.Max(minCenter, Math.Min(maxCenter, targetCenter));
 
-            double currentContourX = Canvas.GetLeft(ContourThumb) + 8;
-            if (currentContourX < newLeftShoulder) currentContourX = newLeftShoulder;
-            if (currentContourX > newRightShoulder) currentContourX = newRightShoulder;
-            Canvas.SetLeft(ContourThumb, currentContourX - 8);
+            double ratio =
+                (targetCenter - (BaseCenter + ShiftToPixels(Ft891FilterRanges.IfShiftMinHz))) /
+                (ShiftToPixels(Ft891FilterRanges.IfShiftMaxHz) -
+                 ShiftToPixels(Ft891FilterRanges.IfShiftMinHz));
+
+            int newShift = (int)Math.Round(
+                Ft891FilterRanges.IfShiftMinHz +
+                ratio * (Ft891FilterRanges.IfShiftMaxHz - Ft891FilterRanges.IfShiftMinHz));
+
+            SetShiftValueInternal(newShift);
 
             UpdateThumbPositions();
             UpdateWaveform();
-            UIValueChanged?.Invoke("SHIFT", (int)ShiftValue);
+
+            UIValueChanged?.Invoke("SHIFT", ShiftValue);
         }
 
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (_isUpdatingProgrammatically) return;
 
-            double currentCenter = BaseCenter + ShiftValue;
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
             double currentLeft = Canvas.GetLeft(WidthThumb);
             double newLeft = currentLeft + e.HorizontalChange;
 
@@ -222,14 +507,18 @@ namespace YAESU_FT_891_Front_End
             if (newLeft < minX) newLeft = minX;
             if (newLeft > maxX) newLeft = maxX;
 
-            double percentage = ((newLeft - minX) / (maxX - minX)) * 100;
-            WidthValue = (int)Math.Round(percentage);
-            if (WidthBadge != null) WidthBadge.Text = "WD: " + WidthValue + "%";
+            double percentage = ((newLeft - minX) / (maxX - minX));
+            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
+
+            SetWidthCodeInternal(code);
+
+            if (WidthBadge != null)
+                WidthBadge.Text = "WD: " + ((int)WidthCode).ToString("D2");
 
             UpdateThumbPositions();
             UpdateWaveform();
 
-            UIValueChanged?.Invoke("WIDTH", WidthValue);
+            UIValueChanged?.Invoke("WIDTH", (int)WidthCode);
         }
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -243,6 +532,7 @@ namespace YAESU_FT_891_Front_End
             NbValue = (int)Math.Round(pct * 10);
             if (newTop <= 5) NbValue = 10;
             if (newTop >= CenterY) NbValue = 0;
+            OnPropertyChanged(nameof(NbValue));
 
             if (NbTextBlock != null) NbTextBlock.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
             if (NbBadge != null) NbBadge.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
@@ -253,7 +543,7 @@ namespace YAESU_FT_891_Front_End
 
         private void NotchThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            double currentCenter = BaseCenter + ShiftValue;
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
             double currentLeft = Canvas.GetLeft(NotchThumb);
             double currentTop = Canvas.GetTop(NotchThumb);
 
@@ -266,34 +556,44 @@ namespace YAESU_FT_891_Front_End
             double leftShoulderX = currentCenter - halfWidth;
             double rightShoulderX = currentCenter + halfWidth;
 
-            if ((leftShoulderX - FixedSlopeWidth) < border1X) leftShoulderX = border1X + FixedSlopeWidth;
-            if ((rightShoulderX + FixedSlopeWidth) > border2X) rightShoulderX = border2X - FixedSlopeWidth;
+            if ((leftShoulderX - FixedSlopeWidth) < border1X)
+                leftShoulderX = border1X + FixedSlopeWidth;
+            if ((rightShoulderX + FixedSlopeWidth) > border2X)
+                rightShoulderX = border2X - FixedSlopeWidth;
 
             double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
-
-            // Restrict vertical movement strictly between PeakY (top flat line) and CenterY (bottom center line)
             double clampedTop = Math.Max(PeakY, Math.Min(CenterY, targetCenterY));
 
             Canvas.SetLeft(NotchThumb, clampedCenterX - 9);
             Canvas.SetTop(NotchThumb, clampedTop - 9);
 
-            NotchFreq = (int)(((clampedCenterX - border1X) / (border2X - border1X)) * 100);
+            int frequency = (int)Math.Round(
+                Ft891FilterRanges.NotchFrequencyMinHz +
+                ((clampedCenterX - border1X) / (border2X - border1X)) *
+                (Ft891FilterRanges.NotchFrequencyMaxHz - Ft891FilterRanges.NotchFrequencyMinHz));
 
-            // Calculate depth percentage (0% at PeakY/fully up, 100% at CenterY/fully down)
-            double travelRange = CenterY - PeakY;
-            NotchDepth = travelRange > 0 ? (int)(((clampedTop - PeakY) / travelRange) * 100) : 0;
+            SetNotchFrequencyInternal(frequency);
 
-            if (NotchDepth < 3) NotchDepth = 0;
-            if (NotchBadge != null) NotchBadge.Text = NotchDepth == 0 ? "NCH: OFF" : "NCH: " + NotchFreq + "% F / " + NotchDepth + "% D";
+            // The FT-891 BP command has ON/OFF, but no depth parameter.
+            // Vertical movement is retained only as the visual ON/OFF gesture.
+            bool enabled = clampedTop > PeakY + 2;
+            SetNotchEnabledInternal(enabled);
+            _notchVisualDepth = enabled
+                ? Math.Max(0.0, Math.Min(1.0, (clampedTop - PeakY) / (CenterY - PeakY)))
+                : 0.0;
+
+            if (NotchBadge != null)
+                NotchBadge.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
 
             UpdateWaveform();
-            UIValueChanged?.Invoke("NCH_FREQ", NotchFreq);
-            UIValueChanged?.Invoke("NCH_DEPTH", NotchDepth);
+
+            UIValueChanged?.Invoke("NCH_FREQ", NotchFrequency);
+            UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
         }
 
         private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            double currentCenter = BaseCenter + ShiftValue;
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
             double currentLeft = Canvas.GetLeft(ContourThumb);
             double currentTop = Canvas.GetTop(ContourThumb);
 
@@ -306,41 +606,37 @@ namespace YAESU_FT_891_Front_End
             double leftShoulderX = currentCenter - halfWidth;
             double rightShoulderX = currentCenter + halfWidth;
 
-            if ((leftShoulderX - FixedSlopeWidth) < border1X) leftShoulderX = border1X + FixedSlopeWidth;
-            if ((rightShoulderX + FixedSlopeWidth) > border2X) rightShoulderX = border2X - FixedSlopeWidth;
+            if ((leftShoulderX - FixedSlopeWidth) < border1X)
+                leftShoulderX = border1X + FixedSlopeWidth;
+            if ((rightShoulderX + FixedSlopeWidth) > border2X)
+                rightShoulderX = border2X - FixedSlopeWidth;
 
             double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
-
-            // Restrict vertical travel between top limit (5) and CenterY
-            double clampedTop = Math.Max(5, Math.Min(CenterY, targetCenterY - 8));
+            double clampedTop = Math.Max(5, Math.Min(CenterY, targetCenterY));
 
             Canvas.SetLeft(ContourThumb, clampedCenterX - 8);
-            Canvas.SetTop(ContourThumb, clampedTop);
+            Canvas.SetTop(ContourThumb, clampedTop - 8);
 
-            double centerThumbY = clampedTop + 8;
+            int frequency = (int)Math.Round(
+                Ft891FilterRanges.ContourFrequencyMinHz +
+                ((clampedCenterX - border1X) / (border2X - border1X)) *
+                (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
 
-            if (Math.Abs(centerThumbY - PeakY) < 2)
-            {
-                ContourValue = 0;
-            }
-            else if (centerThumbY < PeakY)
-            {
-                // Dragged UP (Well state)
-                ContourEnabled = true;
-                double upwardTravel = PeakY - 5;
-                ContourValue = upwardTravel > 0 ? (int)(((PeakY - centerThumbY) / upwardTravel) * 100) : 0;
-            }
-            else
-            {
-                // Dragged DOWN (Dome state)
-                ContourEnabled = true;
-                double downwardTravel = CenterY - PeakY;
-                ContourValue = downwardTravel > 0 ? (int)(((centerThumbY - PeakY) / downwardTravel) * 100) : 0;
-            }
+            SetContourFrequencyInternal(frequency);
 
-            if (ContourBadge != null) ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourValue + "%";
+            // CO has no contour "depth" parameter. Keep vertical movement as
+            // a visual curve control only; CAT value remains the frequency.
+            _contourVisualOffset = clampedTop + 8 - PeakY;
+            _contourVisualOffset = Math.Max(-(PeakY - 5), Math.Min(CenterY - PeakY, _contourVisualOffset));
+
+            ContourEnabled = true;
+            OnPropertyChanged(nameof(ContourEnabled));
+
+            if (ContourBadge != null)
+                ContourBadge.Text = "CNT: " + ContourFrequency + " Hz";
+
             UpdateWaveform();
-            UIValueChanged?.Invoke("CONTOUR_VAL", ContourValue);
+            UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
         }
 
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -354,6 +650,7 @@ namespace YAESU_FT_891_Front_End
             DnrValue = (int)Math.Round(pct * 15);
             if (newTop <= 5) DnrValue = 15;
             if (newTop >= CenterY) DnrValue = 0;
+            OnPropertyChanged(nameof(DnrValue));
 
             if (DNRTextBlock != null) DNRTextBlock.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
             if (DnrBadge != null) DnrBadge.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
@@ -368,7 +665,12 @@ namespace YAESU_FT_891_Front_End
             ToggleButton btn = sender as ToggleButton;
             if (btn != null)
             {
-                if (btn == ContourBtn) { ContourEnabled = true; UpdateWaveform(); }
+                if (btn == ContourBtn)
+                {
+                    ContourEnabled = true;
+                    OnPropertyChanged(nameof(ContourEnabled));
+                    UpdateWaveform();
+                }
                 UIValueChanged?.Invoke(btn.Content.ToString(), true);
             }
         }
@@ -379,7 +681,12 @@ namespace YAESU_FT_891_Front_End
             ToggleButton btn = sender as ToggleButton;
             if (btn != null)
             {
-                if (btn == ContourBtn) { ContourEnabled = false; UpdateWaveform(); }
+                if (btn == ContourBtn)
+                {
+                    ContourEnabled = false;
+                    OnPropertyChanged(nameof(ContourEnabled));
+                    UpdateWaveform();
+                }
                 UIValueChanged?.Invoke(btn.Content.ToString(), false);
             }
         }
@@ -400,12 +707,12 @@ namespace YAESU_FT_891_Front_End
             double nbX = 42.0;
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
-            double currentCenter = BaseCenter + ShiftValue;
+            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - 8.0;
 
-            double wX = minX + ((WidthValue / 100.0) * (maxX - minX)) + 8.0;
+            double wX = minX + (((int)WidthCode / (double)Ft891FilterRanges.WidthCodeMax) * (maxX - minX)) + 8.0;
             Canvas.SetTop(WidthThumb, PeakY - 8);
 
             double dnrX = 598.0;
@@ -440,7 +747,7 @@ namespace YAESU_FT_891_Front_End
             double cY = Canvas.GetTop(ContourThumb) + 8;
             cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
 
-            if (NotchDepth == 0) nY = PeakY;
+            if (!NotchEnabled) nY = PeakY;
             if (!ContourEnabled) cY = PeakY;
 
             if (NbBadge != null) { Canvas.SetLeft(NbBadge, nbX - 22); Canvas.SetTop(NbBadge, nbY - 22); }
@@ -469,7 +776,7 @@ namespace YAESU_FT_891_Front_End
             PathFigureEndPoint.Point = new Point(border2X, CenterY);
 
             // Notch Section (Firebrick) - Flat when fully up at PeakY, V-shape when lowered
-            if (NotchDepth > 0 && nY > PeakY)
+            if (NotchEnabled && nY > PeakY)
             {
                 NotchFigureStart.StartPoint = new Point(Math.Max(leftShoulderX, nX - 12), PeakY);
                 NotchLeftShoulderSegment.Point = new Point(Math.Max(leftShoulderX, nX - 12), PeakY);
@@ -486,7 +793,7 @@ namespace YAESU_FT_891_Front_End
             }
 
             // Notch Section (Firebrick) - Hidden when off/fully up, V-shape when lowered
-            if (NotchDepth > 0 && nY > PeakY)
+            if (NotchEnabled && nY > PeakY)
             {
                 if (NotchPath != null) NotchPath.Visibility = Visibility.Visible;
                 NotchFigureStart.StartPoint = new Point(Math.Max(leftShoulderX, nX - 12), PeakY);

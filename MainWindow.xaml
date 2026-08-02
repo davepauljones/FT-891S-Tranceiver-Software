@@ -441,6 +441,22 @@
                             <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                         </Border>
 
+                        <Border x:Name="ShiftLabelBorder" Canvas.Left="210" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="SFT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="WidthLabelBorder" Canvas.Left="242" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="WDT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="ContourLabelBorder" Canvas.Left="210" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="CNT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="NotchLabelBorder" Canvas.Left="210" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                            <Label Content="NCH" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
                         <Border x:Name="NBLabelBorder" Canvas.Left="242" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
                             <Label Content="NB" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
