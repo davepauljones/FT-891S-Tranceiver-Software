@@ -171,7 +171,6 @@
                 </Path.Data>
             </Path>
 
-            <!-- 2. Contour Section -->
             <Path Stroke="DodgerBlue" StrokeThickness="2.5" Visibility="Visible">
                 <Path.Effect>
                     <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
@@ -180,9 +179,12 @@
                     <PathGeometry>
                         <PathFigure x:Name="ContourFigureStart" StartPoint="300,51">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="ContourLeftShoulderSegment" Point="300,51"/>
-                                <LineSegment x:Name="ContourTipSegment" Point="314,51"/>
-                                <LineSegment x:Name="ContourRightShoulderSegment" Point="328,51"/>
+                                <!-- Replaced LineSegments with a dynamic ArcSegment -->
+                                <ArcSegment x:Name="ContourArcSegment" 
+                                Point="328,51" 
+                                Size="14,0" 
+                                SweepDirection="Clockwise" 
+                                IsLargeArc="False"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>

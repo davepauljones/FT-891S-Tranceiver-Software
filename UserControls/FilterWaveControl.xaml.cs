@@ -129,18 +129,35 @@ namespace YAESU_FT_891_Front_End
 
             // 3. Notch Position (Clamped between PeakY for fully up and CenterY for fully down)
             double nX = border1X + ((NotchFreq / 100.0) * (border2X - border1X));
-            nX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
+
+            // Check if the notch is outside the active passband shoulders and force it to clamp
+            double clampedNotchX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
+            if (nX != clampedNotchX)
+            {
+                // If the passband width reduction forced the notch to move, 
+                // update its frequency percentage to match its new physical boundary!
+                nX = clampedNotchX;
+                NotchFreq = (int)(((nX - border1X) / (border2X - border1X)) * 100);
+            }
+
             double nY = PeakY + ((NotchDepth / 100.0) * (CenterY - PeakY));
             Canvas.SetLeft(NotchThumb, nX - 9);
             Canvas.SetTop(NotchThumb, nY - 9);
 
             // 4. Contour Position
             double cX = Canvas.GetLeft(ContourThumb) + 8;
-            cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
-            double maxTravel = CenterY - 5;
-            double cY = PeakY - ((ContourValue / 100.0) * maxTravel);
+            double clampedContourX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
+            if (cX != clampedContourX)
+            {
+                cX = clampedContourX;
+                // Optional: Recalculate or keep valid bounds if needed, but keeping X clamped prevents desync
+            }
             Canvas.SetLeft(ContourThumb, cX - 8);
-            Canvas.SetTop(ContourThumb, !ContourEnabled ? PeakY - 8 : cY - 8);
+
+            if (!ContourEnabled)
+            {
+                Canvas.SetTop(ContourThumb, PeakY - 8);
+            }
 
             // 5. DNR Position
             double travelSpaceDnr = CenterY - 5;
@@ -293,22 +310,32 @@ namespace YAESU_FT_891_Front_End
             if ((rightShoulderX + FixedSlopeWidth) > border2X) rightShoulderX = border2X - FixedSlopeWidth;
 
             double clampedCenterX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, targetCenterX));
-            double clampedTop = Math.Max(5, Math.Min(CanvasHeight - 16, targetCenterY - 8));
+
+            // Restrict vertical travel between top limit (5) and CenterY
+            double clampedTop = Math.Max(5, Math.Min(CenterY, targetCenterY - 8));
 
             Canvas.SetLeft(ContourThumb, clampedCenterX - 8);
             Canvas.SetTop(ContourThumb, clampedTop);
 
             double centerThumbY = clampedTop + 8;
-            if (Math.Abs(centerThumbY - PeakY) < 3)
+
+            if (Math.Abs(centerThumbY - PeakY) < 2)
             {
                 ContourValue = 0;
-                ContourEnabled = false;
+            }
+            else if (centerThumbY < PeakY)
+            {
+                // Dragged UP (Well state)
+                ContourEnabled = true;
+                double upwardTravel = PeakY - 5;
+                ContourValue = upwardTravel > 0 ? (int)(((PeakY - centerThumbY) / upwardTravel) * 100) : 0;
             }
             else
             {
+                // Dragged DOWN (Dome state)
                 ContourEnabled = true;
-                double maxTravel = CenterY - 5;
-                ContourValue = (int)(((PeakY - centerThumbY) / maxTravel) * 100);
+                double downwardTravel = CenterY - PeakY;
+                ContourValue = downwardTravel > 0 ? (int)(((centerThumbY - PeakY) / downwardTravel) * 100) : 0;
             }
 
             if (ContourBadge != null) ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourValue + "%";
@@ -364,7 +391,7 @@ namespace YAESU_FT_891_Front_End
                 DnrRightFigure == null || DnrRightSegment == null || DnrRightSegment2 == null ||
                 LH_TrapezoidSide == null || LH_TrapezoidWallSegment == null || RH_TrapezoidSide == null || WidthPassbandEnd == null ||
                 NotchFigureStart == null || NotchLeftShoulderSegment == null || NotchTipSegment == null || NotchRightShoulderSegment == null ||
-                ContourFigureStart == null || ContourLeftShoulderSegment == null || ContourTipSegment == null || ContourRightShoulderSegment == null)
+                ContourFigureStart == null || ContourArcSegment == null)
                 return;
 
             const double border0X = 0.0;
@@ -472,20 +499,54 @@ namespace YAESU_FT_891_Front_End
                 if (NotchPath != null) NotchPath.Visibility = Visibility.Collapsed;
             }
 
-            // Contour Section (DodgerBlue) - Completely Independent Path
-            if (ContourEnabled)
+            // Contour Section (DodgerBlue) - Dynamic Arc Segment Shape
+            if (ContourEnabled && ContourArcSegment != null)
             {
-                ContourFigureStart.StartPoint = new Point(Math.Max(leftShoulderX, cX - 30), PeakY);
-                ContourLeftShoulderSegment.Point = new Point(Math.Max(leftShoulderX, cX - 30), PeakY);
-                ContourTipSegment.Point = new Point(cX, cY);
-                ContourRightShoulderSegment.Point = new Point(Math.Min(rightShoulderX, cX + 30), PeakY);
+                // Ensure contour center stays locked inside the active passband shoulders
+                cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
+
+                // Dynamic max arc width (default 60px, but shrinks if passband width is narrow)
+                double maxArcWidth = Math.Min(60.0, rightShoulderX - leftShoulderX);
+                double halfArcWidth = maxArcWidth / 2.0;
+
+                double startX = Math.Max(leftShoulderX, cX - halfArcWidth);
+                double endX = Math.Min(rightShoulderX, cX + halfArcWidth);
+                double actualSpan = endX - startX;
+
+                ContourFigureStart.StartPoint = new Point(startX, PeakY);
+                ContourArcSegment.Point = new Point(endX, PeakY);
+
+                double offset = cY - PeakY;
+
+                if (Math.Abs(offset) < 0.5)
+                {
+                    ContourArcSegment.Size = new Size(actualSpan / 2.0, 0);
+                    ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+                }
+                else if (offset < 0)
+                {
+                    // Thumb is UP -> Well / U-shape
+                    double maxUpTravel = PeakY - 5.0;
+                    double currentHeight = Math.Min(Math.Abs(offset), maxUpTravel);
+
+                    ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+                    ContourArcSegment.Size = new Size(actualSpan / 2.0, currentHeight);
+                }
+                else
+                {
+                    // Thumb is DOWN -> Dome / Hill
+                    double maxDownTravel = CenterY - PeakY;
+                    double currentHeight = Math.Min(offset, maxDownTravel);
+
+                    ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
+                    ContourArcSegment.Size = new Size(actualSpan / 2.0, currentHeight);
+                }
             }
-            else
+            else if (ContourArcSegment != null)
             {
                 ContourFigureStart.StartPoint = new Point(rightShoulderX, PeakY);
-                ContourLeftShoulderSegment.Point = new Point(rightShoulderX, PeakY);
-                ContourTipSegment.Point = new Point(rightShoulderX, PeakY);
-                ContourRightShoulderSegment.Point = new Point(rightShoulderX, PeakY);
+                ContourArcSegment.Point = new Point(rightShoulderX, PeakY);
+                ContourArcSegment.Size = new Size(0, 0);
             }
 
             // DNR Section
