@@ -27,6 +27,13 @@ namespace FT891S_CatControl
     // =========================================================================
     // 1. GLOBAL RADIO STATE VARIABLES (WPF / UI Reference Points)
     // =========================================================================
+    public class IS_Shift
+    {
+        public int Fixed;
+        public int OnOff;
+        public int IfShiftDirection;
+        public int IfShiftHz;
+    }
     public class RadioState
     {
         public long VfoAFrequency { get; set; }
@@ -37,7 +44,7 @@ namespace FT891S_CatControl
         public RadioMode OperatingMode { get; set; }
         public int AgcBandSelection { get; set; }
         public AgcMode CurrentAgcMode { get; set; }
-        public int IfShiftHz { get; set; }
+        public IS_Shift IfShiftHz { get; set; }
         public MeterTypes ActiveMeterType { get; set; }
         public int CurrentMeterReading { get; set; }
         public int BusyMode { get; set; }
@@ -281,6 +288,13 @@ namespace FT891S_CatControl
         public WidthModes Switch { get; set; }
         public WidthValues Values { get; set; }
     }
+    public class IfShiftResult
+    {
+        public int Fixed { get; set; }
+        public int OnOff { get; set; }// on the 710 it is just Fixed at 0
+        public int IfShiftDirection { get; set; }// +/- it needs to see a character "+" or "-"
+        public int IfShiftHz { get; set; }// SHift from 0-1200Hz in 20Hz steps
+    }
     public enum FastStep { FastStep_OFF = 0, FastStep_ON = 1 }
 
     public enum DeveloperModes { DeveloperMode_OFF = 0, DeveloperMode_ON = 1 }
@@ -500,6 +514,29 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.PowerSwitch = (PowerSwitchModes)result
         );
+        public static readonly FT891S_CatCommand<IfShiftResult> IS = new FT891S_CatCommand<IfShiftResult>(
+            "IS",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 1).Expect("P4", 4),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 1).Expect("P4", 4),
+            dict => new IfShiftResult
+            {
+                Fixed = int.Parse(dict["P1"]),//0
+                OnOff = int.Parse(dict["P2"]),//0 or 1
+                IfShiftDirection = dict["P3"] == "+" ? 1 : -1, // Safely maps '+' to 1 and '-' to -1
+                IfShiftHz = int.Parse(dict["P4"]) // 0-1200Hz Steps on 20Hz
+            },
+            result => {
+                // Ensure the object instance exists before setting its properties
+                if (FT891S_CatManager.currentRadioState.IfShiftHz == null)
+                {
+                    FT891S_CatManager.currentRadioState.IfShiftHz = new IS_Shift();
+                }
+                FT891S_CatManager.currentRadioState.IfShiftHz.Fixed = result.Fixed;
+                FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = result.OnOff;
+                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = result.IfShiftDirection;
+                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = result.IfShiftHz;
+            }
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -523,8 +560,19 @@ namespace FT891S_CatControl
             { "RL", RL },
             { "SH", SH },
             { "FS", FS },
-            { "PS", PS }
+            { "PS", PS },
+            { "IS", IS }
         };
+
+        // Example method to build the transmission string for the radio
+        public static string BuildIsCommand(int fixedVal, int onOff, char direction, int hz)
+        {
+            // Use Math.Abs to ensure P4 is always a positive 4-digit number (e.g., 100 -> "0100", not "-0100")
+            string p4Formatted = Math.Abs(hz).ToString("D4");
+
+            return $"{fixedVal}{onOff}{direction}{p4Formatted};";
+        }
+        // Resulting string: "IS0+0100;"
 
         public static void ProcessIncomingRadioData(string rawRadioData, Dispatcher wpfDispatcher = null)
         {
@@ -699,6 +747,10 @@ namespace FT891S_CatControl
             else if (cmd is FT891S_CatCommand<MeterResult> cmdMeter)
             {
                 cmdMeter.ApplyOutgoingValues(values);
+            }
+            else if (cmd is FT891S_CatCommand<IfShiftResult> cmdIfShift)
+            {
+                cmdIfShift.ApplyOutgoingValues(values);
             }
 
             if (mainWindow.fT891S_SerialPort._port != null &&
@@ -1084,6 +1136,10 @@ namespace FT891S_CatControl
                 {
                     case TranceiverModes.BootUp:
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
+
+                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '-', 300);
+                        await SendCatCommandAsync("IS", BuiltIsCommand, OutGoingDataLoopDelay);
+                        await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
                         break;
                     case TranceiverModes.MainWaterfall:
                         break;

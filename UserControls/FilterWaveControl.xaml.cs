@@ -41,7 +41,6 @@ namespace YAESU_FT_891_Front_End
     public enum Ft891IfShiftDirection
     {
         Minus = -1,
-        Zero = 0,
         Plus = 1
     }
 
@@ -135,7 +134,7 @@ namespace YAESU_FT_891_Front_End
             {
                 if (ShiftValue < 0) return Ft891IfShiftDirection.Minus;
                 if (ShiftValue > 0) return Ft891IfShiftDirection.Plus;
-                return Ft891IfShiftDirection.Zero;
+                return Ft891IfShiftDirection.Plus;
             }
         }
         public int ShiftMagnitude { get { return Math.Abs(ShiftValue); } }

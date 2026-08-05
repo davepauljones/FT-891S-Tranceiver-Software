@@ -15,6 +15,7 @@ namespace YAESU_FT_891_Front_End
         private int _widthValue;
         private int _notchFreq;
         private int _notchDepth;
+        private int _isValue;
         private int _dnrValue;
         private bool _dnfEnabled;
         private bool _apfEnabled;
@@ -31,6 +32,8 @@ namespace YAESU_FT_891_Front_End
 
         private void OnUIValueChanged(string parameter, object value)
         {
+            Console.WriteLine(parameter);
+
             Task.Run(async () =>
             {
                 try
@@ -71,6 +74,24 @@ namespace YAESU_FT_891_Front_End
                             _notchDepth = (int)value;
                             bool active = _notchDepth > 0;
                             // Example: await mainWindow._catManager.SendCatCommandAsync("NT", new object[] { 0, active ? 1 : 0 }, ...);
+                            break;
+
+                        case "SHIFT":
+                            _isValue = (int)value;
+
+                            Console.WriteLine(">>>>> " + _isValue);
+                            
+                            char _ShiftDirection = '+';
+                            
+                            if (_isValue > 0)
+                                _ShiftDirection = '+';
+                            else if (_isValue < 0)
+                                _ShiftDirection = '-';
+                            else
+                                _ShiftDirection = '+';
+
+                            String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, _ShiftDirection, _isValue);
+                            await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
 
                         case "NR":
