@@ -65,6 +65,10 @@ namespace FT891S_CatControl
 
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
+        
+        public NotchModes NotchMode { get; set; }
+        public int NotchValue { get; set; } = 0;
+
         public FastStep FastStep { get; set; }
 
         public String ComPort { get; set; }
@@ -245,6 +249,7 @@ namespace FT891S_CatControl
     public enum NBMode { NB_OFF = 0, NB_ON = 1 }
     public enum NRMode { NR_OFF = 0, NR_ON = 1 }
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
+    public enum NotchModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
 
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
                             DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
@@ -287,6 +292,12 @@ namespace FT891S_CatControl
         public int Fixed { get; set; }
         public WidthModes Switch { get; set; }
         public WidthValues Values { get; set; }
+    }
+    public class NotchResult
+    {
+        public int Fixed { get; set; }
+        public NotchModes Switch { get; set; }
+        public int Values { get; set; }
     }
     public class IfShiftResult
     {
@@ -537,6 +548,24 @@ namespace FT891S_CatControl
                 FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = result.IfShiftHz;
             }
         );
+        //BP = Manual Notch, Values are 001-320 x10Hz
+        public static readonly FT891S_CatCommand<NotchResult> BP = new FT891S_CatCommand<NotchResult>(
+            "BP",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 3),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 3),
+
+            dict => new NotchResult
+            {
+                Fixed = int.Parse(dict["P1"]),
+                Switch = dict.ContainsKey("P2") ? (NotchModes)int.Parse(dict["P2"]) : 0,
+                Values = dict.ContainsKey("P3") ? int.Parse(dict["P3"]) : 0
+            },
+            result => {
+                //Do nothing with Fixed
+                FT891S_CatManager.currentRadioState.NotchMode = result.Switch;
+                FT891S_CatManager.currentRadioState.NotchValue = result.Values;
+            }
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -561,7 +590,8 @@ namespace FT891S_CatControl
             { "SH", SH },
             { "FS", FS },
             { "PS", PS },
-            { "IS", IS }
+            { "IS", IS },
+            { "BP", BP }
         };
 
         // Example method to build the transmission string for the radio
