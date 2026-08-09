@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Width="643" Height="142">
-    <Grid>
+    <Grid Background="#444444">
         <Grid.RowDefinitions>
             <RowDefinition Height="102"/>
             <RowDefinition Height="40"/>
@@ -111,11 +111,32 @@
             <Polygon Canvas.Left="1" Canvas.Top="0" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="1" Canvas.Top="106" Points="0,0 640,0 640,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="#33FFFFFF"/>
+
+            <!-- Fixed Background Trapeszoid -->
+            <Path Stroke="Firebrick" StrokeThickness="0" Visibility="Visible">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="SlateGray" Offset="0.0" />
+                        <GradientStop Color="Black" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="199,51">
+                            <PathFigure.Segments>
+                                <LineSegment Point="207,20"/>
+                                <LineSegment Point="434,20"/>
+                                <LineSegment Point="442,51"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
         </Canvas>
 
         <Grid Grid.Row="0">
-            <Line X1="0" Y1="51" X2="643" Y2="51" Stroke="#44FFFFFF" StrokeThickness="1" StrokeDashArray="4 4"/>
-
             <!-- 1. NB Section -->
             <Path Stroke="#FF00FFCC" StrokeThickness="2.5" Visibility="Visible">
                 <Path.Effect>
@@ -134,10 +155,7 @@
             </Path>
 
             <!-- 2. Width Main Section -->
-            <Path Stroke="#FF00FFCC" StrokeThickness="2.5" Visibility="Visible">
-                <Path.Effect>
-                    <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
-                </Path.Effect>
+            <Path Stroke="White" StrokeThickness="1" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure StartPoint="84,51">
@@ -153,18 +171,17 @@
                 </Path.Data>
             </Path>
 
-            <!-- 2. Notch Section -->
-            <Path x:Name="NotchPath" Stroke="Firebrick" StrokeThickness="2.5" Visibility="Collapsed">
-                <Path.Effect>
+            <!-- 2. Notch Section (Fixed Size V-shape, pined to baseline) -->
+            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="1" Visibility="Visible">
+                <!--<Path.Effect>
                     <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
-                </Path.Effect>
+                </Path.Effect>-->
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure x:Name="NotchFigureStart" StartPoint="300,51">
+                        <PathFigure x:Name="NotchFigureStart" StartPoint="300,20">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="NotchLeftShoulderSegment" Point="300,51"/>
-                                <LineSegment x:Name="NotchTipSegment" Point="314,51"/>
-                                <LineSegment x:Name="NotchRightShoulderSegment" Point="328,51"/>
+                                <LineSegment x:Name="NotchTipSegment" Point="314,50"/>
+                                <LineSegment x:Name="NotchRightShoulderSegment" Point="328,20"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -179,7 +196,6 @@
                     <PathGeometry>
                         <PathFigure x:Name="ContourFigureStart" StartPoint="300,51">
                             <PathFigure.Segments>
-                                <!-- Replaced LineSegments with a dynamic ArcSegment -->
                                 <ArcSegment x:Name="ContourArcSegment" 
                                 Point="328,51" 
                                 Size="14,0" 
@@ -215,13 +231,12 @@
                 <TextBlock x:Name="NotchBadge" Text="NCH: OFF" Foreground="#FFFF007F" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="430" Canvas.Top="75"/>
                 <TextBlock x:Name="ContourBadge" Text="CNT: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="86" Canvas.Top="75"/>
                 <TextBlock x:Name="DnrBadge" Text="NR: OFF" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="598" Canvas.Top="15"/>
-
-                <!-- added tracking readout label for slider adjustments -->
                 <TextBlock x:Name="ShiftBadge" Text="SF: 0" Foreground="#FF00FFCC" FontSize="9.5" FontWeight="SemiBold" Canvas.Left="320" Canvas.Top="75"/>
 
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="35" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
                 <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta" />
-                <Thumb x:Name="NotchThumb" Style="{StaticResource NotchHandleStyle}" Canvas.Left="314" Canvas.Top="51" DragDelta="NotchThumb_DragDelta" />
+                <!-- NotchThumb locked to baseline Y (PeakY = 20) -->
+                <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta"/>
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
                 <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta"/>
@@ -233,10 +248,11 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
                 <ToggleButton x:Name="CwApfBtn" Content="CW APF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
-                <ToggleButton x:Name="ContourBtn" Content="CONTOUR" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
-                <ToggleButton x:Name="ResetBtn" Content="RESET" Style="{StaticResource FilterToggleStyle}" Margin="10,0,10,0" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
-                <ToggleButton x:Name="LoadBtn" Content="LOAD" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
-                <ToggleButton x:Name="SaveBtn" Content="SAVE" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="NotchBtn" Content="NOTCH" Style="{StaticResource FilterToggleStyle}" Width="50" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="ContourBtn" Content="CONTOUR" Style="{StaticResource FilterToggleStyle}" Width="60" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="ResetBtn" Content="RESET" Style="{StaticResource FilterToggleStyle}" Width="40" Margin="10,0,10,0" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="LoadBtn" Content="LOAD" Style="{StaticResource FilterToggleStyle}" Width="40" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
+                <ToggleButton x:Name="SaveBtn" Content="SAVE" Style="{StaticResource FilterToggleStyle}" Width="40" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
             </StackPanel>
         </Grid>
     </Grid>
