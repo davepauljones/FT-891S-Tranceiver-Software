@@ -155,7 +155,7 @@
             </Path>
 
             <!-- 2. Width Main Section -->
-            <Path Stroke="White" StrokeThickness="1" Visibility="Visible">
+            <Path Stroke="White" StrokeThickness="0" Fill="#22ffffff" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure StartPoint="84,51">
@@ -171,11 +171,8 @@
                 </Path.Data>
             </Path>
 
-            <!-- 2. Notch Section (Fixed Size V-shape, pined to baseline) -->
-            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="1" Visibility="Visible">
-                <!--<Path.Effect>
-                    <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
-                </Path.Effect>-->
+            <!-- 4. Notch Section (Fixed Size V-shape, pined to baseline) -->
+            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="2.5" Fill="#444444" Visibility="Visible" Panel.ZIndex="1">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="NotchFigureStart" StartPoint="300,20">
@@ -188,10 +185,8 @@
                 </Path.Data>
             </Path>
 
-            <Path Stroke="DodgerBlue" StrokeThickness="2.5" Visibility="Visible">
-                <Path.Effect>
-                    <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>
-                </Path.Effect>
+            <!-- 5. Contour Section (Fixed Size V-shape, pined to baseline) -->
+            <Path x:Name="ContourPath"  Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="ContourFigureStart" StartPoint="300,51">
@@ -207,7 +202,7 @@
                 </Path.Data>
             </Path>
 
-            <!-- 3. DNR Section -->
+            <!-- 6. DNR Section -->
             <Path Stroke="#FF00FFCC" StrokeThickness="2.5" Visibility="Visible">
                 <Path.Effect>
                     <DropShadowEffect BlurRadius="8" Color="#FF00FFCC" ShadowDepth="0" Opacity="0.6"/>

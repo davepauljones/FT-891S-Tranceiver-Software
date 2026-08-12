@@ -95,6 +95,7 @@ namespace YAESU_FT_891_Front_End
 
         public int ContourFrequency { get; private set; } = 1600;
         public int ContourValue { get { return ContourFrequency; } }
+        public Ft891OnOff ContourState { get; private set; } = Ft891OnOff.Off;
         public bool ContourEnabled { get; private set; }
 
         public int ShiftValue { get; private set; }
@@ -357,7 +358,7 @@ namespace YAESU_FT_891_Front_End
             double clampedNotchX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
 
             Canvas.SetLeft(NotchThumb, clampedNotchX - 9);
-            Canvas.SetTop(NotchThumb, PeakY - 9); // Locked to baseline Y
+            Canvas.SetTop(NotchThumb, PeakY - 19); // Locked to baseline Y
 
             // 4. CONTOUR Position
             double contourRatio =
@@ -611,6 +612,10 @@ namespace YAESU_FT_891_Front_End
                 {
                     ContourEnabled = true;
                     OnPropertyChanged(nameof(ContourEnabled));
+                    ContourState = Ft891OnOff.On;
+                    UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
+                    ContourThumb.Visibility = Visibility.Visible;
+                    ContourPath.Visibility = Visibility.Visible;
                     UpdateWaveform();
                 }
                 else if (btn == NotchBtn)
@@ -635,6 +640,10 @@ namespace YAESU_FT_891_Front_End
                 {
                     ContourEnabled = false;
                     OnPropertyChanged(nameof(ContourEnabled));
+                    ContourState = Ft891OnOff.Off;
+                    UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
+                    ContourThumb.Visibility = Visibility.Hidden;
+                    ContourPath.Visibility = Visibility.Hidden;
                     UpdateWaveform();
                 }
                 else if (btn == NotchBtn)
