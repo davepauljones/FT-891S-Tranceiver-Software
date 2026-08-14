@@ -113,21 +113,21 @@
             <Polygon Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="#33FFFFFF"/>
 
             <!-- Fixed Background Trapeszoid -->
-            <Path Stroke="Firebrick" StrokeThickness="0" Visibility="Visible">
-                <Path.Fill>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="SlateGray" Offset="0.0" />
-                        <GradientStop Color="Black" Offset="1.0" />
+            <Path Stroke="Firebrick" StrokeThickness="0" Fill="#33FFFFFF" Opacity="0.8" Visibility="Visible">
+                <!--<Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.2">
+                        <GradientStop Color="Orange" Offset="0.0" />
+                        <GradientStop Color="Firebrick" Offset="1.0" />
                     </LinearGradientBrush>
-                </Path.Fill>
+                </Path.Fill>-->
 
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="199,51">
+                        <PathFigure StartPoint="200,51">
                             <PathFigure.Segments>
-                                <LineSegment Point="207,20"/>
-                                <LineSegment Point="434,20"/>
-                                <LineSegment Point="442,51"/>
+                                <LineSegment Point="208,20"/>
+                                <LineSegment Point="432,20"/>
+                                <LineSegment Point="440,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -155,7 +155,13 @@
             </Path>
 
             <!-- 2. Width Main Section -->
-            <Path Stroke="White" StrokeThickness="0" Fill="#22ffffff" Visibility="Visible">
+            <Path Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
+                        <GradientStop Color="SlateGray" Offset="0.0" />
+                        <GradientStop Color="Black" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure StartPoint="84,51">
