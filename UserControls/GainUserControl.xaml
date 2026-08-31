@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="YAESU_FT_891_Front_End.GainUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+             mc:Ignorable="d" 
+             d:DesignHeight="166" d:DesignWidth="300">
+    <Border Width="300" Panel.ZIndex="1" Height="166" CornerRadius="5" Background="Gray" Visibility="Visible">
+
+            <Canvas>
+
+                <TextBlock Text="GAIN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
+
+                <Border x:Name="Gain10Border" Tag="10" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain10TextBlock" Text="10%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain20Border" Tag="20" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain20TextBlock" Text="20%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain30Border" Tag="30" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain30TextBlock" Text="30%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain40Border" Tag="40" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                    <TextBlock x:Name="Gain40TextBlock" Text="40%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="Gain50Border" Tag="50" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain50TextBlock" Text="50%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain60Border" Tag="60" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain60TextBlock" Text="60%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain70Border" Tag="70" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain70TextBlock" Text="70%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain80Border" Tag="80" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain80TextBlock" Text="80%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="Gain90Border" Tag="90" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain90TextBlock" Text="90%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="Gain100Border" Tag="100" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="Gain100TextBlock" Text="100%" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="GainDefaultBorder" Tag="254" Canvas.Left="148" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="GainDefaultTextBlock" Text="DEFAULT" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+                <Border x:Name="GainMuteBorder" Tag="255" Canvas.Left="221" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="GainMuteTextBlock" Text="MUTE" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    </StackPanel>
+                </Border>
+
+            <StackPanel Canvas.Left="5" Canvas.Top="128" Style="{DynamicResource ArduHorizontalSliderStackPanel}" Width="289">
+                <Slider x:Name = "GainSlider" Minimum = "0" Maximum = "255" Value="50" TickPlacement="BottomRight"
+                    Ticks="0, 32, 64, 96, 128, 160, 192, 224, 255" ToolTip="Drag to fine tune value" Style="{DynamicResource ColoredSliderStyle}" ValueChanged = "GainSlider_ValueChanged">
+                </Slider>
+                <Label x:Name="GainLabel" Content="50%" Margin="0,-6,0,0" Style="{DynamicResource ArduRangeSliderLabel}" HorizontalContentAlignment="Center"/>
+            </StackPanel>
+
+        </Canvas>
+
+        </Border>
+
+</UserControl>

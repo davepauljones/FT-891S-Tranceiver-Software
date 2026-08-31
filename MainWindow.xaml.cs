@@ -2,6 +2,7 @@
 using Event_Horizon;
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
+using NAudio.Gui;
 using System;
 using System.ComponentModel;
 using System.Data.Common;
@@ -1155,6 +1156,14 @@ namespace YAESU_FT_891_Front_End
 
         private void AFGainKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ClickCount == 2)
+            {
+                if (gainUserControl.Visibility == Visibility.Hidden)
+                    gainUserControl.Visibility = Visibility.Visible;
+                else
+                    gainUserControl.Visibility = Visibility.Hidden;
+            }
+
             AFGainKnobAreaCanvas_PreviewMouseDown_DateTime = DateTime.Now;
 
             e.Handled = true;
@@ -1855,6 +1864,11 @@ namespace YAESU_FT_891_Front_End
                 FT891S_CatManager.currentRadioState.CallSign = msg.InputResult;
                 CallSignTextBlock.Text = msg.InputResult;
             }
+        }
+
+        private void GainUserControl_GainChanged(object sender, GainChangedEventArgs e)
+        {
+
         }
     }
 }

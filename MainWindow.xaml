@@ -10,6 +10,7 @@
         xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:modeUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:frequencyDisplay="clr-namespace:YAESU_FT_891_Front_End"
+        xmlns:gainUserControl="clr-namespace:YAESU_FT_891_Front_End"
         mc:Ignorable="d"
         Focusable="True"
         KeyDown="MetroWindow_KeyDown"
@@ -145,6 +146,8 @@
                             <BlurEffect x:Name="AFGainKnobCanvasBlurEffect" Radius="4"/>
                         </Canvas.Effect>
                     </Canvas>
+
+                    <gainUserControl:GainUserControl x:Name="gainUserControl" Canvas.Left="90" Canvas.Top="180" Panel.ZIndex="1" Width="300" Height="166" GainChanged="GainUserControl_GainChanged" Visibility="Hidden"/>
 
                     <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
                         <Canvas.Background>
@@ -1236,6 +1239,8 @@
                         <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Hidden"/>
 
                         <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Hidden"/>
+
+                        
 
                     </Canvas>
                 </Canvas>

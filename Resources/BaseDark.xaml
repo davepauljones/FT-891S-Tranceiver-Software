@@ -1024,4 +1024,94 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ArduHorizontalSliderStackPanel" TargetType="{x:Type StackPanel}">
+        <Setter Property="Margin" Value="0,10,0,10"/>
+        <Setter Property="Orientation" Value="Vertical"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <Style x:Key="ArduRangeSliderLabel" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="Tahoma"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,-2,0,0"/>
+        <Setter Property="Width" Value="180"/>
+    </Style>
+
+    <!-- Color Palette Brushes -->
+    <SolidColorBrush x:Key="SliderTrackUnfilled" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="SliderTrackFilled" Color="#007ACC" />
+    <SolidColorBrush x:Key="SliderThumbNormal" Color="#007ACC" />
+    <SolidColorBrush x:Key="SliderThumbHover" Color="#005A9E" />
+    <SolidColorBrush x:Key="SliderThumbPressed" Color="#003D6B" />
+
+    <!-- Custom Thumb Template -->
+    <ControlTemplate x:Key="CustomSliderThumbTemplate" TargetType="Thumb">
+        <Ellipse x:Name="thumbEllipse" 
+                 Width="16" 
+                 Height="16" 
+                 Fill="{StaticResource SliderThumbNormal}" 
+                 Stroke="White" 
+                 StrokeThickness="2">
+            <Ellipse.Effect>
+                <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.25"/>
+            </Ellipse.Effect>
+        </Ellipse>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="thumbEllipse" Property="Fill" Value="{StaticResource SliderThumbHover}" />
+            </Trigger>
+            <Trigger Property="IsDragging" Value="True">
+                <Setter TargetName="thumbEllipse" Property="Fill" Value="{StaticResource SliderThumbPressed}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Main Horizontal Slider Style -->
+    <Style x:Key="ColoredSliderStyle" TargetType="Slider">
+        <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid x:Name="GridRoot" VerticalAlignment="Center">
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="6" CornerRadius="3,0,0,3" Background="{StaticResource SliderTrackFilled}"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="6" CornerRadius="0,3,3,0" Background="{StaticResource SliderTrackUnfilled}"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb" 
+                                       Focusable="False" 
+                                       OverridesDefaultStyle="True" 
+                                       Template="{StaticResource CustomSliderThumbTemplate}"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Implicit Style: Applies automatically to ALL Sliders in the app -->
+    <!-- Remove target style assignment if you only want explicit key styling -->
+    <!-- <Style TargetType="Slider" BasedOn="{StaticResource ColoredSliderStyle}"/> -->
+
 </ResourceDictionary>
