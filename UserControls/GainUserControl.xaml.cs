@@ -140,6 +140,8 @@ namespace YAESU_FT_891_Front_End
                 // int percent = (int)Math.Round((gainValue / 255.0) * 100);
                 // GainLabel.Content = $"{percent}%";
             }
+
+            ChangeGain(gainValue);
         }
     }
 }

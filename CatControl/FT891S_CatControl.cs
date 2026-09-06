@@ -53,8 +53,12 @@ namespace FT891S_CatControl
         public int TXPowerWattsMaximum { get; } = 100;
         public int TXPowerWattsAMMaximum { get; } = 40;
         public int TXPowerWattsStep { get; } = 5;
+        public int SQGain { get; set; } = 0;
+        public int SQGainDefault { get; set; } = 30;
         public int RFGain { get; set; } = 0;
+        public int RFGainDefault { get; set; } = 30;
         public int AFGain { get; set; } = 0;
+        public int AFGainDefault { get; set; } = 30;
         public long RadioID { get; set; }
         public int SMeter { get; set; }
         public ScanMode ScanMode { get; set; }

@@ -67,6 +67,8 @@ namespace YAESU_FT_891_Front_End
 
         public FT891S_CatManager _catManager;
 
+        public GainManagement gainManagement;
+
         public PacketManagement packetManagement;
 
         public CATCommandLog cATCommandLog;
@@ -191,6 +193,8 @@ namespace YAESU_FT_891_Front_End
             waterFallSweep = new WaterFallSweep(this, BandScopeCanvas, SweepYellowCursorCanvas);
 
             _catManager = new FT891S_CatManager(this, this.Dispatcher);
+
+            gainManagement = new GainManagement(this);
 
             bandUserControl.Visibility = Visibility.Hidden;
             modeUserControl.Visibility = Visibility.Hidden;
@@ -1020,8 +1024,21 @@ namespace YAESU_FT_891_Front_End
 
         DateTime RFGainKnobAreaCanvas_PreviewMouseDown_DateTime = DateTime.MinValue;
 
-        private void RFGainKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void RFGainKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ClickCount == 1)
+            {
+                if (gainUserControl.Visibility == Visibility.Hidden)
+                    await gainManagement.ManageGain(ControlGains.RF, ControlModes.OpenUserControl, FT891S_CatManager.currentRadioState.RFGain);
+                else
+                {
+                    //gainUserControl.Visibility = Visibility.Hidden;
+                    FadoutUserControl(gainUserControl);
+                }
+
+                return;
+            }
+
             RFGainKnobAreaCanvas_PreviewMouseDown_DateTime = DateTime.Now;
 
             e.Handled = true;
@@ -1154,14 +1171,19 @@ namespace YAESU_FT_891_Front_End
 
         DateTime AFGainKnobAreaCanvas_PreviewMouseDown_DateTime = DateTime.MinValue;
 
-        private void AFGainKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void AFGainKnobAreaCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
+            if (e.ClickCount == 1)
             {
                 if (gainUserControl.Visibility == Visibility.Hidden)
-                    gainUserControl.Visibility = Visibility.Visible;
+                    await gainManagement.ManageGain(ControlGains.AF, ControlModes.OpenUserControl, FT891S_CatManager.currentRadioState.AFGain);
                 else
-                    gainUserControl.Visibility = Visibility.Hidden;
+                {
+                    //gainUserControl.Visibility = Visibility.Hidden;
+                    FadoutUserControl(gainUserControl);
+                }
+
+                return;
             }
 
             AFGainKnobAreaCanvas_PreviewMouseDown_DateTime = DateTime.Now;
@@ -1866,9 +1888,24 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        private void GainUserControl_GainChanged(object sender, GainChangedEventArgs e)
+        private async void GainUserControl_GainChanged(object sender, GainChangedEventArgs e)
         {
+            Console.Write("Gain is now set to ");
+            Console.WriteLine(e.Gain);
 
+            switch (gainManagement.currentControlGain)
+            {
+                case ControlGains.AF:
+                    await gainManagement.ManageGain(ControlGains.AF, ControlModes.SetOnly, e.Gain);
+                    break;
+                case ControlGains.RF:
+                    await gainManagement.ManageGain(ControlGains.RF, ControlModes.SetOnly, e.Gain);
+                    break;
+                case ControlGains.SQ:
+                    await gainManagement.ManageGain(ControlGains.SQ, ControlModes.SetOnly, e.Gain);
+                    break;
+            }
         }
+
     }
 }

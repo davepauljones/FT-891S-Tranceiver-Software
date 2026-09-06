@@ -10,7 +10,7 @@
 
             <Canvas>
 
-                <TextBlock Text="GAIN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
+                <TextBlock x:Name="GainTitleTextBlock" Text="GAIN" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
 
                 <Border x:Name="Gain10Border" Tag="10" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="GainWindowCanvas_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">

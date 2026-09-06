@@ -162,6 +162,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Management\GainManagement.cs" />
+    <Compile Include="RadioMode\FTX1ModeMapper.cs" />
     <Compile Include="UserControls\EventHorizonRequesterInformation.xaml.cs">
       <DependentUpon>EventHorizonRequesterInformation.xaml</DependentUpon>
     </Compile>
