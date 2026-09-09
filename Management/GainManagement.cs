@@ -75,14 +75,23 @@ namespace YAESU_FT_891_Front_End
                     {
                         case ControlGains.AF:
                             mainWindow.gainUserControl.GainTitleTextBlock.Text = "AF GAIN";
+                            mainWindow.gainUserControl.Minimum = 0;
+                            mainWindow.gainUserControl.Maximum = 90;
+                            mainWindow.gainUserControl.DefaultGain = 70;
                             mainWindow.gainUserControl.ChangeGain(FT891S_CatManager.currentRadioState.AFGain);
                             break;
                         case ControlGains.RF:
                             mainWindow.gainUserControl.GainTitleTextBlock.Text = "RF GAIN";
+                            mainWindow.gainUserControl.Minimum = 0;
+                            mainWindow.gainUserControl.Maximum = 30;
+                            mainWindow.gainUserControl.DefaultGain = 10;
                             mainWindow.gainUserControl.ChangeGain(FT891S_CatManager.currentRadioState.RFGain);
                             break;
                         case ControlGains.SQ:
                             mainWindow.gainUserControl.GainTitleTextBlock.Text = "SQ GAIN";
+                            mainWindow.gainUserControl.Minimum = 0;
+                            mainWindow.gainUserControl.Maximum = 255;
+                            mainWindow.gainUserControl.DefaultGain = 70;
                             mainWindow.gainUserControl.ChangeGain(FT891S_CatManager.currentRadioState.SQGain);
                             break;
                     }

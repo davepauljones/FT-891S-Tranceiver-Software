@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static YAESU_FT_891_Front_End.Animations;
-using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -24,8 +23,50 @@ namespace YAESU_FT_891_Front_End
             remove => RemoveHandler(GainChangedEvent, value);
         }
 
-        private int _currentGain = 0;
+        #region Dependency Properties
 
+        public static readonly DependencyProperty MinimumProperty =
+            DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(GainUserControl),
+                new PropertyMetadata(0.0, OnScaleRangeChanged));
+
+        public static readonly DependencyProperty MaximumProperty =
+            DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(GainUserControl),
+                new PropertyMetadata(255.0, OnScaleRangeChanged));
+
+        public static readonly DependencyProperty DefaultGainProperty =
+            DependencyProperty.Register(nameof(DefaultGain), typeof(int), typeof(GainUserControl),
+                new PropertyMetadata(254));
+
+        public double Minimum
+        {
+            get => (double)GetValue(MinimumProperty);
+            set => SetValue(MinimumProperty, value);
+        }
+
+        public double Maximum
+        {
+            get => (double)GetValue(MaximumProperty);
+            set => SetValue(MaximumProperty, value);
+        }
+
+        public int DefaultGain
+        {
+            get => (int)GetValue(DefaultGainProperty);
+            set => SetValue(DefaultGainProperty, value);
+        }
+
+        private static void OnScaleRangeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is GainUserControl control)
+            {
+                control.UpdateSliderScale();
+            }
+        }
+
+        #endregion
+
+        private int _currentGain = 0;
+        private bool _isUpdatingSlider = false;
         private readonly Dictionary<int, (Border border, TextBlock text)> _ui;
 
         public GainUserControl()
@@ -45,8 +86,34 @@ namespace YAESU_FT_891_Front_End
                 { 90, (Gain90Border, Gain90TextBlock) },
                 { 100, (Gain100Border, Gain100TextBlock) },
                 { 254, (GainDefaultBorder, GainDefaultTextBlock) },
-                { 255, (GainMuteBorder, GainMuteTextBlock) }
+                { 0, (GainMuteBorder, GainMuteTextBlock) }
             };
+
+            Loaded += GainUserControl_Loaded;
+        }
+
+        private void GainUserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateSliderScale();
+        }
+
+        private void UpdateSliderScale()
+        {
+            if (GainSlider == null) return;
+
+            GainSlider.Minimum = Minimum;
+            GainSlider.Maximum = Maximum;
+
+            DoubleCollection ticks = new DoubleCollection();
+            double range = Maximum - Minimum;
+            double step = range / 8.0;
+
+            for (int i = 0; i <= 8; i++)
+            {
+                ticks.Add(Math.Round(Minimum + (step * i)));
+            }
+
+            GainSlider.Ticks = ticks;
         }
 
         public void SetSupportedGains(IEnumerable<int> supportedGains)
@@ -73,23 +140,36 @@ namespace YAESU_FT_891_Front_End
         private void GainWindowCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
-            if (border == null)
+            if (border == null || !border.IsEnabled)
                 return;
 
-            if (!border.IsEnabled)
-                return;
-
-            int gain;
-            if (int.TryParse(border.Tag.ToString(), out gain))
+            if (int.TryParse(border.Tag?.ToString(), out int tagValue))
             {
-                ChangeGain(gain);
+                int targetGain;
 
+                if (tagValue == 0) // MUTE
+                {
+                    targetGain = (int)Minimum;
+                }
+                else if (tagValue == 254) // DEFAULT
+                {
+                    targetGain = DefaultGain;
+                }
+                else // Percentages 10% through 100%
+                {
+                    // Calculate gain relative to the dynamic Minimum/Maximum range
+                    double range = Maximum - Minimum;
+                    targetGain = (int)Math.Round(Minimum + ((tagValue / 100.0) * range));
+                }
+
+                ChangeGain(targetGain);
                 FadoutUserControl(this);
             }
         }
 
         public void ChangeGain(int gain)
         {
+            // Reset all supported borders to default LightGray
             foreach (var kvp in _ui)
             {
                 if (kvp.Value.border.IsEnabled)
@@ -99,16 +179,80 @@ namespace YAESU_FT_891_Front_End
                 }
             }
 
-            if (_ui.ContainsKey(gain) && _ui[gain].border.IsEnabled)
+            double range = Maximum - Minimum;
+            double currentPercent = range > 0 ? ((gain - Minimum) / range) * 100.0 : 0;
+
+            List<int> presetsToHighlight = new List<int>();
+
+            // 1. MUTE exact match
+            if (gain == (int)Minimum && _ui.ContainsKey(0) && _ui[0].border.IsEnabled)
             {
-                _ui[gain].border.Background = Brushes.DodgerBlue;
-                _ui[gain].text.Foreground = Brushes.White;
+                presetsToHighlight.Add(0);
+            }
+            // 2. DEFAULT match (Highlight DEFAULT + find nearest percentage preset)
+            else if (gain == DefaultGain)
+            {
+                if (_ui.ContainsKey(254) && _ui[254].border.IsEnabled)
+                {
+                    presetsToHighlight.Add(254);
+                }
+
+                int nearestPreset = -1;
+                double smallestDiff = double.MaxValue;
+
+                for (int targetPercent = 10; targetPercent <= 100; targetPercent += 10)
+                {
+                    if (_ui.ContainsKey(targetPercent) && _ui[targetPercent].border.IsEnabled)
+                    {
+                        double diff = Math.Abs(currentPercent - targetPercent);
+                        if (diff < smallestDiff)
+                        {
+                            smallestDiff = diff;
+                            nearestPreset = targetPercent;
+                        }
+                    }
+                }
+
+                if (nearestPreset != -1)
+                {
+                    presetsToHighlight.Add(nearestPreset);
+                }
+            }
+            // 3. Regular Slider movement or Preset Button click (±5% tolerance)
+            else
+            {
+                const double tolerance = 5.0;
+
+                for (int targetPercent = 10; targetPercent <= 100; targetPercent += 10)
+                {
+                    if (Math.Abs(currentPercent - targetPercent) <= tolerance)
+                    {
+                        if (_ui.ContainsKey(targetPercent) && _ui[targetPercent].border.IsEnabled)
+                        {
+                            presetsToHighlight.Add(targetPercent);
+                            break;
+                        }
+                    }
+                }
             }
 
-            // Keep GainSlider synced with preset buttons (this will automatically fire ValueChanged)
-            GainSlider.Value = gain;
+            // Highlight all selected presets
+            foreach (int presetKey in presetsToHighlight)
+            {
+                if (_ui.ContainsKey(presetKey))
+                {
+                    _ui[presetKey].border.Background = Brushes.DodgerBlue;
+                    _ui[presetKey].text.Foreground = Brushes.White;
+                }
+            }
 
-            if (!(gain == _currentGain))
+            // Sync Slider value safely and update its content label
+            _isUpdatingSlider = true;
+            GainSlider.Value = gain;
+            UpdateGainLabel(gain);
+            _isUpdatingSlider = false;
+
+            if (gain != _currentGain)
             {
                 RaiseEvent(new GainChangedEventArgs(GainChangedEvent, gain));
                 _currentGain = gain;
@@ -117,31 +261,28 @@ namespace YAESU_FT_891_Front_End
 
         private void GainSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // Ensure GainLabel is initialized during XAML loading
-            if (GainLabel == null) return;
+            if (GainLabel == null || _isUpdatingSlider) return;
 
             int gainValue = (int)e.NewValue;
+            ChangeGain(gainValue);
+        }
 
-            // Display special preset labels or percentage format
-            if (gainValue == 255)
+        private void UpdateGainLabel(int gainValue)
+        {
+            if (GainLabel == null) return;
+
+            if (gainValue == (int)Minimum)
             {
                 GainLabel.Content = "MUTE";
             }
-            else if (gainValue == 254)
+            else if (gainValue == DefaultGain)
             {
                 GainLabel.Content = "DEFAULT";
             }
             else
             {
-                // Example A: Display direct value (e.g., "50")
-                GainLabel.Content = $"{gainValue}%";
-
-                // Example B: Or convert 0-255 byte range to an actual percentage (0-100%)
-                // int percent = (int)Math.Round((gainValue / 255.0) * 100);
-                // GainLabel.Content = $"{percent}%";
+                GainLabel.Content = $"{gainValue}";
             }
-
-            ChangeGain(gainValue);
         }
     }
 }

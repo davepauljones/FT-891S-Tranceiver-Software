@@ -147,7 +147,7 @@
                         </Canvas.Effect>
                     </Canvas>
 
-                    <gainUserControl:GainUserControl x:Name="gainUserControl" Canvas.Left="90" Canvas.Top="180" Panel.ZIndex="1" Width="300" Height="166" GainChanged="GainUserControl_GainChanged" Visibility="Hidden"/>
+                    <gainUserControl:GainUserControl x:Name="gainUserControl" Canvas.Left="90" Canvas.Top="180" Minimum="0" Maximum="255" DefaultGain="70" Panel.ZIndex="1" Width="300" Height="166" GainChanged="GainUserControl_GainChanged" Visibility="Hidden"/>
 
                     <Canvas x:Name="SelectionKnobBrurCanvas" Canvas.Left="31" Canvas.Top="293" Visibility="Hidden" Width="125" Height="133" VerticalAlignment="Top" IsHitTestVisible="False">
                         <Canvas.Background>
