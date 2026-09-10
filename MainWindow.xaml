@@ -98,7 +98,21 @@
                         <TextBlock Canvas.Left="144" Canvas.Top="-3" Text="FPS" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
                         <TextBlock x:Name="FPSTextBlock" Canvas.Left="166" Canvas.Top="-3" Text="20" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
                         <TextBlock Canvas.Left="184" Canvas.Top="-3" Text="PDR" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right"  Opacity="0.6"/>
+                        <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right" Opacity="0.6"/>
+                    </Canvas>
+
+                    <Canvas Canvas.Left="300" Canvas.Top="344" Width="486" Height="10" IsHitTestVisible="False">
+                        <TextBlock Canvas.Top="-3" Text="STATUS" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="StatusBarTextBlock" Canvas.Left="40" Canvas.Top="-3" Text="SEND" Width="400" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    </Canvas>
+
+                    <Canvas Canvas.Left="790" Canvas.Top="344" Width="90" Height="10" IsHitTestVisible="False">
+                        <TextBlock Canvas.Left="0" Canvas.Top="-3" Text="VL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="VolumeLevelTextBlock" Canvas.Left="16" Canvas.Top="-3" Text="3" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                        <TextBlock Canvas.Left="30" Canvas.Top="-3" Text="CL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="CurrentConfidenceLevelTextBlock" Canvas.Left="46" Canvas.Top="-3" Text="0.80" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                        <TextBlock Canvas.Left="70" Canvas.Top="-3" Text=">" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="ConfidenceLevelThresholdTextBlock" Canvas.Left="80" Canvas.Top="-3" Text="0.89" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
                     <Canvas x:Name="RFGainKnobAreaCanvas"

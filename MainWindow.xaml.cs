@@ -81,6 +81,8 @@ namespace YAESU_FT_891_Front_End
 
         public FilterWave filterWave;
 
+        public FT891SpeechRecognition fT891SpeechRecognition;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -226,6 +228,8 @@ namespace YAESU_FT_891_Front_End
             filterWave = new FilterWave(this, MyFilterWave);
 
             //filterWave.UpdateFromRadio("NB", object value)
+
+            fT891SpeechRecognition = new FT891SpeechRecognition(this);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
