@@ -62,7 +62,7 @@ namespace YAESU_FT_891_Front_End
         {
             SpeechRecognitionSleepTimer_dispatcherTimer.Stop();
             SpeechRecognitionListeningState = SpeechRecognitionStates.Asleep;
-            //UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, true, true);
+            mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true);
             mainWindow.CurrentConfidenceLevelTextBlock.Text = "0.00";
             //Console.WriteLine("UPAS has gone to sleep!");
         }

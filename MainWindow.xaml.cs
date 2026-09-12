@@ -83,6 +83,10 @@ namespace YAESU_FT_891_Front_End
 
         public FT891SpeechRecognition fT891SpeechRecognition;
 
+        public ButtonConsole buttonConsole;
+        Type buttonConsoleType = typeof(StatusBarIndicatorConsole);
+        ButtonConsole.ButtonClickCallBackFunction buttonConsoleAction;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -230,6 +234,13 @@ namespace YAESU_FT_891_Front_End
             //filterWave.UpdateFromRadio("NB", object value)
 
             fT891SpeechRecognition = new FT891SpeechRecognition(this);
+
+            buttonConsoleAction = ButtonConsoleButtons_Click;
+
+            if (buttonConsoleType != null && buttonConsoleAction != null)
+                buttonConsole = (ButtonConsole)Activator.CreateInstance(buttonConsoleType, StatusBarButtonConsoleStackPanel, 28, (Color)ColorConverter.ConvertFromString("#22FFFFFF"), buttonConsoleAction);
+
+            buttonConsole.UpdateButton(0, true, false, false, false, false);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -1907,6 +1918,16 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case ControlGains.SQ:
                     await gainManagement.ManageGain(ControlGains.SQ, ControlModes.SetOnly, e.Gain);
+                    break;
+            }
+        }
+
+        private void ButtonConsoleButtons_Click(byte ButtonID)
+        {
+            switch (ButtonID)
+            {
+                case 0:
+                    Console.WriteLine("ButtonConsoleButtons_Click - Clicked!");
                     break;
             }
         }

@@ -163,6 +163,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ButtonConsoles\ButtonConsole.cs" />
+    <Compile Include="ButtonConsoles\StatusBarIndicatorConsole.cs" />
     <Compile Include="MiscFunctions\Functions.cs" />
     <Compile Include="Speech\FT891SpeechRecognition.cs" />
     <Compile Include="Management\GainManagement.cs" />
