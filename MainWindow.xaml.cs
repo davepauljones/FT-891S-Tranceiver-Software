@@ -240,7 +240,7 @@ namespace YAESU_FT_891_Front_End
             if (buttonConsoleType != null && buttonConsoleAction != null)
                 buttonConsole = (ButtonConsole)Activator.CreateInstance(buttonConsoleType, StatusBarButtonConsoleStackPanel, 28, (Color)ColorConverter.ConvertFromString("#22FFFFFF"), buttonConsoleAction);
 
-            buttonConsole.UpdateButton(0, true, false, false, false, false);
+            buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true, false, false, false);
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -1927,7 +1927,23 @@ namespace YAESU_FT_891_Front_End
             switch (ButtonID)
             {
                 case 0:
-                    Console.WriteLine("ButtonConsoleButtons_Click - Clicked!");
+                    if (FT891SpeechRecognition.VoiceCommandsCanStart)
+                    {
+                        buttonConsole.ButtonList[StatusBarIndicatorConsole.Console.Recognition].StateIsOn = !buttonConsole.ButtonList[StatusBarIndicatorConsole.Console.Recognition].StateIsOn;
+
+                        if (buttonConsole.ButtonList[StatusBarIndicatorConsole.Console.Recognition].StateIsOn)
+                        {
+                            buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true);
+                            StatusBarTextBlock.Text = "Speech recognition is on!";
+                            FT891SpeechRecognition.SpeechRecognizerEnabled = true;
+                        }
+                        else
+                        {
+                            buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, false, false);
+                            StatusBarTextBlock.Text = "Speech recognition is off!";
+                            FT891SpeechRecognition.SpeechRecognizerEnabled = false;
+                        }
+                    }
                     break;
             }
         }

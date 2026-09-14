@@ -68,14 +68,14 @@ namespace YAESU_FT_891_Front_End
         }
         public void SwitchOnVoiceCommands(bool overrideIndicator = false)
         {
-            //if (!overrideIndicator) MainWindow.UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, true, true);
-            //mainWindow.statusBar.Status("Speech recognition is on!", 0);
+            if (!overrideIndicator) mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true);
+            //mainWindow.StatusBarTextBlock.Text = "Speech recognition is on!";
             SpeechRecognizerEnabled = true;
         }
         public void SwitchOffVoiceCommands(bool overrideIndicator = false)
         {
-            //if (!overrideIndicator) MainWindow.UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, false, false);
-            //mainWindow.statusBar.Status("Speech recognition is off!", 0);
+            if (!overrideIndicator) mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, false, false);
+            //mainWindow.StatusBarTextBlock.Text = "Speech recognition is off!";
             SpeechRecognizerEnabled = false;
         }
         public void SetConfidenceLevel(int level)
@@ -162,7 +162,7 @@ namespace YAESU_FT_891_Front_End
             //if (rwuw.Text.ToString() == "youpass" && e.Result.Confidence > ConfidenceLevel)
             if (rwuw.Text.ToString() == "yaysue" && e.Result.Confidence > ConfidenceLevel)
             {
-                //UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, true, true, true);
+                mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true, true);
                 SpeechRecognitionListeningState = SpeechRecognitionStates.Awake;
                 SpeechRecognitionSleepTimer_dispatcherTimer.Start();
 
@@ -211,7 +211,7 @@ namespace YAESU_FT_891_Front_End
                     if (value > -1 && value < 10)
                     {
                         SetSpeechLevel(value);
-                        //ArduFunctions.PlayTextSynth("Speech volume set to " + value.ToString());
+                        Functions.PlayTextSynth(mainWindow, "Speech volume set to " + value.ToString());
                         mainWindow.StatusBarTextBlock.Text = "Speech volume set to " + value.ToString();
                     }
                     break;
@@ -219,10 +219,10 @@ namespace YAESU_FT_891_Front_End
                 case VoiceCommands.EnableVoice:
                     if (!SpeechRecognizerEnabled)
                     {
-                        //UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, true, true);
+                        mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true);
                         AlreadyDisabled = false;
                         mainWindow.StatusBarTextBlock.Text = "Voice commands are now enabled!";
-                        //ArduFunctions.PlayTextSynth("Voice commands are now enabled!");
+                        Functions.PlayTextSynth(mainWindow, "Voice commands are now enabled!");
                         SpeechRecognizerEnabled = true;
                     }
                     else
@@ -230,12 +230,12 @@ namespace YAESU_FT_891_Front_End
                         if (!AlreadyEnabled)
                         {
                             AlreadyEnabled = true;
-                            //ArduFunctions.PlayTextSynth("Voice commands are already enabled!");
+                            Functions.PlayTextSynth(mainWindow, "Voice commands are already enabled!");
                             SpeechRecognizerEnabled = true;
                         }
                         else
                         {
-                            //ArduFunctions.PlayTextSynth("Its enabled!");
+                            Functions.PlayTextSynth(mainWindow, "Its enabled!");
                             SpeechRecognizerEnabled = true;
                         }
                     }
@@ -243,10 +243,10 @@ namespace YAESU_FT_891_Front_End
                 case VoiceCommands.DisableVoice:
                     if (SpeechRecognizerEnabled)
                     {
-                        //UPAS.Console.UpdateButton(SiteIndicatorConsole.Console.Recognition, false, false);
+                        mainWindow.buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, false, false);
                         AlreadyEnabled = false;
                         mainWindow.StatusBarTextBlock.Text = "Voice commands are now disabled!";
-                        //ArduFunctions.PlayTextSynth("Voice commands are now disabled!");
+                        Functions.PlayTextSynth(mainWindow, "Voice commands are now disabled!");
                         SpeechRecognizerEnabled = false;
                     }
                     else
@@ -254,29 +254,26 @@ namespace YAESU_FT_891_Front_End
                         if (!AlreadyDisabled)
                         {
                             AlreadyDisabled = true;
-                            //ArduFunctions.PlayTextSynth("Voice commands are already disabled!");
+                            Functions.PlayTextSynth(mainWindow, "Voice commands are already disabled!");
                             SpeechRecognizerEnabled = false;
                         }
                         else
                         {
-                            //ArduFunctions.PlayTextSynth("Its disabled!");
+                            Functions.PlayTextSynth(mainWindow, "Its disabled!");
                             SpeechRecognizerEnabled = false;
                         }
                     }
                     break;
                 case VoiceCommands.WhatTimeIsIt:
-                    Functions.PlayTextSynth("The time is " + DateTime.Now.ToString("hh:mm tt"));
+                    Functions.PlayTextSynth(mainWindow, "The time is " + DateTime.Now.ToString("hh:mm tt"));
                     break;
                 case VoiceCommands.SetWatts:
-                    //ArduFunctions.PlayTextSynth("The Watts has been set");
+                    Functions.PlayTextSynth(mainWindow, "The Watts has been set");
                     break;
             }
         }
         private void EvaluateVoiceCommand(List<string> words, string text)
         {
-            //Console.Write("EvaluateVoiceCommand text = ");
-            //Console.WriteLine(text);
-
             if (SpeechRecognitionListeningState == SpeechRecognitionStates.Awake)
             {
                 if (text == "enable voice commands")

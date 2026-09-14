@@ -88,23 +88,22 @@ namespace YAESU_FT_891_Front_End
             return result;
         }
 
-        public static void PlayTextSynth(string text, int volumeLevel = 60, bool overrideAsync = false)
+        public static void PlayTextSynth(MainWindow mainWindow, string text, int volumeLevel = 60, bool overrideAsync = false)
         {
+            if (mainWindow.fT891SpeechRecognition != null) mainWindow.fT891SpeechRecognition.SwitchOffVoiceCommands(true);
 
-                //if (MainWindow.MAINWINDOW.aSpeech != null) MainWindow.MAINWINDOW.aSpeech.SwitchOffVoiceCommands(true);
+            SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
 
-                SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
+            volumeLevel = mainWindow.fT891SpeechRecognition.SpeechLevel;
 
-                volumeLevel = 60;
+            speechSynthesizer.Volume = volumeLevel;
 
-                speechSynthesizer.Volume = volumeLevel;
+            if (overrideAsync)
+                speechSynthesizer.Speak(text);
+            else
+                speechSynthesizer.SpeakAsync(text);
 
-                if (overrideAsync)
-                    speechSynthesizer.Speak(text);
-                else
-                    speechSynthesizer.SpeakAsync(text);
-
-                //if (MainWindow.MAINWINDOW.aSpeech != null) MainWindow.MAINWINDOW.aSpeech.SwitchOnVoiceCommands(true);
+            if (mainWindow.fT891SpeechRecognition != null) mainWindow.fT891SpeechRecognition.SwitchOnVoiceCommands(true);
         }
 
     }

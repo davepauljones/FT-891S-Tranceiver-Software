@@ -101,29 +101,29 @@
                         <TextBlock x:Name="PDRTextBlock" Canvas.Left="206" Canvas.Top="-3" Text="100%" FontSize="10" Foreground="White" HorizontalAlignment="Right" TextAlignment="Right" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="288" Canvas.Top="336" Width="486" Height="10" IsHitTestVisible="False">
-                        <Grid Canvas.Top="-2" Width="32" Height="30" VerticalAlignment="Top">
+                    <Canvas Canvas.Left="288" Canvas.Top="75" Width="28" Height="21" IsHitTestVisible="False">
+                        <Grid Canvas.Top="0" Width="28" Height="21" VerticalAlignment="Top">
                             <Grid Margin="1,0,1,0" Background="Transparent"/>
                             <fa:FontAwesome x:Name="StatusIcon" Icon="ThumbsUp" FontSize="18" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                     </Canvas>
 
-                    <Canvas Canvas.Left="316" Canvas.Top="345" Width="486" Height="10" IsHitTestVisible="False">
-                        <TextBlock Canvas.Top="-3" Text="STATUS" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="StatusBarTextBlock" Canvas.Left="40" Canvas.Top="-3" Text="SEND" Width="400" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    <Canvas Canvas.Left="316" Canvas.Top="75" Width="486" Height="21" IsHitTestVisible="False">
+                        <TextBlock Canvas.Top="3" Text="STATUS" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="StatusBarTextBlock" Canvas.Left="42" Canvas.Top="3" Text="SEND" Width="400" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="770" Canvas.Top="345" Width="100" Height="10" IsHitTestVisible="False">
-                        <TextBlock Canvas.Left="0" Canvas.Top="-3" Text="VL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="VolumeLevelTextBlock" Canvas.Left="16" Canvas.Top="-3" Text="3" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
-                        <TextBlock Canvas.Left="30" Canvas.Top="-3" Text="CL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="CurrentConfidenceLevelTextBlock" Canvas.Left="46" Canvas.Top="-3" Text="0.80" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
-                        <TextBlock Canvas.Left="70" Canvas.Top="-3" Text=">" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
-                        <TextBlock x:Name="ConfidenceLevelThresholdTextBlock" Canvas.Left="80" Canvas.Top="-3" Text="0.89" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                    <Canvas Canvas.Left="770" Canvas.Top="75" Width="100" Height="21" IsHitTestVisible="False">
+                        <TextBlock Canvas.Left="0" Canvas.Top="3" Text="VL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="VolumeLevelTextBlock" Canvas.Left="16" Canvas.Top="3" Text="3" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                        <TextBlock Canvas.Left="30" Canvas.Top="3" Text="CL" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="CurrentConfidenceLevelTextBlock" Canvas.Left="46" Canvas.Top="3" Text="0.80" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
+                        <TextBlock Canvas.Left="70" Canvas.Top="3" Text=">" FontSize="10" FontWeight="Bold" Foreground="#ff8d7a69"/>
+                        <TextBlock x:Name="ConfidenceLevelThresholdTextBlock" Canvas.Left="80" Canvas.Top="3" Text="0.89" Width="30" FontSize="10" FontWeight="Bold" Foreground="White" Opacity="0.6"/>
                     </Canvas>
 
-                    <Canvas Canvas.Left="860" Canvas.Top="342">
-                        <StackPanel x:Name="StatusBarButtonConsoleStackPanel"/>
+                    <Canvas Canvas.Left="910" Canvas.Top="74">
+                        <StackPanel x:Name="StatusBarButtonConsoleStackPanel" Width="30" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Canvas>
 
                     <Canvas x:Name="RFGainKnobAreaCanvas"
