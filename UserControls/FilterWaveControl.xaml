@@ -55,7 +55,7 @@
             <Polygon Canvas.Left="533" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
 
             <Canvas Canvas.Left="84" Canvas.Top="10" Width="472" Height="12">
-                <TextBlock Text="MAX CUT" Foreground="#FFA0AABF" Width="472" FontSize="11" TextAlignment="Center"/>
+                <TextBlock x:Name="MaxCutTextBlock" Text="MAX CUT" Foreground="#FFA0AABF" Width="472" FontSize="11" TextAlignment="Center"/>
             </Canvas>
             <Canvas Canvas.Left="84" Canvas.Top="29" Width="472" Height="12">
                 <TextBlock x:Name="WidthNotchTextBlock" Text="WIDTH/NOTCH" Foreground="#FFFFFFFF" Width="472" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
@@ -155,7 +155,7 @@
             </Path>
 
             <!-- 2. Width Main Section -->
-            <Path Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+            <Path x:Name="WidthMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
                 <Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
@@ -245,7 +245,7 @@
         </Grid>
 
         <!-- Control Panel Options -->
-        <Grid Grid.Row="1">
+        <Grid x:Name="ControlPanelOptionsGrid" Grid.Row="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                 <ToggleButton x:Name="AutoDnfBtn" Content="AUTO DNF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>
                 <ToggleButton x:Name="CwApfBtn" Content="CW APF" Style="{StaticResource FilterToggleStyle}" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked"/>

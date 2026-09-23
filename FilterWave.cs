@@ -29,6 +29,37 @@ namespace YAESU_FT_891_Front_End
             this.uiControl = uiControl ?? throw new ArgumentNullException("uiControl");
             this.uiDispatcher = uiControl.Dispatcher;
 
+            if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+            {
+                mainWindow.MyFilterWave.WidthThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.NotchThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.ContourThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.ShiftThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.WidthMainSectionPath.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                mainWindow.MyFilterWave.WidthThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.NotchThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.ContourThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.ShiftThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.WidthMainSectionPath.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
             uiControl.UIValueChanged += OnUIValueChanged;
         }
 

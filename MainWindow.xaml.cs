@@ -211,7 +211,7 @@ namespace YAESU_FT_891_Front_End
             UsersCallSignTextBlock.Text = FT891S_CatManager.currentRadioState.CallSign;
             CallSignTextBlock.Text = FT891S_CatManager.currentRadioState.CallSign;
             SetDeveloperMode(true);
-            
+
             _modeMapper = new FT891ModeMapper();
             modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
 
@@ -233,14 +233,49 @@ namespace YAESU_FT_891_Front_End
 
             //filterWave.UpdateFromRadio("NB", object value)
 
-            fT891SpeechRecognition = new FT891SpeechRecognition(this);
+            if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+            {
+                //Speech Recognition   
+                fT891SpeechRecognition = new FT891SpeechRecognition(this);
 
-            buttonConsoleAction = ButtonConsoleButtons_Click;
+                buttonConsoleAction = ButtonConsoleButtons_Click;
 
-            if (buttonConsoleType != null && buttonConsoleAction != null)
-                buttonConsole = (ButtonConsole)Activator.CreateInstance(buttonConsoleType, StatusBarButtonConsoleStackPanel, 28, (Color)ColorConverter.ConvertFromString("#22FFFFFF"), buttonConsoleAction);
+                if (buttonConsoleType != null && buttonConsoleAction != null)
+                    buttonConsole = (ButtonConsole)Activator.CreateInstance(buttonConsoleType, StatusBarButtonConsoleStackPanel, 28, (Color)ColorConverter.ConvertFromString("#22FFFFFF"), buttonConsoleAction);
 
-            buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true, false, false, false);
+                buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true, false, false, false);
+
+                
+                //QRZ
+                QRZGrid.Visibility = Visibility.Collapsed;
+                QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
+
+                //Expand / Collapse MainWindow
+                RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
+
+                //CW Decoder
+                CWDecoderCanvas.Visibility = Visibility.Visible;
+
+                //Display Switched Un implemented so far
+                TuneTextBlock.Visibility = Visibility.Visible;
+                CenterCursorFixTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                //QRZ
+                QRZGrid.Visibility = Visibility.Collapsed;
+                QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
+
+                //Expand / Collapse MainWindow
+                RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
+
+                //CW Decoder
+                CWDecoderCanvas.Visibility = Visibility.Collapsed;
+
+                //Display Switched Un implemented so far
+                TuneTextBlock.Visibility = Visibility.Collapsed;
+                CenterCursorFixTextBlock.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void BlurTimer_Tick(object sender, EventArgs e)
@@ -885,19 +920,22 @@ namespace YAESU_FT_891_Front_End
 
         private void CLARButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Canvas c = (Canvas)sender;
-            AnimateButtonClick(c, () =>
+            if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
             {
-                if (decoder.IsRunning)
+                Canvas c = (Canvas)sender;
+                AnimateButtonClick(c, () =>
                 {
-                    decoder.Stop();
-                }
-                else
-                {
-                    CWDecoderTextBlock.Text = string.Empty;
-                    decoder.Start();
-                }
-            });
+                    if (decoder.IsRunning)
+                    {
+                        decoder.Stop();
+                    }
+                    else
+                    {
+                        CWDecoderTextBlock.Text = string.Empty;
+                        decoder.Start();
+                    }
+                });
+            }
         }
 
         private void StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -936,10 +974,9 @@ namespace YAESU_FT_891_Front_End
         private void MVButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
-            AnimateButtonClick(c, async () =>
+            AnimateButtonClick(c, () =>
             {
-                // Properly await the single sweep execution path
-                await waterFallSweep.ToggleSweepOnOff(forceSingleSweep: true);
+
             });
         }
 
@@ -949,27 +986,27 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                
+
             });
 
-            if (ScanningState == 0)
-            {
-                waterFallSweep.SweepActive = true;
-                ScanningState = 1;
-                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            }
-            else if (ScanningState == 1)
-            {
-                waterFallSweep.SweepActive = true;
-                ScanningState = 2;
-                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            }
-            else if (ScanningState == 2)
-            {
-                waterFallSweep.SweepActive = false;
-                ScanningState = 0;
-                await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            }
+            //if (ScanningState == 0)
+            //{
+            //    waterFallSweep.SweepActive = true;
+            //    ScanningState = 1;
+            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            //}
+            //else if (ScanningState == 1)
+            //{
+            //    waterFallSweep.SweepActive = true;
+            //    ScanningState = 2;
+            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            //}
+            //else if (ScanningState == 2)
+            //{
+            //    waterFallSweep.SweepActive = false;
+            //    ScanningState = 0;
+            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
+            //}
         }
 
         private void VMToggleButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -986,7 +1023,10 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                memorySlot.SwapVFOs(this);
+                if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+                {
+                    memorySlot.SwapVFOs(this);
+                }
             });
         }
 
@@ -1721,17 +1761,19 @@ namespace YAESU_FT_891_Front_End
         bool ToggleScreen;
         private void RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (ToggleScreen == false)
+            if (!ToggleScreen)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // Force it into full grid space
+                    // Force into full grid space
                     Grid.SetRow(MainViewBox, 0);
                     Grid.SetColumn(MainViewBox, 0);
                     Grid.SetRowSpan(MainViewBox, 1);
                     Grid.SetColumnSpan(MainViewBox, 1);
 
-                    // Ensure it is stretchable
+                    // Ensure stretchable full screen
+                    MainViewBox.Width = double.NaN;
+                    MainViewBox.Height = double.NaN;
                     MainViewBox.HorizontalAlignment = HorizontalAlignment.Stretch;
                     MainViewBox.VerticalAlignment = VerticalAlignment.Stretch;
                     MainViewBox.Stretch = Stretch.Uniform;
@@ -1741,21 +1783,26 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                // Normal
+                // Restore normal size and settings
                 MainViewBox.Width = 1349;
                 MainViewBox.Height = 452;
+                MainViewBox.HorizontalAlignment = HorizontalAlignment.Center;
+                MainViewBox.VerticalAlignment = VerticalAlignment.Center;
                 MainViewBox.Stretch = Stretch.None;
 
-                // Full screen
-                MainViewBox.Width = double.NaN;
-                MainViewBox.Height = double.NaN;
-                MainViewBox.Stretch = Stretch.Uniform;
+                // Optional: Restore Grid positions if normal mode sits in a specific row/column
+                // Grid.SetRow(MainViewBox, originalRow);
+                // Grid.SetColumn(MainViewBox, originalColumn);
 
                 ToggleScreen = false;
             }
 
-            Debug.WriteLine(MainViewBox.ActualWidth);
-            Debug.WriteLine(MainViewBox.ActualHeight);
+            // Log dimensions after the UI updates
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Debug.WriteLine($"ActualWidth: {MainViewBox.ActualWidth}");
+                Debug.WriteLine($"ActualHeight: {MainViewBox.ActualHeight}");
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
@@ -1854,18 +1901,21 @@ namespace YAESU_FT_891_Front_End
                     FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_ON;
                     DeveloperModeTextBlock.Text = "ON";
                     DeveloperModeOnOffTextBlock.Text = "ON";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Visible;
                 }
                 else if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
                 {
                     FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
                     DeveloperModeTextBlock.Text = "OFF";
                     DeveloperModeOnOffTextBlock.Text = "OFF";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
                     DeveloperModeTextBlock.Text = "OFF";
                     DeveloperModeOnOffTextBlock.Text = "OFF";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -1874,17 +1924,20 @@ namespace YAESU_FT_891_Front_End
                 {
                     DeveloperModeTextBlock.Text = "OFF";
                     DeveloperModeOnOffTextBlock.Text = "OFF";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Collapsed;
                 }
                 else if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
                 {
                     DeveloperModeTextBlock.Text = "ON";
                     DeveloperModeOnOffTextBlock.Text = "ON";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     FT891S_CatManager.currentRadioState.DeveloperMode = (int)DeveloperModes.DeveloperMode_OFF;
                     DeveloperModeTextBlock.Text = "OFF";
                     DeveloperModeOnOffTextBlock.Text = "OFF";
+                    VoiceCommandStatusBarCanvas.Visibility = Visibility.Collapsed;
                 }
             }
         }
