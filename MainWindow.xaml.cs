@@ -938,8 +938,10 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        public DateTime LastTimeThresholdChangedDateTime = DateTime.Now;
         private void StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
+            LastTimeThresholdChangedDateTime = DateTime.Now;
             var value = StationScopeSignalStrengthThresholdNumericUpDown.Value;
             if (ConsoleDebugLevel == ConsoleDebugLevels.All)
             {
@@ -2001,5 +2003,19 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        private void StationScopeBandButtons_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            var code = border.Tag.ToString();
+            uint switchValue = uint.Parse(code);
+
+            stationSeek.ButtonSelection(Convert.ToByte(switchValue));
+
+            if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.Write("StationScopeBandButtons_MouseLeftButtonDown = ");
+                Console.WriteLine(switchValue);
+            }
+        }
     }
 }
