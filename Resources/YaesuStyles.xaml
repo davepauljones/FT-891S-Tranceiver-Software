@@ -2,6 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     x:Class="YourNamespace.FunctionMenuResources">
 
+    <Style x:Key="StationScopeTransportButtonBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Margin" Value="1"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="16"/>
+    </Style>
+
     <Style x:Key="SimulatedWaterfallBorderStyle" TargetType="{x:Type Border}">
         <Setter Property="Background" Value="Gray"/>
         <Setter Property="BorderBrush" Value="Gray"/>

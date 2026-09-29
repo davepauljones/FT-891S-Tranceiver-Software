@@ -731,12 +731,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (stationSeek.IsScanning == true) stationSeek.RequestToStopScanning = true;
-
-                FoundStationCountGrid.Visibility = System.Windows.Visibility.Visible;
-                FoundStationCountLabel.Content = 0;
-
-                stationSeek.SeekActiveStations(this, fT891S_SerialPort._port, 3500000, 3700000, 500, Convert.ToInt16(StationScopeSignalStrengthThresholdNumericUpDown.Value), FoundStationCountLabel);
+                
             }); 
         }
 
@@ -745,12 +740,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (stationSeek.IsScanning == true) stationSeek.RequestToStopScanning = true;
-
-                FoundStationCountGrid.Visibility = System.Windows.Visibility.Visible;
-                FoundStationCountLabel.Content = 0;
-
-                stationSeek.SeekActiveStations(this, fT891S_SerialPort._port, 7100000, 7200000, 500, Convert.ToInt16(StationScopeSignalStrengthThresholdNumericUpDown.Value), FoundStationCountLabel);
+               
             });
         }
 
@@ -759,12 +749,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (stationSeek.IsScanning == true) stationSeek.RequestToStopScanning = true;
-
-                FoundStationCountGrid.Visibility = System.Windows.Visibility.Visible;
-                FoundStationCountLabel.Content = 0;
-
-                stationSeek.SeekActiveStations(this, fT891S_SerialPort._port, 14100000, 14380000, 500, Convert.ToInt16(StationScopeSignalStrengthThresholdNumericUpDown.Value), FoundStationCountLabel);
+                
             });
         }
 
@@ -939,37 +924,22 @@ namespace YAESU_FT_891_Front_End
         }
 
         public DateTime LastTimeThresholdChangedDateTime = DateTime.Now;
-        private void StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            LastTimeThresholdChangedDateTime = DateTime.Now;
-            var value = StationScopeSignalStrengthThresholdNumericUpDown.Value;
-            if (ConsoleDebugLevel == ConsoleDebugLevels.All)
-            {
-                Console.WriteLine(value);
-            }
-        }
+        //private void StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        //{
+        //    LastTimeThresholdChangedDateTime = DateTime.Now;
+        //    var value = StationScopeSignalStrengthThresholdNumericUpDown.Value;
+        //    if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+        //    {
+        //        Console.WriteLine(value);
+        //    }
+        //}
 
         private void OMBButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (StationScopeListView.SelectedIndex != -1)
-                {
-                    RadioState radioState = new RadioState { VfoAFrequency = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].Frequency, SMeter = stationSeek.StationSeekActiveList[stationScopeListViewSelectedItem].SignalStrength };
-
-                    qMBRigStates.AddNewRigStateToList(QMBListView, radioState);
-                }
-
-                if (ConsoleDebugLevel == ConsoleDebugLevels.All)
-                {
-                    Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-                    Console.Write("QMBRigStatesList.Count = ");
-                    Console.WriteLine(qMBRigStates.QMBRigStatesList.Count);
-                    Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-                }
-
-                qMBRigStates.ListRigStates();
+                
             });
         }
 
@@ -2014,6 +1984,23 @@ namespace YAESU_FT_891_Front_End
             if (ConsoleDebugLevel == ConsoleDebugLevels.All)
             {
                 Console.Write("StationScopeBandButtons_MouseLeftButtonDown = ");
+                Console.WriteLine(switchValue);
+            }
+        }
+
+        private void StationScopeTransportButtons_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            var code = border.Tag.ToString();
+            uint switchValue = uint.Parse(code);
+
+            LastTimeThresholdChangedDateTime = DateTime.Now;
+
+            stationSeek.TransportButtonSelection(Convert.ToByte(switchValue));
+
+            if (ConsoleDebugLevel == ConsoleDebugLevels.All)
+            {
+                Console.Write("StationScopeTransportButtons_MouseLeftButtonDown = ");
                 Console.WriteLine(switchValue);
             }
         }

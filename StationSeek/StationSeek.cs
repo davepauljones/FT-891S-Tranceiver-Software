@@ -28,12 +28,19 @@ namespace YAESU_FT_891_Front_End
         public const byte _START = 8;
         public const byte _STOP = 9;
     }
+    public struct StationScopeTransportButtons
+    {
+        public const int CopyToQMB = 0;
+        public const int IncreaseThresholdValue = 1;
+        public const int DecreaseThresholdValue = 2;
+        public const int RemoveSelectedQMB = 3;
+    }
     public class StationSeekCriteriaClass
     {
         public byte ScanBand = ScanBands._20M;
         public long StartFreq = 14000000;
         public long EndFreq = 14350000;
-        public int StepFreq = 1000;
+        public int StepFreq = 500;
         public int Threshold = 8;
     }
     public class StationSeekClass
@@ -53,6 +60,7 @@ namespace YAESU_FT_891_Front_End
         public bool RequestToStopScanning = false;
         public byte CurrentScanBand = ScanBands._20M;
         public StationSeekCriteriaClass currentStationSeekCriteria;
+        public int CurrentThresholdValue = 7;
 
         MainWindow mainWindow;
         public StationSeek(MainWindow mainWindow)
@@ -62,8 +70,7 @@ namespace YAESU_FT_891_Front_End
             mainWindow.ScanBandTextBlock.Text = "20M";
             mainWindow.ScanBandStartFreqTextBlock.Text = "14.000.000";
             mainWindow.ScanBandEndFreqTextBlock.Text = "14.350.000";
-            mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
-            mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = 8;
+            mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
             currentStationSeekCriteria = new StationSeekCriteriaClass { ScanBand = ScanBands._20M, StartFreq = 14000000, EndFreq = 14350000, StepFreq = 500, Threshold = 8 };
         }
@@ -123,6 +130,8 @@ namespace YAESU_FT_891_Front_End
 
                 window.RigBlurVFOCanvas.Visibility = Visibility.Visible;
                 window.RigBlurVFOCanvasBlurEffect.Radius = 4;
+
+                if (signalStrengthThreshold != CurrentThresholdValue) signalStrengthThreshold = CurrentThresholdValue;
 
                 if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
                 {
@@ -236,22 +245,23 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.ScanBandTextBlock.Text = "80M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "3.500.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "3.800.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
-                    
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
+
                     currentStationSeekCriteria.ScanBand = ScanBands._80M;
                     currentStationSeekCriteria.StartFreq = 3500000;
                     currentStationSeekCriteria.EndFreq = 3800000;
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 4;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._40M:
                     CurrentScanBand = ScanBands._40M;
                     mainWindow.ScanBandTextBlock.Text = "40M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "7.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "7.200.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._40M;
                     currentStationSeekCriteria.StartFreq = 7000000;
@@ -259,14 +269,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 6;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._20M:
                     CurrentScanBand = ScanBands._20M;
                     mainWindow.ScanBandTextBlock.Text = "20M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "14.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "14.350.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._20M;
                     currentStationSeekCriteria.StartFreq = 14000000;
@@ -274,14 +285,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._15M:
                     CurrentScanBand = ScanBands._15M;
                     mainWindow.ScanBandTextBlock.Text = "15M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "21.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "21.450.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._15M;
                     currentStationSeekCriteria.StartFreq = 21000000;
@@ -289,14 +301,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._12M:
                     CurrentScanBand = ScanBands._12M;
                     mainWindow.ScanBandTextBlock.Text = "12M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "24.890.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "24.990.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._12M;
                     currentStationSeekCriteria.StartFreq = 24890000;
@@ -304,14 +317,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._11M:
                     CurrentScanBand = ScanBands._11M;
                     mainWindow.ScanBandTextBlock.Text = "11M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "26.200.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "27.991.250";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._11M;
                     currentStationSeekCriteria.StartFreq = 26200000;
@@ -319,14 +333,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._10M:
                     CurrentScanBand = ScanBands._10M;
                     mainWindow.ScanBandTextBlock.Text = "10M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "28.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "29.700.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._10M;
                     currentStationSeekCriteria.StartFreq = 28000000;
@@ -334,14 +349,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._6M:
                     CurrentScanBand = ScanBands._6M;
                     mainWindow.ScanBandTextBlock.Text = "6M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "50.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "52.000.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._6M;
                     currentStationSeekCriteria.StartFreq = 50000000;
@@ -349,7 +365,8 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 2;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case ScanBands._START:
                     if (IsScanning == true) RequestToStopScanning = true;
@@ -359,12 +376,12 @@ namespace YAESU_FT_891_Front_End
 
                     if (DateTime.Now > mainWindow.LastTimeThresholdChangedDateTime + TimeSpan.FromSeconds(5))
                     {
-                        mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                        CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                         SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, currentStationSeekCriteria.Threshold, mainWindow.FoundStationCountLabel);
                     }
                     else
                     {
-                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, Convert.ToInt16(mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value), mainWindow.FoundStationCountLabel);
+                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, CurrentThresholdValue, mainWindow.FoundStationCountLabel);
                     }
                     break;
                 case ScanBands._STOP:
@@ -380,7 +397,7 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.ScanBandTextBlock.Text = "20M";
                     mainWindow.ScanBandStartFreqTextBlock.Text = "14.000.000";
                     mainWindow.ScanBandEndFreqTextBlock.Text = "14.350.000";
-                    mainWindow.ScanBandStepFreqTextBlock.Text = "1000";
+                    mainWindow.ScanBandStepFreqTextBlock.Text = "500";
 
                     currentStationSeekCriteria.ScanBand = ScanBands._20M;
                     currentStationSeekCriteria.StartFreq = 14000000;
@@ -388,10 +405,46 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 8;
 
-                    mainWindow.StationScopeSignalStrengthThresholdNumericUpDown.Value = currentStationSeekCriteria.Threshold;
+                    CurrentThresholdValue = currentStationSeekCriteria.Threshold;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
             }
-            
+
+        }
+        public void TransportButtonSelection(byte buttonClicked)
+        {
+            switch (buttonClicked)
+            {
+                case StationScopeTransportButtons.CopyToQMB:
+                    if (mainWindow.StationScopeListView.SelectedIndex != -1)
+                    {
+                        RadioState radioState = new RadioState { VfoAFrequency = StationSeekActiveList[mainWindow.stationScopeListViewSelectedItem].Frequency, SMeter = StationSeekActiveList[mainWindow.stationScopeListViewSelectedItem].SignalStrength };
+
+                        mainWindow.qMBRigStates.AddNewRigStateToList(mainWindow.QMBListView, radioState);
+                    }
+
+                    if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+                    {
+                        Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                        Console.Write("QMBRigStatesList.Count = ");
+                        Console.WriteLine(mainWindow.qMBRigStates.QMBRigStatesList.Count);
+                        Console.WriteLine("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                    }
+
+                    mainWindow.qMBRigStates.ListRigStates();
+                    break;
+                case StationScopeTransportButtons.IncreaseThresholdValue:
+                    if (CurrentThresholdValue < 9) CurrentThresholdValue++;
+
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
+                    break;
+                case StationScopeTransportButtons.DecreaseThresholdValue:
+                    if (CurrentThresholdValue > 0) CurrentThresholdValue--;
+                    mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
+                    break;
+                case StationScopeTransportButtons.RemoveSelectedQMB:
+                    break;
+            }
         }
     }
 }
