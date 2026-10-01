@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Speech.Recognition;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -51,12 +52,75 @@ namespace YAESU_FT_891_Front_End
             {
                 QMBRigStatesList.Add(radioState);
 
-                int PositionInTheList = QMBRigStatesList.Count-1;
+                int PositionInTheList = QMBRigStatesList.Count;
 
                 StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = radioState.VfoAFrequency, SignalStrength = radioState.SMeter };
 
                 QMBListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
             }
+
+            UpdateTheQuickMemoryBankListCount();
         }
+
+        public void ClearQuickMemoryBankList()
+        {
+            QMBRigStatesList.Clear();
+            mainWindow.QMBListView.Items.Clear();
+
+            UpdateTheQuickMemoryBankListCount();
+        }
+
+        public void RemoveSelectedQMBStation()
+        {
+            if (mainWindow.QMBListView.SelectedIndex != -1)
+            {
+                QMBRigStatesList.RemoveAt(mainWindow.QMBListView.SelectedIndex);
+                mainWindow.QMBListView.Items.RemoveAt(mainWindow.QMBListView.SelectedIndex);
+
+                UpdateTheQuickMemoryBankListCount();
+            }
+        }
+
+        public void UpdateTheQuickMemoryBankListCount()
+        {
+            if (mainWindow.QMBListView.SelectedIndex == -1)
+            {
+                if (mainWindow.QMBListView.Items.Count > 0)
+                {
+                    mainWindow.QMBListView.SelectedItem = mainWindow.QMBListView.Items[0];
+                    mainWindow.QMBListView.ScrollIntoView(mainWindow.QMBListView.Items[0]);
+
+                    mainWindow.QMBCountLabel.Content = "1 of " + QMBRigStatesList.Count;
+                }
+                else
+                {
+                    mainWindow.QMBCountLabel.Content = "No Stations!";
+                }
+            }
+            else if (mainWindow.QMBListView.SelectedIndex != -1)
+            {
+                RadioState rs = QMBRigStatesList[mainWindow.QMBListView.SelectedIndex];
+                mainWindow.QMBCountLabel.Content = rs.RadioID + " of " + QMBRigStatesList.Count;
+                //RenumberTheQMBRigStatesList();
+            }
+        }
+        public void RenumberTheQMBRigStatesList()
+        {
+            Int32 index = 0;
+            foreach (RadioState rs in QMBRigStatesList)
+            {
+                index++;
+
+                rs.RadioID = index;
+            }
+
+            mainWindow.QMBListView.Items.Clear();
+
+            foreach (RadioState rs in QMBRigStatesList)
+            {
+                AddNewRigStateToList(mainWindow.QMBListView, rs);
+            }
+        }
+
     }
 }

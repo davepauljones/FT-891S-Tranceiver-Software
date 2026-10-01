@@ -1111,27 +1111,12 @@
 
                                 <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
-                                    <!--<Border Canvas.Left="265" Canvas.Top="90" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas x:Name="StationScopeControlsCanvas" Width="264" Height="30" VerticalAlignment="Top">
-                                            <Grid Canvas.Left="2" Canvas.Top="7" Width="29" Height="13" Background="White">
-                                                <Label Content="TH" Height="38" Margin="-2,-5,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>
-                                            </Grid>
-                                            <controls:NumericUpDown x:Name="StationScopeSignalStrengthThresholdNumericUpDown" Canvas.Left="30" Canvas.Top="0" Width="104" Height="10" Minimum="1" Maximum="60" Value="7" Interval="1"
-                                        StringFormat="N0" UpDownButtonsWidth="30" FontSize="14" BorderThickness="0" Background="Transparent" Foreground="White"
-                                        PreviewMouseUp="StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp">
-                                            </controls:NumericUpDown>
-                                            --><!--<Label Content="dB" Canvas.Left="130" Canvas.Top="0" Height="38" Margin="-1,2,0,0" Padding="0" Foreground="White" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="18" HorizontalAlignment="Center"/>-->
-
-                                            <!--<Label Canvas.Left="78" Canvas.Top="14" Content="1   3   5   7  9  20 40 60 dB" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Right"/>--><!--
-                                        </Canvas>
-                                    </Border>-->
-
                                     <Border Canvas.Left="0" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas x:Name="StationScopeListCanvas" Width="264" Height="125">
 
                                             <Label Canvas.Left="2" Canvas.Top="0" Content="Found Stations List" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center" Foreground="White"/>
 
-                                            <Grid x:Name="FoundStationCountGrid" Canvas.Left="202" Canvas.Top="0" Opacity="0.6" Width="62" Height="14" Background="White" Visibility="Visible">
+                                            <Grid x:Name="FoundStationCountGrid" Canvas.Left="162" Canvas.Top="0" Opacity="0.6" Width="102" Height="14" Background="White" Visibility="Visible">
                                                 <Label x:Name="FoundStationCountLabel" Content="1 of 1" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center"/>
                                             </Grid>
 
@@ -1182,9 +1167,14 @@
                                                     <fa:FontAwesome Icon="CaretDown" Margin="1,0,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
-                                            <Border Tag="3" Canvas.Left="0" Canvas.Top="68" Style="{StaticResource StationScopeTransportButtonBorderStyle}" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border Tag="3" Canvas.Left="0" Canvas.Top="68" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Remove The Selected QMB Station" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="Eject" Margin="1,1,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <fa:FontAwesome Icon="MinusSquareOutline" Margin="1,1,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Tag="4" Canvas.Left="0" Canvas.Top="85" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Clear The Quick Memory Bank List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <StackPanel Orientation="Vertical">
+                                                    <fa:FontAwesome Icon="SquareOutline" Margin="1,1,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
 
@@ -1194,9 +1184,9 @@
                                     <Border Canvas.Left="300" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas x:Name="QMBListCanvas" Width="232" Height="125">
 
-                                            <Label Canvas.Left="2" Canvas.Top="0" Content="Quick Memory Bank List" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center" Foreground="White"/>
+                                            <Label Canvas.Left="2" Canvas.Top="0" Content="QM Bank List" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center" Foreground="White"/>
 
-                                            <Grid x:Name="QMBCountGrid" Canvas.Left="170" Canvas.Top="0" Opacity="0.6" Width="62" Height="14" Background="White" Visibility="Visible">
+                                            <Grid x:Name="QMBCountGrid" Canvas.Left="130" Canvas.Top="0" Opacity="0.6" Width="102" Height="14" Background="White" Visibility="Visible">
                                                 <Label x:Name="QMBCountLabel" Content="1 of 1" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center"/>
                                             </Grid>
 

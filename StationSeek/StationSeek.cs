@@ -34,6 +34,7 @@ namespace YAESU_FT_891_Front_End
         public const int IncreaseThresholdValue = 1;
         public const int DecreaseThresholdValue = 2;
         public const int RemoveSelectedQMB = 3;
+        public const int ClearQuickMemoryBankList = 4;
     }
     public class StationSeekCriteriaClass
     {
@@ -443,6 +444,10 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     break;
                 case StationScopeTransportButtons.RemoveSelectedQMB:
+                    mainWindow.qMBRigStates.RemoveSelectedQMBStation();
+                    break;
+                case StationScopeTransportButtons.ClearQuickMemoryBankList:
+                    mainWindow.qMBRigStates.ClearQuickMemoryBankList();
                     break;
             }
         }

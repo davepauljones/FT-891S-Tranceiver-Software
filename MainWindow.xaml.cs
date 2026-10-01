@@ -888,6 +888,8 @@ namespace YAESU_FT_891_Front_End
 
             stationScopeListViewSelectedItem = QMBListView.SelectedIndex;
 
+            qMBRigStates.UpdateTheQuickMemoryBankListCount();
+
             //add ability to send these freq's to rig QMB
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
