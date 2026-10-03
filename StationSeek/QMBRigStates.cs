@@ -1,4 +1,5 @@
-﻿using FT891S_CatControl;
+﻿using Event_Horizon;
+using FT891S_CatControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,11 +51,23 @@ namespace YAESU_FT_891_Front_End
 
             if (DuplicateFoundCount == 0)
             {
+                int PositionInTheList = QMBRigStatesList.Count + 1;
+
+                radioState.ID = PositionInTheList;
+
                 QMBRigStatesList.Add(radioState);
 
-                int PositionInTheList = QMBRigStatesList.Count;
+                PopulateRigStateList(QMBListView);
+            }         
+        }
 
-                StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = radioState.VfoAFrequency, SignalStrength = radioState.SMeter };
+        public void PopulateRigStateList(ListView QMBListView)
+        {
+            QMBListView.Items.Clear();
+
+            foreach (RadioState rs in QMBRigStatesList)
+            {
+                StationSeekClass station = new StationSeekClass { ID = rs.ID, Frequency = rs.VfoAFrequency, SignalStrength = rs.SMeter };
 
                 QMBListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
             }
@@ -64,10 +77,15 @@ namespace YAESU_FT_891_Front_End
 
         public void ClearQuickMemoryBankList()
         {
-            QMBRigStatesList.Clear();
-            mainWindow.QMBListView.Items.Clear();
+            EventHorizonRequesterNotification msg = new EventHorizonRequesterNotification(mainWindow, new OracleCustomMessage { MessageTitleTextBlock = "FT891S Information", InformationTextBlock = "Clear All QMB Stations, Are You Sure ?" }, RequesterTypes.NoYes);
 
-            UpdateTheQuickMemoryBankListCount();
+            if (msg.ShowDialog() == true)
+            {
+                QMBRigStatesList.Clear();
+                mainWindow.QMBListView.Items.Clear();
+
+                UpdateTheQuickMemoryBankListCount();
+            }
         }
 
         public void RemoveSelectedQMBStation()
@@ -76,6 +94,8 @@ namespace YAESU_FT_891_Front_End
             {
                 QMBRigStatesList.RemoveAt(mainWindow.QMBListView.SelectedIndex);
                 mainWindow.QMBListView.Items.RemoveAt(mainWindow.QMBListView.SelectedIndex);
+
+                RenumberTheQMBRigStatesList();
 
                 UpdateTheQuickMemoryBankListCount();
             }
@@ -100,26 +120,21 @@ namespace YAESU_FT_891_Front_End
             else if (mainWindow.QMBListView.SelectedIndex != -1)
             {
                 RadioState rs = QMBRigStatesList[mainWindow.QMBListView.SelectedIndex];
-                mainWindow.QMBCountLabel.Content = rs.RadioID + " of " + QMBRigStatesList.Count;
-                //RenumberTheQMBRigStatesList();
+                mainWindow.QMBCountLabel.Content = rs.ID + " of " + QMBRigStatesList.Count;
             }
         }
         public void RenumberTheQMBRigStatesList()
         {
             Int32 index = 0;
+            
             foreach (RadioState rs in QMBRigStatesList)
             {
                 index++;
 
-                rs.RadioID = index;
+                rs.ID = index;
             }
 
-            mainWindow.QMBListView.Items.Clear();
-
-            foreach (RadioState rs in QMBRigStatesList)
-            {
-                AddNewRigStateToList(mainWindow.QMBListView, rs);
-            }
+            PopulateRigStateList(mainWindow.QMBListView);
         }
 
     }

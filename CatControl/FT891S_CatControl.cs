@@ -36,6 +36,7 @@ namespace FT891S_CatControl
     }
     public class RadioState
     {
+        public Int32 ID { get; set; }
         public long VfoAFrequency { get; set; }
         public long VfoALastFrequency { get; set; }
         public long VfoBFrequency { get; set; }
