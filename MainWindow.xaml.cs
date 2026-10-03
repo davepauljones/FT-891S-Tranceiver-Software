@@ -1651,28 +1651,36 @@ namespace YAESU_FT_891_Front_End
 
         private async void ModeUserControl_ModeChanged(object sender, ModeChangedEventArgs e)
         {
-            byte catValue = _modeMapper.ToCAT(e.Mode);
+            Mode_ModeChange(e.Mode);
+        }
 
-            if (e.Mode == RadioMode.USB)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "1107", 0 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.LSB)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "1107", 1 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.CW_U)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "0707", 0 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.CW_L)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "0707", 1 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.DATA_U)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "0812", 0 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.DATA_L)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "0812", 1 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.RTTY_U)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "1011", 0 }, _catManager.OutGoingDataLoopDelay);
-            else if (e.Mode == RadioMode.RTTY_L)
-                await _catManager.SendCatCommandAsync("EX", new object[] { "1011", 1 }, _catManager.OutGoingDataLoopDelay);
+        public async void Mode_ModeChange(RadioMode radioMode)
+        {
+            if (_modeMapper != null)
+            {
+                byte catValue = _modeMapper.ToCAT(radioMode);
 
-            await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(catValue)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
+                if (radioMode == RadioMode.USB)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "1107", 0 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.LSB)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "1107", 1 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.CW_U)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "0707", 0 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.CW_L)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "0707", 1 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.DATA_U)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "0812", 0 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.DATA_L)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "0812", 1 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.RTTY_U)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "1011", 0 }, _catManager.OutGoingDataLoopDelay);
+                else if (radioMode == RadioMode.RTTY_L)
+                    await _catManager.SendCatCommandAsync("EX", new object[] { "1011", 1 }, _catManager.OutGoingDataLoopDelay);
 
-            await _catManager.SendCatCommandAsync("MD", "0", _catManager.OutGoingDataLoopDelay);
+                await _catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(catValue)).ToString("X") }, _catManager.OutGoingDataLoopDelay);
+
+                await _catManager.SendCatCommandAsync("MD", "0", _catManager.OutGoingDataLoopDelay);
+            }
         }
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

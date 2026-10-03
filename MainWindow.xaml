@@ -1233,71 +1233,86 @@
 
                                     <Border Canvas.Left="534" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas Width="106" Height="125">
-                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="SCAN BAND" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandTextBlock" Canvas.Left="0" Canvas.Top="14" Text="20M" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="60" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="74" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="14" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="60" Text="MODE" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandModeTextBlock" Canvas.Left="0" Canvas.Top="74" Text="USB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
                                             <TextBlock Canvas.Left="0" Canvas.Top="90" Text="STEP Hz" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="1000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="500" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="-1" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="20" CornerRadius="0,0,0,24" BorderThickness="0"/>
+                                    <Border Canvas.Left="-1" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" Width="20" CornerRadius="0,0,0,24" BorderThickness="0"/>
 
-                                    <Border Tag="0" Canvas.Left="20" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="0" Canvas.Left="20" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="80M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_160MATextBlock" Text="160M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_160MBTextBlock" Text="1.8Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="1" Canvas.Left="77" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="1" Canvas.Left="73" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="40M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_80MATextBlock" Text="80M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_80MBTextBlock" Text="3.5Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="2" Canvas.Left="134" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="2" Canvas.Left="126" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="20M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_40MATextBlock" Text="40M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_40MBTextBlock" Text="7Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="3" Canvas.Left="191" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="3" Canvas.Left="179" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="15M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_30MATextBlock" Text="30M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_30MBTextBlock" Text="10Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="4" Canvas.Left="248" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="4" Canvas.Left="232" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="12M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_20MATextBlock" Text="20M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_20MBTextBlock" Text="14Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="5" Canvas.Left="305" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="5" Canvas.Left="285" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="11M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_15MATextBlock" Text="15M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_15MBTextBlock" Text="21Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="6" Canvas.Left="362" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="56" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="6" Canvas.Left="338" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="10M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_12MATextBlock" Text="12M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_12MBTextBlock" Text="24.5Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="7" Canvas.Left="419" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="50" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="7" Canvas.Left="391" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="6M" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_11MATextBlock" Text="11M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_11MBTextBlock" Text="27Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="8" Canvas.Left="470" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="8" Canvas.Left="444" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="START" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_10MATextBlock" Text="10M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_10MBTextBlock" Text="28Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
-                                    <Border Tag="9" Canvas.Left="545" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                    <Border Tag="9" Canvas.Left="497" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="STOP" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_6MATextBlock" Text="6M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                                            <TextBlock x:Name="_6MBTextBlock" Text="50Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Tag="10" Canvas.Left="550" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" Width="69" MouseLeftButtonDown="StationScopeBandButtons_MouseLeftButtonDown">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Name="StartStopTextBlock" Text="START" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                                         </StackPanel>
                                     </Border>
 
-                                    <Border Canvas.Left="620" Canvas.Top="129" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="21" CornerRadius="0,0,24,0" BorderThickness="0"/>
+                                    <Border Canvas.Left="620" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" Width="21" CornerRadius="0,0,24,0" BorderThickness="0"/>
 
                                 </Canvas>
                             </TabItem>

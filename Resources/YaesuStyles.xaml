@@ -33,6 +33,34 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
+
+    <Style x:Key="StationScopeButtonBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Margin" Value="1"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Width" Value="52"/>
+        <Setter Property="Height" Value="24"/>
+    </Style>
+    <Style x:Key="StationScopeButtonATextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,-3,0,0"/>
+    </Style>
+    <Style x:Key="StationScopeButtonBTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,-4,0,0"/>
+        <Setter Property="Opacity" Value="0.6"/>
+    </Style>
+
     <Style x:Key="StatusBarTextBlockStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="DodgerBlue"/>
         <Setter Property="Padding" Value="0"/>
