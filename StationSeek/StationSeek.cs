@@ -37,6 +37,8 @@ namespace YAESU_FT_891_Front_End
         public const int DecreaseThresholdValue = 2;
         public const int RemoveSelectedQMB = 3;
         public const int ClearQuickMemoryBankList = 4;
+        public const int SortDescending = 5;
+        public const int PlayStopButtonQMB = 6;
     }
     public class StationSeekCriteriaClass
     {
@@ -79,6 +81,28 @@ namespace YAESU_FT_891_Front_End
             currentStationSeekCriteria = new StationSeekCriteriaClass { ScanBand = ScanBands._20M, StartFreq = 14000000, EndFreq = 14350000, StepFreq = 500, Threshold = 8 };
 
             ButtonSelection(ScanBands._20M);
+        }
+        private void SortFoundStationsListDescending()
+        {
+            // Sorts the existing list in-place (highest SignalStrength first)
+            StationSeekActiveList.Sort((a, b) => b.SignalStrength.CompareTo(a.SignalStrength));
+            PopulateStationSeekActiveList();
+        }
+        private void PopulateStationSeekActiveList()
+        {
+            mainWindow.StationScopeListView.Items.Clear();
+
+            Int32 PositionInTheList = 1;
+
+            // Iterate over a snapshot copy of StationSeekActiveList
+            foreach (StationSeekClass ss in StationSeekActiveList.ToList())
+            {
+                StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = ss.Frequency, NumTimesEmpty = ss.NumTimesEmpty, SignalStrength = ss.SignalStrength };
+                AddActiveStation(station);
+                UpdateFoundStationCountLabel(mainWindow.FoundStationCountLabel, StationSeekActiveList.Count.ToString());
+                mainWindow.StationScopeListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
+                PositionInTheList++;
+            }
         }
         public void AddActiveStation(StationSeekClass ssc)
         {
@@ -544,6 +568,12 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case StationScopeTransportButtons.ClearQuickMemoryBankList:
                     mainWindow.qMBRigStates.ClearQuickMemoryBankList();
+                    break;
+                case StationScopeTransportButtons.SortDescending:
+                    SortFoundStationsListDescending();
+                    break;
+                case StationScopeTransportButtons.PlayStopButtonQMB:
+                    //PlayStopButtonIconFontAwesome
                     break;
             }
         }

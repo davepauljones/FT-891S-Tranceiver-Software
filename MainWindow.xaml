@@ -1112,14 +1112,28 @@
                                 <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
                                     <Border Canvas.Left="0" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas x:Name="StationScopeListCanvas" Width="264" Height="125">
+                                        <Canvas Width="88" Height="126">
+                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="14" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="60" Text="MODE" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandModeTextBlock" Canvas.Left="0" Canvas.Top="74" Text="USB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
+                                            <TextBlock Canvas.Left="0" Canvas.Top="90" Text="STEP Hz" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="500" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
+                                        </Canvas>
+                                    </Border>
+
+                                    <Border Canvas.Left="91" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas x:Name="StationScopeListCanvas" Width="220" Height="126">
 
                                             <Border Canvas.Left="-1" Canvas.Top="-1" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="162"/>
+                                                        <ColumnDefinition Width="118"/>
                                                         <ColumnDefinition Width="102"/>
                                                     </Grid.ColumnDefinitions>
+                                                    
                                                     <Label Grid.Column="0" Content="Found Stations" Height="14" Padding="0" Margin="2,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left" Foreground="White"/>
 
                                                     <Grid x:Name="FoundStationCountGrid" Grid.Column="1" Opacity="0.6" Width="102" Height="14" Background="White" Visibility="Visible">
@@ -1128,7 +1142,7 @@
                                                 </Grid>
                                             </Border>
 
-                                            <ScrollViewer x:Name="StationScopeListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="265" Height="110">
+                                            <ScrollViewer x:Name="StationScopeListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="220" Height="111">
 
                                                 <StackPanel Orientation="Vertical" Margin="0,2,0,0">
 
@@ -1152,50 +1166,45 @@
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="265" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas Width="34" Height="125" VerticalAlignment="Top">
+                                    <Border Canvas.Left="312" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas Width="52" Height="126" VerticalAlignment="Top">
 
                                             <Border Tag="0" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
-                                                <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="Forward" Margin="3,0,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="AngleDoubleRight" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
                                             </Border>
-                                            <Border Tag="1" Canvas.Left="0" Canvas.Top="17" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Increase Threshold Value" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
-                                                <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="CaretUp" Margin="1,0,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                            <Border Tag="1" Canvas.Left="0" Canvas.Top="25" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Increase Threshold Value" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="AngleUp" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
                                             </Border>
-
-                                            <Border Canvas.Left="0" Canvas.Top="35" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Threshold Value" Margin="1,0,1,0" BorderThickness="0" Width="32" Background="Transparent">
-                                                <Label x:Name="ThresholdValueLabel" Content="7" Height="24" Margin="0,1,0,0" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" Foreground="White" HorizontalAlignment="Center"/>
+                                            <Border Canvas.Left="0" Canvas.Top="51" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Threshold Value" Margin="1,0,1,0" BorderThickness="0">
+                                                <Grid>
+                                                    <Label x:Name="ThresholdValueLabel" Content="7" Height="24" Margin="0,1,0,0" Padding="0" VerticalContentAlignment="Center" FontWeight="Bold" FontFamily="Consolas" FontSize="16" Foreground="#7FFFFFFF" HorizontalAlignment="Center"/>
+                                                </Grid>
                                             </Border>
-
-                                            <Border Tag="2" Canvas.Left="0" Canvas.Top="51" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Decrease Threshold Value" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
-                                                <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="CaretDown" Margin="1,0,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                            <Border Tag="2" Canvas.Left="0" Canvas.Top="75" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Decrease Threshold Value" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="AngleDown" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
                                             </Border>
-                                            <Border Tag="3" Canvas.Left="0" Canvas.Top="68" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Remove QMB Station" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
-                                                <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="MinusSquareOutline" Margin="1,1,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <Border Tag="4" Canvas.Left="0" Canvas.Top="85" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Clear All QMB Stations" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
-                                                <StackPanel Orientation="Vertical">
-                                                    <fa:FontAwesome Icon="SquareOutline" Margin="1,1,0,0" FontSize="12" Foreground="#7FFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                            <Border Tag="5" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Sort Descending" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="SortAmountDesc" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}" FontSize="14"/>
+                                                </Grid>
                                             </Border>
 
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="300" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas x:Name="QMBListCanvas" Width="232" Height="125">
+                                    <Border Canvas.Left="367" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas x:Name="QMBListCanvas" Width="220" Height="126">
 
                                             <Border Canvas.Left="-1" Canvas.Top="-1" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="118"/>
                                                         <ColumnDefinition Width="102"/>
                                                     </Grid.ColumnDefinitions>
                                                     
@@ -1207,7 +1216,7 @@
                                                 </Grid>
                                             </Border>
 
-                                            <ScrollViewer x:Name="QMBListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="233" Height="110">
+                                            <ScrollViewer x:Name="QMBListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="220" Height="111">
 
                                                 <StackPanel Orientation="Vertical" Margin="0,2,0,0">
 
@@ -1231,16 +1240,35 @@
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="534" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas Width="106" Height="125">
-                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="14" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="60" Text="MODE" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandModeTextBlock" Canvas.Left="0" Canvas.Top="74" Text="USB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="90" Text="STEP Hz" Style="{StaticResource StatusBarTextBlockStyle}" Width="106" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="500" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="106" TextAlignment="Center"/>
+                                    <Border Canvas.Left="588" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas Width="52" Height="126" VerticalAlignment="Top">
+
+                                            <Border Tag="0" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="AngleDoubleUp" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Tag="3" Canvas.Left="0" Canvas.Top="25" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Remove QMB Station" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="MinusSquareOutline" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Tag="4" Canvas.Left="0" Canvas.Top="50" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Clear All QMB Stations" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="SquareOutline" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Tag="6" Canvas.Left="0" Canvas.Top="75" Style="{StaticResource StationScopeTransportButtonBorderStyle}" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome x:Name="PlayStopButtonIconFontAwesome" Icon="Play" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}" FontSize="16"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Tag="99" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                                <Grid>
+                                                    <fa:FontAwesome Icon="None" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                </Grid>
+                                            </Border>
+
                                         </Canvas>
                                     </Border>
 

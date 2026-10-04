@@ -6,13 +6,12 @@
              xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
              xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
              mc:Ignorable="d" 
-             d:DesignHeight="8" d:DesignWidth="264" MinWidth="264" MaxWidth="264">
+             d:DesignHeight="8" d:DesignWidth="220" MinWidth="220" MaxWidth="220">
     <Grid x:Name="BackgroundGrid" Height="8" Background="#01AAAAAA">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="24" MaxWidth="24"/>
             <ColumnDefinition Width="Auto" MinWidth="56" MaxWidth="56"/>
-            <ColumnDefinition Width="Auto" MinWidth="160" MaxWidth="160"/>
-            <ColumnDefinition Width="Auto" MinWidth="26" MaxWidth="26"/>
+            <ColumnDefinition Width="Auto" MinWidth="140" MaxWidth="140"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="StationIDTextBlock" Grid.Column="0" Text="00000" Foreground="White" FontSize="9" Margin="2,0,0,0" Padding="0" TextAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Center"/>

@@ -20,6 +20,11 @@ namespace YAESU_FT_891_Front_End
         {
             this.mainWindow = mainWindow;
         }
+        //public void SortQuickMemoryBankDescending()
+        //{
+        //    QMBRigStatesList.Sort();
+        //    PopulateRigStateList(mainWindow.QMBListView);
+        //}
         public void ListRigStates()
         {
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
