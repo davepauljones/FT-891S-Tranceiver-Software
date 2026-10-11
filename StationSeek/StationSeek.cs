@@ -12,6 +12,7 @@ using YAESU_FT_891_Front_End.Models;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.SimulatedWaterfall;
+using static YAESU_FT_891_Front_End.StationSeek;
 
 namespace YAESU_FT_891_Front_End
 { 
@@ -40,6 +41,16 @@ namespace YAESU_FT_891_Front_End
         public const int SortDescending = 5;
         public const int PlayStopButtonQMB = 6;
     }
+    public struct StationScopeSortModes
+    {
+        public const int Frequency = 0;
+        public const int SignalStrength = 1;
+    }
+    public struct StationScopeListCounts
+    {
+        public const int FoundStations = 0;
+        public const int QuickMemoryBankStations = 1;
+    }
     public class StationSeekCriteriaClass
     {
         public byte ScanBand = ScanBands._20M;
@@ -49,9 +60,9 @@ namespace YAESU_FT_891_Front_End
         public int StepFreq = 500;
         public int Threshold = 8;
     }
-    public class StationSeekClass
+    public class StationSeekClass : IIdentifiable
     {
-        public Int32 ID;
+        public Int32 ID { get; set; }
         public long Frequency;
         public int NumTimesEmpty;
         public int SignalStrength;
@@ -67,6 +78,7 @@ namespace YAESU_FT_891_Front_End
         public byte CurrentScanBand = ScanBands._20M;
         public StationSeekCriteriaClass currentStationSeekCriteria;
         public int CurrentThresholdValue = 7;
+        public int SortMode = StationScopeSortModes.Frequency;
 
         MainWindow mainWindow;
         public StationSeek(MainWindow mainWindow)
@@ -82,10 +94,22 @@ namespace YAESU_FT_891_Front_End
 
             ButtonSelection(ScanBands._20M);
         }
-        private void SortFoundStationsListDescending()
+        private void SortFoundStationsList(int sortMode)
         {
-            // Sorts the existing list in-place (highest SignalStrength first)
-            StationSeekActiveList.Sort((a, b) => b.SignalStrength.CompareTo(a.SignalStrength));
+            SortMode = sortMode;
+
+            switch (sortMode)
+            {
+                case StationScopeSortModes.Frequency:
+                    // Sorts the existing list in-place (highest SignalStrength first)
+                    StationSeekActiveList.Sort((a, b) => b.Frequency.CompareTo(a.Frequency));
+                    break;
+                case StationScopeSortModes.SignalStrength:
+                    // Sorts the existing list in-place (highest SignalStrength first)
+                    StationSeekActiveList.Sort((a, b) => b.SignalStrength.CompareTo(a.SignalStrength));
+                    break;
+            }
+           
             PopulateStationSeekActiveList();
         }
         private void PopulateStationSeekActiveList()
@@ -97,12 +121,23 @@ namespace YAESU_FT_891_Front_End
             // Iterate over a snapshot copy of StationSeekActiveList
             foreach (StationSeekClass ss in StationSeekActiveList.ToList())
             {
-                StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = ss.Frequency, NumTimesEmpty = ss.NumTimesEmpty, SignalStrength = ss.SignalStrength };
-                AddActiveStation(station);
-                UpdateFoundStationCountLabel(mainWindow.FoundStationCountLabel, StationSeekActiveList.Count.ToString());
-                mainWindow.StationScopeListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
+                ss.ID = PositionInTheList;
+                //StationSeekClass station = new StationSeekClass { ID = ss.ID, Frequency = ss.Frequency, NumTimesEmpty = ss.NumTimesEmpty, SignalStrength = ss.SignalStrength };
+                
+                CreateStationScopeUserControlFromStationSeekClass(ss);
                 PositionInTheList++;
             }
+
+            if (StationSeekActiveList.Count > 0)
+            {
+                mainWindow.StationScopeListView.SelectedItem = mainWindow.StationScopeListView.Items[0];
+                mainWindow.StationScopeListView.ScrollIntoView(mainWindow.StationScopeListView.Items[0]);
+            }
+        }
+        private void CreateStationScopeUserControlFromStationSeekClass(StationSeekClass ss)
+        {
+            mainWindow.StationScopeListView.Items.Add(new StationScope(mainWindow, ss, mainWindow.frequencyManagement));
+            UpdateListLabelCount(mainWindow.StationScopeListView, StationSeekActiveList, mainWindow.FoundStationCountLabel);
         }
         public void AddActiveStation(StationSeekClass ssc)
         {
@@ -118,8 +153,6 @@ namespace YAESU_FT_891_Front_End
         {
             if (IsScanning) return;
 
-            IsScanning = true;
-
             var window = Application.Current.MainWindow as MainWindow;
             window.RigBlurVFOCanvas.Visibility = Visibility.Visible;
             window.RigBlurVFOCanvasBlurEffect.Radius = 4;
@@ -128,6 +161,10 @@ namespace YAESU_FT_891_Front_End
             mainWindow.StationScopeListView.Items.Clear();
 
             mainWindow._catManager.StopOutgoingDataLoop();
+
+            ChangeSortMode(StationScopeSortModes.Frequency);
+
+            IsScanning = true;
 
             await Task.Delay(100);
 
@@ -174,26 +211,17 @@ namespace YAESU_FT_891_Front_End
                 if (MainWindow.GetSMeterInteger(FT891S_CatManager.currentRadioState.CurrentMeterReading) >= signalStrengthThreshold)
                 {
                     StationSeekClass station = new StationSeekClass { ID = PositionInTheList, Frequency = freq, NumTimesEmpty = 0, SignalStrength = FT891S_CatManager.currentRadioState.CurrentMeterReading };
+                    
                     AddActiveStation(station);
-                    UpdateFoundStationCountLabel(FoundStationCountLabel, StationSeekActiveList.Count.ToString());
-                    mainWindow.StationScopeListView.Items.Add(new StationScope(mainWindow, station, mainWindow.frequencyManagement));
+
+                    CreateStationScopeUserControlFromStationSeekClass(station);
+
                     PositionInTheList++;
                 }
 
                 if (RequestToStopScanning)
                 {
-                    await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                    mainWindow._catManager.StartOutgoingDataLoop();
-
-                    window.RigBlurVFOCanvas.Visibility = Visibility.Hidden;
-
-                    IsScanning = false;
-                    RequestToStopScanning = false;
-
-                    ButtonSelection(ScanBands._STOP);
-
-                    return;
+                    break;
                 }
             }
 
@@ -218,26 +246,56 @@ namespace YAESU_FT_891_Front_End
             window.RigBlurVFOCanvas.Visibility = Visibility.Hidden;
             IsScanning = false;
 
-            if (mainWindow.StationScopeListView.Items.Count > 0)
-            {
-                mainWindow.StationScopeListView.SelectedItem = mainWindow.StationScopeListView.Items[0];
-                mainWindow.StationScopeListView.ScrollIntoView(mainWindow.StationScopeListView.Items[0]);
-
-                UpdateFoundStationCountLabel(FoundStationCountLabel, "1 of " + StationSeekActiveList.Count);
-            }
-            else
-            {
-                UpdateFoundStationCountLabel(FoundStationCountLabel, "No Stations Found!");
-            }
+            UpdateListLabelCount(mainWindow.StationScopeListView, StationSeekActiveList, mainWindow.FoundStationCountLabel, false);
 
             //ScanFoundStations(_port);
 
             mainWindow._catManager.StartOutgoingDataLoop();
         }
 
-        public void UpdateFoundStationCountLabel(Label FoundStationCountLabel, string foundStationCountLabel)
+        public interface IIdentifiable
         {
-            FoundStationCountLabel.Content = foundStationCountLabel;
+            Int32 ID { get; set; } // Adjust type (int, string, GUID) as needed
+        }
+        public void UpdateListLabelCount<T>(ListView listView, List<T> list, Label countMetricsLabel, bool useSelectedIndex = false) where T : IIdentifiable
+        {
+            if (listView.Items.Count > 0)
+            {
+                if (!useSelectedIndex)
+                {
+                    listView.SelectedItem = listView.Items[0];
+                    listView.ScrollIntoView(listView.Items[0]);
+
+                    countMetricsLabel.Content = "1 of " + listView.Items.Count;
+                }
+                else
+                {
+                    countMetricsLabel.Content = list[listView.SelectedIndex].ID.ToString() + " of " + listView.Items.Count;
+                }
+            }
+            else
+            {
+                countMetricsLabel.Content = "No Stations Found!";
+            }
+        }
+
+        private void ChangeSortMode(int sortMode)
+        {
+            if (IsScanning) return;
+            
+            switch (sortMode)
+            {
+                case StationScopeSortModes.Frequency:
+                    SortMode = StationScopeSortModes.Frequency;
+                    mainWindow.SortButtonToolTipBorder.ToolTip = "Sort By Signal Strength";
+                    SortFoundStationsList(StationScopeSortModes.Frequency);
+                    break;
+                case StationScopeSortModes.SignalStrength:
+                    SortMode = StationScopeSortModes.SignalStrength;
+                    mainWindow.SortButtonToolTipBorder.ToolTip = "Sort By Frequency";
+                    SortFoundStationsList(StationScopeSortModes.SignalStrength);
+                    break;
+            }
         }
 
         //public async void ScanFoundStations(SerialPort _port)
@@ -570,7 +628,14 @@ namespace YAESU_FT_891_Front_End
                     mainWindow.qMBRigStates.ClearQuickMemoryBankList();
                     break;
                 case StationScopeTransportButtons.SortDescending:
-                    SortFoundStationsListDescending();
+                    if (SortMode == StationScopeSortModes.Frequency)
+                    {
+                        ChangeSortMode(StationScopeSortModes.SignalStrength);
+                    }
+                    else
+                    {
+                        ChangeSortMode(StationScopeSortModes.Frequency);
+                    }
                     break;
                 case StationScopeTransportButtons.PlayStopButtonQMB:
                     //PlayStopButtonIconFontAwesome

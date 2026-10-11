@@ -1189,7 +1189,7 @@
                                                     <fa:FontAwesome Icon="AngleDown" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
                                                 </Grid>
                                             </Border>
-                                            <Border Tag="5" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Sort Descending" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border x:Name="SortButtonToolTipBorder" Tag="5" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Sort By Signal Strength" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <Grid>
                                                     <fa:FontAwesome Icon="SortAmountDesc" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}" FontSize="14"/>
                                                 </Grid>

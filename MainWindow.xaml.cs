@@ -863,7 +863,7 @@ namespace YAESU_FT_891_Front_End
 
             stationScopeListViewSelectedItem = StationScopeListView.SelectedIndex;
 
-            stationSeek.UpdateFoundStationCountLabel(FoundStationCountLabel, stationSeek.StationSeekActiveList[StationScopeListView.SelectedIndex].ID.ToString() + " of " + stationSeek.StationSeekActiveList.Count);
+            stationSeek.UpdateListLabelCount(StationScopeListView, stationSeek.StationSeekActiveList, FoundStationCountLabel, true);
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
 
