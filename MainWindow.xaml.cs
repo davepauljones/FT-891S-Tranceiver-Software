@@ -894,7 +894,6 @@ namespace YAESU_FT_891_Front_End
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
 
-            //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
             await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
 
             if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
@@ -941,7 +940,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                
+                qMBRigStates.NextQuickMemoryBank();
             });
         }
 

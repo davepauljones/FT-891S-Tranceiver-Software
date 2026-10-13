@@ -41,6 +41,7 @@ namespace YAESU_FT_891_Front_End
         public const int SortDescending = 5;
         public const int PlayStopButtonQMB = 6;
         public const int UpdateSelectedQMBFromVFO = 7;
+        public const int CopyToRigsQMB = 8;
     }
     public struct StationScopeSortModes
     {
@@ -643,6 +644,9 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case StationScopeTransportButtons.UpdateSelectedQMBFromVFO:
                     mainWindow.qMBRigStates.UpdateSelectedQMBFromVFO();
+                    break;
+                case StationScopeTransportButtons.CopyToRigsQMB:
+                    mainWindow.qMBRigStates.QMBStore();
                     break;
             }
         }

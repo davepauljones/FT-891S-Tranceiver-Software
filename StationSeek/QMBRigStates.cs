@@ -155,5 +155,40 @@ namespace YAESU_FT_891_Front_End
                 mainWindow.QMBListView.SelectedIndex = selectedIndex;
             }
         }
+
+        public void NextQuickMemoryBank()
+        {
+            int itemCount = mainWindow.QMBListView.Items.Count;
+            if (itemCount == 0) return;
+
+            int currentIndex = mainWindow.QMBListView.SelectedIndex;
+
+            // Wrap around if nothing is selected or if we've reached the last item
+            if (currentIndex == -1 || currentIndex >= itemCount - 1)
+            {
+                mainWindow.QMBListView.SelectedIndex = 0;
+            }
+            else
+            {
+                mainWindow.QMBListView.SelectedIndex++;
+            }
+
+            RadioState radioState = QMBRigStatesList[mainWindow.QMBListView.SelectedIndex];
+            SetRigStateFromQuickMemoryBank(radioState);
+        }
+
+        public async void SetRigStateFromQuickMemoryBank(RadioState radioState)
+        {
+            mainWindow.frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, radioState.VfoAFrequency, mainWindow.MainFrequencyTextBlock);
+
+            await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, mainWindow._catManager.OutGoingDataLoopDelay);
+        }
+
+        public async void QMBStore()
+        {
+            await mainWindow._catManager.SendCatCommandAsync("QI", mainWindow._catManager.OutGoingDataLoopDelay);
+            await mainWindow._catManager.SendCatCommandAsync("QR", mainWindow._catManager.OutGoingDataLoopDelay);
+        }
+
     }
 }

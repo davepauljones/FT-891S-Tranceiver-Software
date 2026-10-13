@@ -599,6 +599,20 @@ namespace FT891S_CatControl
                 FT891S_CatManager.currentRadioState.ContourValue = result.Values;
             }
         );
+        public static readonly FT891S_CatCommand<int> QI = new FT891S_CatCommand<int>(
+            "QI",
+            new CatStructure(),
+            new CatStructure(),
+            dict => 0,
+            result => { }
+        );
+        public static readonly FT891S_CatCommand<int> QR = new FT891S_CatCommand<int>(
+            "QR",
+            new CatStructure(),
+            new CatStructure(),
+            dict => 0,
+            result => { }
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -625,7 +639,9 @@ namespace FT891S_CatControl
             { "PS", PS },
             { "IS", IS },
             { "BP", BP },
-            { "CO", CO }
+            { "CO", CO },
+            { "QI", QI },
+            { "QR", QR }
         };
 
         // Example method to build the transmission string for the radio

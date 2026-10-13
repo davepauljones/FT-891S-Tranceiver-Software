@@ -1243,7 +1243,7 @@
                                     <Border Canvas.Left="588" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas Width="52" Height="126" VerticalAlignment="Top">
 
-                                            <Border Tag="0" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border Tag="8" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <Grid>
                                                     <fa:FontAwesome Icon="AngleDoubleUp" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
                                                 </Grid>
