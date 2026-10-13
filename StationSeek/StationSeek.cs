@@ -40,6 +40,7 @@ namespace YAESU_FT_891_Front_End
         public const int ClearQuickMemoryBankList = 4;
         public const int SortDescending = 5;
         public const int PlayStopButtonQMB = 6;
+        public const int UpdateSelectedQMBFromVFO = 7;
     }
     public struct StationScopeSortModes
     {
@@ -639,6 +640,9 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case StationScopeTransportButtons.PlayStopButtonQMB:
                     //PlayStopButtonIconFontAwesome
+                    break;
+                case StationScopeTransportButtons.UpdateSelectedQMBFromVFO:
+                    mainWindow.qMBRigStates.UpdateSelectedQMBFromVFO();
                     break;
             }
         }

@@ -1263,9 +1263,9 @@
                                                     <fa:FontAwesome x:Name="PlayStopButtonIconFontAwesome" Icon="Play" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}" FontSize="16"/>
                                                 </Grid>
                                             </Border>
-                                            <Border Tag="99" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border Tag="7" Canvas.Left="0" Canvas.Top="100" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Update Selected QMB From VFO" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <Grid>
-                                                    <fa:FontAwesome Icon="None" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                    <fa:FontAwesome Icon="AngleDoubleLeft" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
                                                 </Grid>
                                             </Border>
 

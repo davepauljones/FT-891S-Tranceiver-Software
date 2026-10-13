@@ -142,5 +142,18 @@ namespace YAESU_FT_891_Front_End
             PopulateRigStateList(mainWindow.QMBListView);
         }
 
+        public void UpdateSelectedQMBFromVFO()
+        {
+            if (mainWindow.QMBListView.SelectedIndex != -1)
+            {
+                Int32 selectedIndex = mainWindow.QMBListView.SelectedIndex;
+
+                RadioState rs = QMBRigStatesList[selectedIndex];
+                rs.VfoAFrequency = FT891S_CatManager.currentRadioState.VfoAFrequency;
+
+                PopulateRigStateList(mainWindow.QMBListView);
+                mainWindow.QMBListView.SelectedIndex = selectedIndex;
+            }
+        }
     }
 }
