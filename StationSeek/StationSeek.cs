@@ -151,7 +151,7 @@ namespace YAESU_FT_891_Front_End
             StationSeekActiveList.Remove(ssc);
         }
 
-        public async void SeekActiveStations(MainWindow mainWindow, SerialPort _port, long startFrequency, long endFrequency, int freqStep, int signalStrengthThreshold, Label FoundStationCountLabel)
+        public async void SeekActiveStations(MainWindow mainWindow, SerialPort _port, long startFrequency, long endFrequency, long freqStep, int signalStrengthThreshold, Label FoundStationCountLabel)
         {
             if (IsScanning) return;
 
@@ -366,6 +366,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 2;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._160MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
@@ -383,6 +389,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.RadioMode = RadioMode.LSB;
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 2;
+
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
 
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
@@ -402,6 +414,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 4;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._40MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
@@ -419,6 +437,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.RadioMode = RadioMode.LSB;
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 3;
+
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
 
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
@@ -438,6 +462,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 7;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._20MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
@@ -455,6 +485,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.RadioMode = RadioMode.USB;
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 6;
+
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
 
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
@@ -474,6 +510,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 4;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._12MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
@@ -491,6 +533,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.RadioMode = RadioMode.FM;
                     currentStationSeekCriteria.StepFreq = 10000;
                     currentStationSeekCriteria.Threshold = 3;
+
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
 
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
@@ -510,6 +558,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 3;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._10MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
@@ -527,6 +581,12 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.RadioMode = RadioMode.USB;
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 1;
+
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
+                    mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
 
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
@@ -554,11 +614,13 @@ namespace YAESU_FT_891_Front_End
                     if (DateTime.Now > mainWindow.LastTimeThresholdChangedDateTime + TimeSpan.FromSeconds(5))
                     {
                         CurrentThresholdValue = currentStationSeekCriteria.Threshold;
-                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, currentStationSeekCriteria.Threshold, mainWindow.FoundStationCountLabel);
+                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, mainWindow.ScanBandStartFreqDisplay.Frequency, mainWindow.ScanBandEndFreqDisplay.Frequency, mainWindow.ScanBandStepFreqDisplay.Frequency, currentStationSeekCriteria.Threshold, mainWindow.FoundStationCountLabel);
+                        //SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, currentStationSeekCriteria.Threshold, mainWindow.FoundStationCountLabel);
                     }
                     else
                     {
-                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, CurrentThresholdValue, mainWindow.FoundStationCountLabel);
+                        SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, mainWindow.ScanBandStartFreqDisplay.Frequency, mainWindow.ScanBandEndFreqDisplay.Frequency, mainWindow.ScanBandStepFreqDisplay.Frequency, CurrentThresholdValue, mainWindow.FoundStationCountLabel);
+                        //SeekActiveStations(mainWindow, mainWindow.fT891S_SerialPort._port, currentStationSeekCriteria.StartFreq, currentStationSeekCriteria.EndFreq, currentStationSeekCriteria.StepFreq, CurrentThresholdValue, mainWindow.FoundStationCountLabel);
                     }
                     break;
                 case ScanBands._STOP:
@@ -584,13 +646,15 @@ namespace YAESU_FT_891_Front_End
                     currentStationSeekCriteria.StepFreq = 500;
                     currentStationSeekCriteria.Threshold = 7;
 
+                    mainWindow.ScanBandStartFreqDisplay.Frequency = currentStationSeekCriteria.StartFreq;
+                    mainWindow.ScanBandEndFreqDisplay.Frequency = currentStationSeekCriteria.EndFreq;
+                    mainWindow.ScanBandStepFreqDisplay.Frequency = currentStationSeekCriteria.StepFreq;
+
                     CurrentThresholdValue = currentStationSeekCriteria.Threshold;
                     mainWindow.ThresholdValueLabel.Content = CurrentThresholdValue.ToString();
                     mainWindow._20MATextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                     break;
             }
-
-            mainWindow.Mode_ModeChange(currentStationSeekCriteria.RadioMode);
         }
         public void TransportButtonSelection(byte buttonClicked)
         {

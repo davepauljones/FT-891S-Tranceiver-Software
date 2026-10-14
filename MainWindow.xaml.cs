@@ -709,14 +709,6 @@ namespace YAESU_FT_891_Front_End
                 this.DragMove();
         }
 
-        private void StartStationSeekButton_Click(object sender, RoutedEventArgs e)
-        {
-            FoundStationCountGrid.Visibility = System.Windows.Visibility.Visible;
-            FoundStationCountLabel.Content = 0;
-
-            stationSeek.SeekActiveStations(this, fT891S_SerialPort._port, 14100000, 14380000, 500, 3, FoundStationCountLabel);
-        }
-
         private void FButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
@@ -1680,6 +1672,8 @@ namespace YAESU_FT_891_Front_End
 
                 await _catManager.SendCatCommandAsync("MD", "0", _catManager.OutGoingDataLoopDelay);
             }
+
+            UpdateUIRigMode(ScanBandModeTextBlock, radioMode);
         }
 
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -2011,6 +2005,21 @@ namespace YAESU_FT_891_Front_End
             {
                 Console.Write("StationScopeTransportButtons_MouseLeftButtonDown = ");
                 Console.WriteLine(switchValue);
+            }
+        }
+
+        private void ScanBandModeCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (modeUserControl.Visibility != Visibility.Visible)
+            {
+                // 1. Instant Show: Make it visible and reset opacity to full
+                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.OperatingMode);
+                modeUserControl.Visibility = Visibility.Visible;
+                modeUserControl.Opacity = 1.0;
+            }
+            else
+            {
+                FadoutUserControl(modeUserControl, 0);
             }
         }
     }

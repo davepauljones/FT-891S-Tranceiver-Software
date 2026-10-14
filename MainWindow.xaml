@@ -1112,37 +1112,50 @@
                                 <Canvas x:Name="StationScopeTabCanvas" Style="{StaticResource TabCanvasStyle}">
 
                                     <Border Canvas.Left="0" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas Width="88" Height="126">
-                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="14" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="60" Text="MODE" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandModeTextBlock" Canvas.Left="0" Canvas.Top="74" Text="USB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
-                                            <TextBlock Canvas.Left="0" Canvas.Top="90" Text="STEP Hz" Style="{StaticResource StatusBarTextBlockStyle}" Width="88" TextAlignment="Center"/>
-                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="500" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center"/>
+                                        <Canvas Width="116" Height="126">
+                                            <TextBlock Canvas.Left="0" Canvas.Top="0" Text="START FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="116" TextAlignment="Center"/>
+
+                                            <TextBlock x:Name="ScanBandStartFreqTextBlock" Canvas.Left="0" Canvas.Top="14" Text="14.000.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="116" TextAlignment="Center" Visibility="Collapsed"/>
+                                            
+                                            <local:FrequencyDisplay x:Name="ScanBandStartFreqDisplay" Canvas.Left="0" Canvas.Top="17" Frequency="14000000" Height="16"/>
+
+                                            <TextBlock Canvas.Left="0" Canvas.Top="30" Text="END FREQ" Style="{StaticResource StatusBarTextBlockStyle}" Width="116" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandEndFreqTextBlock" Canvas.Left="0" Canvas.Top="44" Text="14.380.000" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="88" TextAlignment="Center" Visibility="Collapsed"/>
+                                            
+                                            <local:FrequencyDisplay x:Name="ScanBandEndFreqDisplay" Canvas.Left="0" Canvas.Top="46" Frequency="14000000" Height="16"/>
+
+                                            <Canvas Canvas.Left="0" Canvas.Top="64" Width="116" Height="29" Background="#01FFFFFF" MouseLeftButtonDown="ScanBandModeCanvas_MouseLeftButtonDown">
+                                                <TextBlock Canvas.Top="-3" Text="MODE" Style="{StaticResource StatusBarTextBlockStyle}" Width="116" TextAlignment="Center"/>
+                                                <TextBlock x:Name="ScanBandModeTextBlock" Canvas.Top="11" Text="USB" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="116" TextAlignment="Center"/>
+                                            </Canvas>
+
+                                            <TextBlock Canvas.Left="0" Canvas.Top="90" Text="STEP Hz" Style="{StaticResource StatusBarTextBlockStyle}" Width="116" TextAlignment="Center"/>
+                                            <TextBlock x:Name="ScanBandStepFreqTextBlock" Canvas.Left="0" Canvas.Top="104" Text="500" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="White" Width="116" TextAlignment="Center" Visibility="Collapsed"/>
+                                            
+                                            <local:FrequencyDisplay x:Name="ScanBandStepFreqDisplay" Canvas.Left="0" Canvas.Top="107" Frequency="500" Height="16"/>
+
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="91" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas x:Name="StationScopeListCanvas" Width="220" Height="126">
+                                    <Border Canvas.Left="117" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas x:Name="StationScopeListCanvas" Width="208" Height="126">
 
                                             <Border Canvas.Left="-1" Canvas.Top="-1" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="118"/>
-                                                        <ColumnDefinition Width="102"/>
+                                                        <ColumnDefinition Width="119"/>
+                                                        <ColumnDefinition Width="88"/>
                                                     </Grid.ColumnDefinitions>
                                                     
                                                     <Label Grid.Column="0" Content="Found Stations" Height="14" Padding="0" Margin="2,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left" Foreground="White"/>
 
-                                                    <Grid x:Name="FoundStationCountGrid" Grid.Column="1" Opacity="0.6" Width="102" Height="14" Background="White" Visibility="Visible">
+                                                    <Grid x:Name="FoundStationCountGrid" Grid.Column="1" Opacity="0.6" Width="88" Height="14" Background="White" Visibility="Visible">
                                                         <Label x:Name="FoundStationCountLabel" Content="1 of 1" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center"/>
                                                     </Grid>
                                                 </Grid>
                                             </Border>
 
-                                            <ScrollViewer x:Name="StationScopeListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="220" Height="111">
+                                            <ScrollViewer x:Name="StationScopeListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="208" Height="111">
 
                                                 <StackPanel Orientation="Vertical" Margin="0,2,0,0">
 
@@ -1166,7 +1179,7 @@
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="312" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                    <Border Canvas.Left="326" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas Width="52" Height="126" VerticalAlignment="Top">
 
                                             <Border Tag="0" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
@@ -1198,19 +1211,19 @@
                                         </Canvas>
                                     </Border>
 
-                                    <Border Canvas.Left="367" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
-                                        <Canvas x:Name="QMBListCanvas" Width="220" Height="126">
+                                    <Border Canvas.Left="379" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                        <Canvas x:Name="QMBListCanvas" Width="208" Height="126">
 
-                                            <Border Canvas.Left="-1" Canvas.Top="-1" BorderThickness="1" BorderBrush="LightGray" Padding="0">
+                                            <Border Canvas.Left="0" Canvas.Top="-1" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="118"/>
-                                                        <ColumnDefinition Width="102"/>
+                                                        <ColumnDefinition Width="119"/>
+                                                        <ColumnDefinition Width="88"/>
                                                     </Grid.ColumnDefinitions>
                                                     
                                                     <Label Grid.Column="0" Content="Quick Memory Bank" Height="14" Padding="0" Margin="2,0,0,0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left" Foreground="White"/>
 
-                                                    <Grid x:Name="QMBCountGrid" Grid.Column="1" Opacity="0.6" Width="102" Height="14" Background="White" Visibility="Visible">
+                                                    <Grid x:Name="QMBCountGrid" Grid.Column="1" Opacity="0.6" Width="88" Height="14" Background="White" Visibility="Visible">
                                                         <Label x:Name="QMBCountLabel" Content="1 of 1" Height="38" Padding="0" VerticalAlignment="Top" VerticalContentAlignment="Top" FontWeight="Bold" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Center"/>
                                                     </Grid>
                                                 </Grid>

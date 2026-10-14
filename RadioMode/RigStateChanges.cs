@@ -35,6 +35,12 @@ namespace YAESU_FT_891_Front_End
             rigModeBorder.Background = new SolidColorBrush(rmc.BackgroundColor);
             rigModeLabel.Foreground = new SolidColorBrush(rmc.ForegroundColor);
         }
+        public static void UpdateUIRigMode(TextBlock rigModeTextBlock, RadioMode rigMode)
+        {
+            RigModeDisplay rmc = ChangeMode(rigMode);
+
+            rigModeTextBlock.Text = rmc.Name;
+        }
 
         public static RigModeDisplay ChangeMode(RadioMode mode)
         {
