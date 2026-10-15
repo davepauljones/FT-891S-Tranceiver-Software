@@ -104,8 +104,8 @@ namespace YAESU_FT_891_Front_End
             switch (sortMode)
             {
                 case StationScopeSortModes.Frequency:
-                    // Sorts the existing list in-place (highest SignalStrength first)
-                    StationSeekActiveList.Sort((a, b) => b.Frequency.CompareTo(a.Frequency));
+                    // Sorts the existing list in-place (Lowest Frequency first)
+                    StationSeekActiveList.Sort((a, b) => a.Frequency.CompareTo(b.Frequency));
                     break;
                 case StationScopeSortModes.SignalStrength:
                     // Sorts the existing list in-place (highest SignalStrength first)
