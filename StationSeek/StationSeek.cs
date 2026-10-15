@@ -42,6 +42,7 @@ namespace YAESU_FT_891_Front_End
         public const int PlayStopButtonQMB = 6;
         public const int UpdateSelectedQMBFromVFO = 7;
         public const int CopyToRigsQMB = 8;
+        public const int PlayDwellTIme = 9;
     }
     public struct StationScopeSortModes
     {
@@ -603,6 +604,9 @@ namespace YAESU_FT_891_Front_End
                     else
                     {
                         //start the scanning
+
+                        mainWindow.qMBRigStates.SwitchOffQMBDispatcherTimer();
+
                         RequestToStopScanning = false;
                         mainWindow.StartStopTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                         mainWindow.StartStopTextBlock.Text = "STOP";
@@ -656,6 +660,7 @@ namespace YAESU_FT_891_Front_End
                     break;
             }
         }
+
         public void TransportButtonSelection(byte buttonClicked)
         {
             switch (buttonClicked)
@@ -704,13 +709,16 @@ namespace YAESU_FT_891_Front_End
                     }
                     break;
                 case StationScopeTransportButtons.PlayStopButtonQMB:
-                    //PlayStopButtonIconFontAwesome
+                    mainWindow.qMBRigStates.ToggleQMBDispatcherTimer();
                     break;
                 case StationScopeTransportButtons.UpdateSelectedQMBFromVFO:
                     mainWindow.qMBRigStates.UpdateSelectedQMBFromVFO();
                     break;
                 case StationScopeTransportButtons.CopyToRigsQMB:
-                    mainWindow.qMBRigStates.QMBStore();
+                    mainWindow.qMBRigStates.QMBStore();//currently not being used
+                    break;
+                case StationScopeTransportButtons.PlayDwellTIme:
+                    mainWindow.qMBRigStates.ToggleSettingDwellTimeSpan();
                     break;
             }
         }

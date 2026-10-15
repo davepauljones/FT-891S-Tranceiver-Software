@@ -7,6 +7,8 @@ using System.Speech.Recognition;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
@@ -16,15 +18,89 @@ namespace YAESU_FT_891_Front_End
         public List<RadioState> QMBRigStatesList = new List<RadioState>();
 
         MainWindow mainWindow;
+
+        DispatcherTimer dispatcherTimer;
+
+        bool SettingDwellTIme = false;
+        DateTime DwellDurrationStartTime = DateTime.MinValue;
+        DateTime DwellDurrationEndTime = DateTime.MinValue;
+        public TimeSpan DwellTimeSpan = TimeSpan.FromSeconds(3);
+
         public QMBRigStates(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
+
+            Init_QMB_DispatcherTimer();
         }
-        //public void SortQuickMemoryBankDescending()
-        //{
-        //    QMBRigStatesList.Sort();
-        //    PopulateRigStateList(mainWindow.QMBListView);
-        //}
+
+        private void Init_QMB_DispatcherTimer()
+        {
+            dispatcherTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 5) };
+            dispatcherTimer.Tick += OnDispatcherTimer;
+
+            dispatcherTimer.Stop();
+        }
+        private void OnDispatcherTimer(object sender, EventArgs e)
+        {
+            Console.WriteLine("Dispatcher Timer Has Run!");
+            NextQuickMemoryBank();
+        }
+        public void SwitchOffQMBDispatcherTimer()
+        {
+            if (dispatcherTimer.IsEnabled)
+            {
+                dispatcherTimer.Stop();
+                mainWindow.PlayStopButtonIconFontAwesome.Icon = FontAwesome.WPF.FontAwesomeIcon.Play;
+            }
+        }
+        public void ToggleQMBDispatcherTimer()
+        {
+            if (dispatcherTimer.IsEnabled)
+            {
+                dispatcherTimer.Stop();
+                mainWindow.PlayStopButtonIconFontAwesome.Icon = FontAwesome.WPF.FontAwesomeIcon.Play;
+                mainWindow.PlayStopButtonBorder.ToolTip = "Start Scanning The QMB";
+            }
+            else
+            {
+                dispatcherTimer.Start();
+                mainWindow.PlayStopButtonIconFontAwesome.Icon = FontAwesome.WPF.FontAwesomeIcon.Pause;
+                mainWindow.PlayStopButtonBorder.ToolTip = "Pause Scanning The QMB";
+            }
+        }
+        public void ToggleSettingDwellTimeSpan()
+        {
+            if (SettingDwellTIme == true)
+            {
+                SettingDwellTIme = false;
+
+                DwellDurrationEndTime = DateTime.Now;
+
+                DwellTimeSpan = DwellDurrationEndTime - DwellDurrationStartTime;
+
+                if (DwellTimeSpan < TimeSpan.FromMilliseconds(250))
+                    DwellTimeSpan = TimeSpan.FromMilliseconds(250);
+                else if (DwellTimeSpan > TimeSpan.FromSeconds(30))
+                    DwellTimeSpan = TimeSpan.FromSeconds(30);
+
+                SetDwellTimeSpan();
+                mainWindow.SetTimeSpanFontAwesome.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#7FFFFFFF");
+                mainWindow.SetTimeSpanBorder.ToolTip = "Start Setting The Play Time Span";
+            }
+            else
+            {
+                SettingDwellTIme = true;
+
+                DwellDurrationStartTime = DateTime.Now;
+                mainWindow.SetTimeSpanFontAwesome.Foreground = new SolidColorBrush(Colors.Red);
+                mainWindow.SetTimeSpanBorder.ToolTip = "End Setting The Play Time Span";
+            }
+        }
+        public void SetDwellTimeSpan()
+        {
+            dispatcherTimer.Interval = DwellTimeSpan;
+        }
+
         public void ListRigStates()
         {
             if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)

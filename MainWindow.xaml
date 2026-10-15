@@ -1229,7 +1229,7 @@
                                                 </Grid>
                                             </Border>
 
-                                            <ScrollViewer x:Name="QMBListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="220" Height="111">
+                                            <ScrollViewer x:Name="QMBListScrollViewer" Canvas.Left="0" Canvas.Top="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Width="208" Height="111">
 
                                                 <StackPanel Orientation="Vertical" Margin="0,2,0,0">
 
@@ -1256,9 +1256,9 @@
                                     <Border Canvas.Left="588" Canvas.Top="0" BorderThickness="1" BorderBrush="LightGray" Padding="0">
                                         <Canvas Width="52" Height="126" VerticalAlignment="Top">
 
-                                            <Border Tag="8" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Add Station To QMB List" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border x:Name="SetTimeSpanBorder" Tag="9" Canvas.Left="0" Canvas.Top="0" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Start Setting The Play Time Span" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <Grid>
-                                                    <fa:FontAwesome Icon="AngleDoubleUp" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
+                                                    <fa:FontAwesome x:Name="SetTimeSpanFontAwesome" Icon="ClockOutline" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
                                                 </Grid>
                                             </Border>
                                             <Border Tag="3" Canvas.Left="0" Canvas.Top="25" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Remove QMB Station" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
@@ -1271,7 +1271,7 @@
                                                     <fa:FontAwesome Icon="SquareOutline" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}"/>
                                                 </Grid>
                                             </Border>
-                                            <Border Tag="6" Canvas.Left="0" Canvas.Top="75" Style="{StaticResource StationScopeTransportButtonBorderStyle}" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
+                                            <Border x:Name="PlayStopButtonBorder" Tag="6" Canvas.Left="0" Canvas.Top="75" Style="{StaticResource StationScopeTransportButtonBorderStyle}" ToolTip="Start Scanning The QMB" MouseLeftButtonDown="StationScopeTransportButtons_MouseLeftButtonDown">
                                                 <Grid>
                                                     <fa:FontAwesome x:Name="PlayStopButtonIconFontAwesome" Icon="Play" Style="{StaticResource StationScopeTransportButtonsFontAwesomeIconStyle}" FontSize="16"/>
                                                 </Grid>
