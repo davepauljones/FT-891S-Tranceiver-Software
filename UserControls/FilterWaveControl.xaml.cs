@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FT891S_CatControl;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -6,9 +7,37 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using static System.Windows.Forms.AxHost;
+using static YAESU_FT_891_Front_End.MyStructs;
 
 namespace YAESU_FT_891_Front_End
 {
+    public struct FilterTypes
+    {
+        public const int NB = 0;
+        public const int Notch = 1;
+        public const int Contour = 2;
+        public const int Shift = 3;
+        public const int Width = 4;
+        public const int DNR = 5;
+        public const int ResetAll = 6;
+        public const int Save = 7;
+    }
+    public struct States
+    {
+        public const bool Off = false;
+        public const bool On = true;
+    }
+    public class FilterClass
+    {
+        public Int32 ID { get; set; }
+        public String Name { get; set; }
+        public int Value { get; set; }
+        public int MinValue { get; set; }
+        public int MaxValue { get; set; }
+        public int DefaultValue { get; set; }
+        public bool Enabled { get; set; }
+    }
     public enum Ft891OnOff
     {
         Off = 0,
@@ -69,6 +98,8 @@ namespace YAESU_FT_891_Front_End
 
     public partial class FilterWaveControl : UserControl, INotifyPropertyChanged
     {
+        public List<FilterClass> filters = new List<FilterClass>();
+
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
         private const double PeakY = 20.0;
@@ -227,18 +258,45 @@ namespace YAESU_FT_891_Front_End
         public FilterWaveControl()
         {
             InitializeComponent();
+
+            Init_Filters();
+
             Loaded += (s, e) => {
                 UpdateThumbPositions();
                 UpdateWaveform();
             };
         }
 
+        private void Init_Filters()
+        {
+            filters.Add(new FilterClass { ID = FilterTypes.NB, Name = "NB", Value = 0, MinValue = 0, MaxValue = 10, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Notch, Name = "NOTCH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Contour, Name = "CONTOUR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Shift, Name = "SHIFT", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false }); 
+        }
+
+
         public void SetNbValue(int value)
         {
             NbValue = Clamp(value, 0, 10);
             OnPropertyChanged(nameof(NbValue));
-            if (NbTextBlock != null) NbTextBlock.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
-            if (NbBadge != null) NbBadge.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
+
+            if (NBValueTextBlock != null)
+            {
+                if (NbValue == 0)
+                {
+                    NBValueTextBlock.Text = "0";
+                    ButtonState(FilterTypes.NB, States.Off);
+                }
+                else
+                {
+                    NBValueTextBlock.Text = NbValue.ToString("D2");
+                    ButtonState(FilterTypes.NB, States.On);
+                }
+            }
+
             UpdateThumbPositions();
             UpdateWaveform();
         }
@@ -246,7 +304,7 @@ namespace YAESU_FT_891_Front_End
         public void SetWidthValue(int value)
         {
             SetWidthCodeInternal(value);
-            if (WidthBadge != null) WidthBadge.Text = "WD: " + ((int)WidthCode).ToString("D2");
+            if (WidthValueTextBlock != null) WidthValueTextBlock.Text = "WD: " + ((int)WidthCode).ToString("D2");
             UpdateThumbPositions();
             UpdateWaveform();
         }
@@ -256,8 +314,8 @@ namespace YAESU_FT_891_Front_End
             SetNotchFrequencyInternal(freq);
             SetNotchEnabledInternal(enabled);
 
-            if (NotchBadge != null)
-                NotchBadge.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
+            if (NotchValueTextBlock != null)
+                NotchValueTextBlock.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
 
             UpdateThumbPositions();
             UpdateWaveform();
@@ -275,8 +333,8 @@ namespace YAESU_FT_891_Front_End
             ContourEnabled = enabled;
             OnPropertyChanged(nameof(ContourEnabled));
 
-            if (ContourBadge != null)
-                ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+            if (ContourValueTextBlock != null)
+                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
 
             UpdateThumbPositions();
             UpdateWaveform();
@@ -286,27 +344,39 @@ namespace YAESU_FT_891_Front_End
         {
             DnrValue = Clamp(value, 0, 15);
             OnPropertyChanged(nameof(DnrValue));
-            if (DNRTextBlock != null) DNRTextBlock.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
-            if (DnrBadge != null) DnrBadge.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
+            
+            if (DNRValueTextBlock != null)
+            {
+                if (DnrValue == 0)
+                {
+                    DNRValueTextBlock.Text = "0";
+                    ButtonState(FilterTypes.DNR, States.Off);
+                }
+                else
+                {
+                    DNRValueTextBlock.Text = DnrValue.ToString("D2");
+                    ButtonState(FilterTypes.DNR, States.On);
+                }
+            }
+
             UpdateThumbPositions();
             UpdateWaveform();
         }
 
-        public void SetDnfEnabled(bool value) { _isUpdatingProgrammatically = true; if (AutoDnfBtn != null) AutoDnfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
-        public void SetApfEnabled(bool value) { _isUpdatingProgrammatically = true; if (CwApfBtn != null) CwApfBtn.IsChecked = value; _isUpdatingProgrammatically = false; }
-        public void SetContourEnabled(bool value)
-        {
-            _isUpdatingProgrammatically = true;
-            if (ContourBtn != null) ContourBtn.IsChecked = value;
-            if (ContourEnabled != value)
-            {
-                ContourEnabled = value;
-                OnPropertyChanged(nameof(ContourEnabled));
-            }
-            UpdateThumbPositions();
-            UpdateWaveform();
-            _isUpdatingProgrammatically = false;
-        }
+       
+        //public void SetContourEnabled(bool value)
+        //{
+        //    _isUpdatingProgrammatically = true;
+        //    if (ContourTextBlock != null) ContourTextBlock.IsChecked = value;
+        //    if (ContourEnabled != value)
+        //    {
+        //        ContourEnabled = value;
+        //        OnPropertyChanged(nameof(ContourEnabled));
+        //    }
+        //    UpdateThumbPositions();
+        //    UpdateWaveform();
+        //    _isUpdatingProgrammatically = false;
+        //}
 
         private void UpdateThumbPositions()
         {
@@ -382,17 +452,17 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetLeft(ShiftThumb, currentBaseRightX);
             Canvas.SetTop(ShiftThumb, CenterY - 8);
 
-            if (WidthBadge != null)
-                WidthBadge.Text = "WD: " + ((int)WidthCode).ToString("D2");
+            if (WidthValueTextBlock != null)
+                WidthValueTextBlock.Text = "WD: " + ((int)WidthCode).ToString("D2");
 
-            if (NotchBadge != null)
-                NotchBadge.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
+            if (NotchValueTextBlock != null)
+                NotchValueTextBlock.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
 
-            if (ContourBadge != null)
-                ContourBadge.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+            if (ContourValueTextBlock != null)
+                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
 
-            if (ShiftBadge != null)
-                ShiftBadge.Text = "SF: " + (ShiftValue > 0 ? "+" : "") + ShiftValue;
+            if (ShiftValueTextBlock != null)
+                ShiftValueTextBlock.Text = "SF: " + (ShiftValue > 0 ? "+" : "") + ShiftValue;
 
             _isUpdatingProgrammatically = false;
         }
@@ -467,8 +537,19 @@ namespace YAESU_FT_891_Front_End
             if (newTop >= CenterY) NbValue = 0;
             OnPropertyChanged(nameof(NbValue));
 
-            if (NbTextBlock != null) NbTextBlock.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
-            if (NbBadge != null) NbBadge.Text = NbValue == 0 ? "NB: OFF" : "NB: " + NbValue;
+            if (NBValueTextBlock != null)
+            {
+                if (NbValue == 0)
+                {
+                    NBValueTextBlock.Text = "0";
+                    ButtonState(FilterTypes.NB, States.Off);
+                }
+                else
+                {
+                    NBValueTextBlock.Text = NbValue.ToString("D2");
+                    ButtonState(FilterTypes.NB, States.On);
+                }
+            }
 
             UpdateWaveform();
             UIValueChanged?.Invoke("NB", NbValue);
@@ -526,8 +607,8 @@ namespace YAESU_FT_891_Front_End
             // Automatically enable when dragged/active if not already enabled
             SetNotchEnabledInternal(true);
 
-            if (NotchBadge != null)
-                NotchBadge.Text = "NCH: " + NotchFrequency + " Hz";
+            if (NotchValueTextBlock != null)
+                NotchValueTextBlock.Text = "NCH: " + NotchFrequency + " Hz";
 
             UpdateThumbPositions();
             UpdateWaveform();
@@ -575,8 +656,8 @@ namespace YAESU_FT_891_Front_End
             ContourEnabled = true;
             OnPropertyChanged(nameof(ContourEnabled));
 
-            if (ContourBadge != null)
-                ContourBadge.Text = "CNT: " + ContourFrequency + " Hz";
+            if (ContourValueTextBlock != null)
+                ContourValueTextBlock.Text = "CNT: " + ContourFrequency + " Hz";
 
             UpdateWaveform();
             UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
@@ -595,68 +676,79 @@ namespace YAESU_FT_891_Front_End
             if (newTop >= CenterY) DnrValue = 0;
             OnPropertyChanged(nameof(DnrValue));
 
-            if (DNRTextBlock != null) DNRTextBlock.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
-            if (DnrBadge != null) DnrBadge.Text = DnrValue == 0 ? "NR: OFF" : "NR: " + DnrValue.ToString("D2");
+            if (DNRValueTextBlock != null)
+            {
+                if (DnrValue == 0)
+                {
+                    DNRValueTextBlock.Text = "0";
+                    ButtonState(FilterTypes.DNR, States.Off);
+                }
+                else
+                {
+                    DNRValueTextBlock.Text = DnrValue.ToString("D2");
+                    ButtonState(FilterTypes.DNR, States.On);
+                }
+            }
 
             UpdateWaveform();
             UIValueChanged?.Invoke("NR", DnrValue);
         }
 
-        private void ToggleButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (_isUpdatingProgrammatically) return;
-            ToggleButton btn = sender as ToggleButton;
-            if (btn != null)
-            {
-                if (btn == ContourBtn)
-                {
-                    ContourEnabled = true;
-                    OnPropertyChanged(nameof(ContourEnabled));
-                    ContourState = Ft891OnOff.On;
-                    UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
-                    ContourThumb.Visibility = Visibility.Visible;
-                    ContourPath.Visibility = Visibility.Visible;
-                    UpdateWaveform();
-                }
-                else if (btn == NotchBtn)
-                {
-                    OnPropertyChanged(nameof(NotchEnabled));
-                    NotchState = Ft891OnOff.On;
-                    UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
-                    NotchThumb.Visibility = Visibility.Visible;
-                    NotchPath.Visibility = Visibility.Visible;
-                }
-                UIValueChanged?.Invoke(btn.Content.ToString(), true);
-            }
-        }
+        //private void ToggleButton_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    if (_isUpdatingProgrammatically) return;
+        //    ToggleButton btn = sender as ToggleButton;
+        //    if (btn != null)
+        //    {
+        //        if (btn == ContourBtn)
+        //        {
+        //            ContourEnabled = true;
+        //            OnPropertyChanged(nameof(ContourEnabled));
+        //            ContourState = Ft891OnOff.On;
+        //            UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
+        //            ContourThumb.Visibility = Visibility.Visible;
+        //            ContourPath.Visibility = Visibility.Visible;
+        //            UpdateWaveform();
+        //        }
+        //        else if (btn == NotchBtn)
+        //        {
+        //            OnPropertyChanged(nameof(NotchEnabled));
+        //            NotchState = Ft891OnOff.On;
+        //            UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
+        //            NotchThumb.Visibility = Visibility.Visible;
+        //            NotchPath.Visibility = Visibility.Visible;
+        //        }
+        //        UIValueChanged?.Invoke(btn.Content.ToString(), true);
+        //    }
+        //}
 
-        private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (_isUpdatingProgrammatically) return;
-            ToggleButton btn = sender as ToggleButton;
-            if (btn != null)
-            {
-                if (btn == ContourBtn)
-                {
-                    ContourEnabled = false;
-                    OnPropertyChanged(nameof(ContourEnabled));
-                    ContourState = Ft891OnOff.Off;
-                    UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
-                    ContourThumb.Visibility = Visibility.Hidden;
-                    ContourPath.Visibility = Visibility.Hidden;
-                    UpdateWaveform();
-                }
-                else if (btn == NotchBtn)
-                {
-                    OnPropertyChanged(nameof(NotchEnabled));
-                    NotchState = Ft891OnOff.Off;
-                    UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
-                    NotchThumb.Visibility = Visibility.Hidden;
-                    NotchPath.Visibility = Visibility.Hidden;
-                }
-                UIValueChanged?.Invoke(btn.Content.ToString(), false);
-            }
-        }
+        //private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    if (_isUpdatingProgrammatically) return;
+        //    ToggleButton btn = sender as ToggleButton;
+        //    if (btn != null)
+        //    {
+        //        if (btn == ContourBtn)
+        //        {
+        //            ContourEnabled = false;
+        //            OnPropertyChanged(nameof(ContourEnabled));
+        //            ContourState = Ft891OnOff.Off;
+        //            UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
+        //            ContourThumb.Visibility = Visibility.Hidden;
+        //            ContourPath.Visibility = Visibility.Hidden;
+        //            UpdateWaveform();
+        //        }
+        //        else if (btn == NotchBtn)
+        //        {
+        //            OnPropertyChanged(nameof(NotchEnabled));
+        //            NotchState = Ft891OnOff.Off;
+        //            UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
+        //            NotchThumb.Visibility = Visibility.Hidden;
+        //            NotchPath.Visibility = Visibility.Hidden;
+        //        }
+        //        UIValueChanged?.Invoke(btn.Content.ToString(), false);
+        //    }
+        //}
 
         private void UpdateWaveform()
         {
@@ -715,11 +807,11 @@ namespace YAESU_FT_891_Front_End
 
             if (!ContourEnabled) cY = PeakY;
 
-            if (NbBadge != null) { Canvas.SetLeft(NbBadge, nbX - 22); Canvas.SetTop(NbBadge, nbY - 22); }
-            if (WidthBadge != null) { Canvas.SetLeft(WidthBadge, border1X + 15); Canvas.SetTop(WidthBadge, 75); }
-            if (NotchBadge != null) { Canvas.SetLeft(NotchBadge, border2X - 110); Canvas.SetTop(NotchBadge, 75); }
-            if (DnrBadge != null) { Canvas.SetLeft(DnrBadge, dnrX - 22); Canvas.SetTop(DnrBadge, dnrY - 22); }
-            if (ShiftBadge != null) { Canvas.SetLeft(ShiftBadge, currentBaseRightX - 15); }
+            //if (NbBadge != null) { Canvas.SetLeft(NbBadge, nbX - 22); Canvas.SetTop(NbBadge, nbY - 22); }
+            //if (WidthBadge != null) { Canvas.SetLeft(WidthBadge, border1X + 15); Canvas.SetTop(WidthBadge, 75); }
+            //if (NotchBadge != null) { Canvas.SetLeft(NotchBadge, border2X - 110); Canvas.SetTop(NotchBadge, 75); }
+            //if (DnrBadge != null) { Canvas.SetLeft(DnrBadge, dnrX - 22); Canvas.SetTop(DnrBadge, dnrY - 22); }
+            //if (ShiftValueTextBlock != null) { Canvas.SetLeft(ShiftValueTextBlock, currentBaseRightX - 15); }
 
             // NB Section
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
@@ -813,5 +905,210 @@ namespace YAESU_FT_891_Front_End
             DnrRightSegment2.Point2 = new Point(border3X - (border3X - dnrX) * 0.5, CenterY);
             DnrRightSegment2.Point3 = new Point(border3X, CenterY);
         }
+
+        private void FilterWaveButtons_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            var code = border.Tag.ToString();
+            uint switchValue = uint.Parse(code);
+
+            ButtonSelection(Convert.ToByte(switchValue));
+
+            //if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
+            //{
+            //    Console.Write("SimulatedWaterfall_MouseLeftButtonDown = ");
+            //    Console.WriteLine(switchValue);
+            //}
+        }
+
+        public void ButtonState(byte button, bool state)
+        {
+            switch (button)
+            {
+                case FilterTypes.NB:
+                    if (state)
+                    {
+                        filters[FilterTypes.NB].Enabled = true;
+                        NBTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.NB].Enabled = false;
+                        NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Notch:
+                    if (state)
+                    {
+                        filters[FilterTypes.Notch].Enabled = true;
+                        NotchTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Notch].Enabled = false;
+                        NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Contour:
+                    if (state)
+                    {
+                        filters[FilterTypes.Contour].Enabled = true;
+                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Contour].Enabled = false;
+                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Shift:
+                    if (state)
+                    {
+                        filters[FilterTypes.Shift].Enabled = true;
+                        ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Shift].Enabled = false;
+                        ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Width:
+                    if (state)
+                    {
+                        filters[FilterTypes.Width].Enabled = true;
+                        WidthTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Width].Enabled = false;
+                        WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.DNR:
+                    if (state)
+                    {
+                        filters[FilterTypes.DNR].Enabled = true;
+                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.DNR].Enabled = false;
+                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+            }
+        }
+
+        public void ButtonSelection(byte button)
+        {
+            switch (button)
+            {
+                case FilterTypes.NB:
+                    if (!(filters[FilterTypes.NB].Enabled))
+                    {
+                        filters[FilterTypes.NB].Enabled = true;
+                        NbValue = filters[FilterTypes.NB].Value;
+                        NBTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.NB].Enabled = false;
+                        filters[FilterTypes.NB].Value = NbValue;
+                        NbValue = 0;
+                        NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    NBValueTextBlock.Text = NbValue.ToString("D2");
+                    UIValueChanged?.Invoke("NB", NbValue);
+                    break;
+                case FilterTypes.Notch:
+                    if (!(filters[FilterTypes.Notch].Enabled))
+                    {
+                        filters[FilterTypes.Notch].Enabled = true;
+                        NotchTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Notch].Enabled = false;
+                        NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Contour:
+                    if (!(filters[FilterTypes.Contour].Enabled))
+                    {
+                        filters[FilterTypes.Contour].Enabled = true;
+                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Contour].Enabled = false;
+                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Shift:
+                    if (!(filters[FilterTypes.Shift].Enabled))
+                    {
+                        filters[FilterTypes.Shift].Enabled = true;
+                        ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Shift].Enabled = false;
+                        ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.Width:
+                    if (!(filters[FilterTypes.Width].Enabled))
+                    {
+                        filters[FilterTypes.Width].Enabled = true;
+                        WidthTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Width].Enabled = false;
+                        WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    break;
+                case FilterTypes.DNR:
+                    if (!(filters[FilterTypes.DNR].Enabled))
+                    {
+                        filters[FilterTypes.DNR].Enabled = true;
+                        DnrValue = filters[FilterTypes.DNR].Value;
+                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.DNR].Enabled = false;
+                        filters[FilterTypes.DNR].Value = DnrValue;
+                        DnrValue = 0;
+                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    DNRValueTextBlock.Text = DnrValue.ToString("D2");
+                    UIValueChanged?.Invoke("NR", DnrValue);
+                    break;
+                case FilterTypes.ResetAll:
+                    filters[FilterTypes.Notch].Enabled = false;
+                    NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                 
+                    filters[FilterTypes.Contour].Enabled = false;
+                    ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                
+                    filters[FilterTypes.Width].Enabled = false;
+                    WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                
+                    filters[FilterTypes.Shift].Enabled = false;
+                    ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
+              
+                    filters[FilterTypes.NB].Enabled = false;
+                    NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                  
+                    filters[FilterTypes.DNR].Enabled = false;
+                    DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    break;
+                case FilterTypes.Save:
+                    break;
+            }
+        }
+
     }
 }

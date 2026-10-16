@@ -301,39 +301,6 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        //public async void ScanFoundStations(SerialPort _port)
-        //{
-        //    if (IsScanning) return;
-
-        //    IsScanning = true;
-
-        //    mainWindow._catManager.StopOutgoingDataLoop();
-
-        //    mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 30);
-        //    await Task.Delay(20);
-
-        //    foreach (StationSeekClass foundStation in StationSeekActiveList)
-        //    {
-        //        mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, foundStation.Frequency);
-        //        await Task.Delay(10);
-
-        //        mainWindow.yAESU_FT_891_CAT_Dictionary.FreqA(_port, 0);
-        //        await Task.Delay(10);
-
-        //        mainWindow.yAESU_FT_891_CAT_Dictionary.SMeter(_port, SMeters.S);
-        //        await Task.Delay(20);
-
-        //        await Task.Delay(1000);
-        //    }
-
-        //    mainWindow.yAESU_FT_891_CAT_Dictionary.SetRfGain(_port, 0);
-        //    await Task.Delay(20);
-
-        //    mainWindow._catManager.StartOutgoingDataLoop();
-
-        //    IsScanning = false;
-        //}
-
         public void ButtonSelection(byte buttonClicked)
         {
             if (buttonClicked != ScanBands._START && buttonClicked != ScanBands._STOP)
