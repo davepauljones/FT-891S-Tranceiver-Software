@@ -20,8 +20,8 @@ namespace YAESU_FT_891_Front_End
         public const int Shift = 3;
         public const int Width = 4;
         public const int DNR = 5;
-        public const int ResetAll = 6;
-        public const int Save = 7;
+        public const int Narrow = 6;
+        public const int AllOff = 7;
     }
     public struct States
     {
@@ -100,6 +100,13 @@ namespace YAESU_FT_891_Front_End
     {
         public List<FilterClass> filters = new List<FilterClass>();
 
+        public readonly List<int> WidthFrequencies_SSB_Narrow = new List<int> { 1500, 200, 400, 600, 850, 1100, 1350, 1500, 1650, 1800, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500 };
+        public readonly List<int> WidthFrequencies_SSB_Wide = new List<int> { 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 1800, 1950, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3200 };
+        public readonly List<int> WidthFrequencies_CW_Narrow = new List<int> { 500, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500 };
+        public readonly List<int> WidthFrequencies_CW_Wide = new List<int> { 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 500, 800, 1200, 1400, 1700, 2000, 3000, 2400, 2400, 2400, 2400, 2400 };
+        public readonly List<int> WidthFrequencies_RTTY_PSK_Narrow = new List<int> { 300, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300 };
+        public readonly List<int> WidthFrequencies_RTTY_PSK_Wide = new List<int> { 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 800, 1200, 1400, 1700, 2000, 2400, 3000, 500, 500, 500, 500 };
+
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
         private const double PeakY = 20.0;
@@ -143,6 +150,7 @@ namespace YAESU_FT_891_Front_End
 
         public int DnrValue { get; private set; }
         private double _contourVisualOffset = 0.0;
+        public int NarrowValue { get; private set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -274,7 +282,8 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.Contour, Name = "CONTOUR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.Shift, Name = "SHIFT", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false }); 
+            filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
         }
 
         public void SetNbValue(int value)
@@ -304,6 +313,12 @@ namespace YAESU_FT_891_Front_End
         {
             SetWidthCodeInternal(value);
             if (WidthValueTextBlock != null) WidthValueTextBlock.Text = "WD: " + ((int)WidthCode).ToString("D2");
+
+            if (WidthValueTextBlock != null)
+            {
+                //if (FT891S_CatManager.currentRadioState.OperatingMode == Models.RadioMode.)
+            }
+
             UpdateThumbPositions();
             UpdateWaveform();
         }
@@ -1089,7 +1104,28 @@ namespace YAESU_FT_891_Front_End
                     DNRValueTextBlock.Text = DnrValue.ToString("D2");
                     UIValueChanged?.Invoke("NR", DnrValue);
                     break;
-                case FilterTypes.ResetAll:
+                case FilterTypes.Narrow:
+                    if (!(filters[FilterTypes.Narrow].Enabled))
+                    {
+                        filters[FilterTypes.Narrow].Enabled = true;
+                        NarrowValue = 1;
+                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Narrow].Enabled = false;
+                        NarrowValue = 0;
+                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+                    
+                    if (NarrowValue == 0)
+                        NarrowValueTextBlock.Text = "OFF";
+                    else
+                        NarrowValueTextBlock.Text = "ON";
+
+                    UIValueChanged?.Invoke("Narrow_ENABLED", NarrowValue);
+                    break;
+                case FilterTypes.AllOff:
                     filters[FilterTypes.Notch].Enabled = false;
                     NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
                  
@@ -1107,8 +1143,6 @@ namespace YAESU_FT_891_Front_End
                   
                     filters[FilterTypes.DNR].Enabled = false;
                     DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                    break;
-                case FilterTypes.Save:
                     break;
             }
         }

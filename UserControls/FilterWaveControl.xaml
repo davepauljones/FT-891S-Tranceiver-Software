@@ -263,6 +263,11 @@
                         <TextBlock x:Name="DNRValueTextBlock" Text="DNR" Style="{StaticResource FilterValueTextBlockStyle}"/>
                     </StackPanel>
                 </Border>
+                <Border Canvas.Left="470" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="NarrowValueTextBlock" Text="OFF" Style="{StaticResource FilterValueTextBlockStyle}"/>
+                    </StackPanel>
+                </Border>
 
             </Canvas>
 
@@ -301,12 +306,12 @@
                 </Border>
                 <Border Tag="6" Canvas.Left="470" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Text="RESET ALL" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                        <TextBlock x:Name="NarrowTextBlock" Text="NARROW" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
                 <Border Tag="7" Canvas.Left="545" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Text="SAVE" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                        <TextBlock Text="ALL OFF" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
 

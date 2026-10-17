@@ -22,6 +22,7 @@ namespace YAESU_FT_891_Front_End
         private int _dnrValue;
         private bool _dnfEnabled;
         private bool _apfEnabled;
+        private bool _narrowEnabled;
 
         public FilterWave(MainWindow mainWindow, FilterWaveControl uiControl)
         {
@@ -228,6 +229,30 @@ namespace YAESU_FT_891_Front_End
                                 await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, _dnrValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             }
                             break;
+                        case "Narrow_ENABLED":
+                            if ((int)value == 0)
+                                _narrowEnabled = false;
+                            else
+                                _narrowEnabled = true;
+
+                            //_narrowEnabled = (bool)value;
+
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (!(_narrowEnabled))
+                                    mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                                else
+                                    mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            });
+
+                            if (!(_narrowEnabled))
+                                await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            else
+                                await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+                            //remove once added to outgoing data loop
+                            await mainWindow._catManager.SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -237,47 +262,50 @@ namespace YAESU_FT_891_Front_End
             });
         }
 
-        public void UpdateFromRadio(string parameter, object value)
-        {
-            uiDispatcher.BeginInvoke(new Action(() =>
-            {
-                switch (parameter.ToUpper())
-                {
-                    case "NB":
-                        _nbValue = (int)value;
-                        uiControl.SetNbValue(_nbValue);
-                        break;
-                    case "WD":
-                        _widthValue = (int)value;
-                        uiControl.SetWidthValue(_widthValue);
-                        break;
-                    case "NCH":
-                        Tuple<int, int> notchVals = value as Tuple<int, int>;
-                        if (notchVals != null)
-                        {
-                            _notchFreq = notchVals.Item1;
-                            _notchDepth = notchVals.Item2;
-                            uiControl.SetNotchValues(_notchFreq, _notchDepth);
-                        }
-                        break;
-                    case "NR":
-                        _dnrValue = (int)value;
-                        uiControl.SetDnrValue(_dnrValue);
-                        break;
-                    case "DNF":
-                        _dnfEnabled = (bool)value;
-                        //uiControl.SetDnfEnabled(_dnfEnabled);
-                        break;
-                    case "APF":
-                        _apfEnabled = (bool)value;
-                        //uiControl.SetApfEnabled(_apfEnabled);
-                        break;
-                    case "CONTOUR":
-                        _contourEnabled = (bool)value;
-                        //uiControl.SetContourEnabled(_contourEnabled);
-                        break;
-                }
-            }));
-        }
+        //public void UpdateFromRadio(string parameter, object value)
+        //{
+        //    uiDispatcher.BeginInvoke(new Action(() =>
+        //    {
+        //        switch (parameter.ToUpper())
+        //        {
+        //            case "NB":
+        //                _nbValue = (int)value;
+        //                uiControl.SetNbValue(_nbValue);
+        //                break;
+        //            case "WD":
+        //                _widthValue = (int)value;
+        //                uiControl.SetWidthValue(_widthValue);
+        //                break;
+        //            case "NCH":
+        //                Tuple<int, int> notchVals = value as Tuple<int, int>;
+        //                if (notchVals != null)
+        //                {
+        //                    _notchFreq = notchVals.Item1;
+        //                    _notchDepth = notchVals.Item2;
+        //                    uiControl.SetNotchValues(_notchFreq, _notchDepth);
+        //                }
+        //                break;
+        //            case "NR":
+        //                _dnrValue = (int)value;
+        //                uiControl.SetDnrValue(_dnrValue);
+        //                break;
+        //            case "DNF":
+        //                _dnfEnabled = (bool)value;
+        //                //uiControl.SetDnfEnabled(_dnfEnabled);
+        //                break;
+        //            case "APF":
+        //                _apfEnabled = (bool)value;
+        //                //uiControl.SetApfEnabled(_apfEnabled);
+        //                break;
+        //            case "CONTOUR":
+        //                _contourEnabled = (bool)value;
+        //                //uiControl.SetContourEnabled(_contourEnabled);
+        //                break;
+        //            case "NA":
+        //                _narrowEnabled = (bool)value;
+        //                break;
+        //        }
+        //    }));
+        //}
     }
 }

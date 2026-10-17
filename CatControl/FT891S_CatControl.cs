@@ -76,6 +76,7 @@ namespace FT891S_CatControl
         
         public ContourModes ContourMode { get; set; }
         public int ContourValue { get; set; } = 0;
+        public NAMode NarrowMode { get; set; }
 
         public FastStep FastStep { get; set; }
 
@@ -259,6 +260,7 @@ namespace FT891S_CatControl
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
     public enum NotchModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
     public enum ContourModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
+    public enum NAMode { NA_OFF = 0, NA_ON = 1 }
 
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
                             DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
@@ -613,6 +615,13 @@ namespace FT891S_CatControl
             dict => 0,
             result => { }
         );
+        public static readonly FT891S_CatCommand<int> NA = new FT891S_CatCommand<int>(
+            "NA",
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            new CatStructure().Expect("P1", 1).Expect("P2", 1),
+            dict => int.Parse(dict["P1"] + dict["P2"]),
+            result => FT891S_CatManager.currentRadioState.NarrowMode = (NAMode)result
+        );
 
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
@@ -641,7 +650,8 @@ namespace FT891S_CatControl
             { "BP", BP },
             { "CO", CO },
             { "QI", QI },
-            { "QR", QR }
+            { "QR", QR },
+            { "NA", NA }
         };
 
         // Example method to build the transmission string for the radio

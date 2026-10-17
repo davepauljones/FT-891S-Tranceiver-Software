@@ -423,7 +423,7 @@
                             <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
                         </Viewbox>
 
-                        <Border Canvas.Left="261" Canvas.Top="71" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
+                        <Border Canvas.Left="275" Canvas.Top="71" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
                             <Label x:Name="TabControlDescriptionLabel" Content="SPECTRUM SCOPE" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
                         </Border>
 
@@ -493,6 +493,10 @@
 
                         <Border x:Name="DNRLabelBorder" Canvas.Left="274" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Collapsed">
                             <Label Content="DNR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                        </Border>
+
+                        <Border x:Name="NarrowLabelBorder" Canvas.Left="242" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Collapsed">
+                            <Label Content="NAR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                         </Border>
 
                         <Border x:Name="FastNormalBorder" Canvas.Left="306" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
