@@ -277,7 +277,6 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false }); 
         }
 
-
         public void SetNbValue(int value)
         {
             NbValue = Clamp(value, 0, 10);
@@ -1061,13 +1060,17 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Width].Enabled))
                     {
                         filters[FilterTypes.Width].Enabled = true;
+                        SetWidthValue(filters[FilterTypes.Width].Value);
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                     }
                     else
                     {
                         filters[FilterTypes.Width].Enabled = false;
+                        filters[FilterTypes.Width].Value = DnrValue;
+                        SetWidthValue(0);
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
+                    UIValueChanged?.Invoke("WIDTH", (int)WidthCode);
                     break;
                 case FilterTypes.DNR:
                     if (!(filters[FilterTypes.DNR].Enabled))
