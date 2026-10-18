@@ -19,7 +19,7 @@ namespace YAESU_FT_891_Front_End
         private int _contourFreq;
         private bool _contourEnabled;
         private int _isValue;
-        private int _dnrValue;
+        //private int _dnrValue;
         private bool _dnfEnabled;
         private bool _apfEnabled;
         private bool _narrowEnabled;
@@ -209,24 +209,24 @@ namespace YAESU_FT_891_Front_End
                             break;
 
                         case "NR":
-                            _dnrValue = (int)value;
+                            FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)value;
 
                             mainWindow.Dispatcher.Invoke(() =>
                             {
-                                if (_dnrValue == 0)
+                                if (FT891S_CatManager.currentRadioState.DNRValue == 0)
                                     mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
                                 else
                                     mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
                             });
 
-                            if (_dnrValue == 0)
+                            if (FT891S_CatManager.currentRadioState.DNRValue == 0)
                             {
                                 await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
                             }
                             else
                             {
                                 await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                                await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, _dnrValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                                await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             }
                             break;
                         case "Narrow_ENABLED":

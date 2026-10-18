@@ -63,10 +63,12 @@ namespace FT891S_CatControl
         public long RadioID { get; set; }
         public int SMeter { get; set; }
         public ScanMode ScanMode { get; set; }
+        
         public NBMode NoiseBlankerMode { get; set; }
         public int NoiseBlankerLevel { get; set; } = 0;
-        public NRMode NoiseReductionMode { get; set; }
-        public DNRValues NoiseReductionLevel { get; set; } = 0;
+        
+        public DNRModes DNRMode { get; set; }
+        public DNRValues DNRValue { get; set; } = 0;
 
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
@@ -256,12 +258,13 @@ namespace FT891S_CatControl
     public enum ScanMode { Scan_OFF = 0, ScanUpward_ON = 1, ScanDownward_ON= 2 }
 
     public enum NBMode { NB_OFF = 0, NB_ON = 1 }
-    public enum NRMode { NR_OFF = 0, NR_ON = 1 }
+    
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
     public enum NotchModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
     public enum ContourModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
     public enum NAMode { NA_OFF = 0, NA_ON = 1 }
 
+    public enum DNRModes { NR_OFF = 0, NR_ON = 1 }
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
                             DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
                             DNR_11 = 11, DNR_12 = 12, DNR_13 = 13, DNR_14 = 14, DNR_15 = 15 }
@@ -491,7 +494,7 @@ namespace FT891S_CatControl
             new CatStructure().Expect("P1", 1).Expect("P2", 1),
             new CatStructure().Expect("P1", 1).Expect("P2", 1),
             dict => int.Parse(dict["P1"] + dict["P2"]),
-            result => FT891S_CatManager.currentRadioState.NoiseReductionMode = (NRMode)result
+            result => FT891S_CatManager.currentRadioState.DNRMode = (DNRModes)result
         );
         public static readonly FT891S_CatCommand<DnrResult> RL = new FT891S_CatCommand<DnrResult>(
             "RL",
@@ -508,7 +511,7 @@ namespace FT891S_CatControl
             },
             result => {
                 //Do nothing with Fixed
-                FT891S_CatManager.currentRadioState.NoiseReductionLevel = result.Values;
+                FT891S_CatManager.currentRadioState.DNRValue = result.Values;
             }
         );
         public static readonly FT891S_CatCommand<WidthResult> SH = new FT891S_CatCommand<WidthResult>(
@@ -964,7 +967,7 @@ namespace FT891S_CatControl
             else
                 mainWindow.NBLabelBorder.Visibility = Visibility.Visible;
 
-            if (currentRadioState.NoiseReductionMode == NRMode.NR_OFF)
+            if (currentRadioState.DNRMode == DNRModes.NR_OFF)
                 mainWindow.DNRLabelBorder.Visibility = Visibility.Hidden;
             else
                 mainWindow.DNRLabelBorder.Visibility = Visibility.Visible;
