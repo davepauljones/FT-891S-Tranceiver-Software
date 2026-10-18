@@ -98,6 +98,7 @@ namespace YAESU_FT_891_Front_End
 
     public partial class FilterWaveControl : UserControl, INotifyPropertyChanged
     {
+        MainWindow mainWindow;
         public List<FilterClass> filters = new List<FilterClass>();
 
         public readonly List<int> WidthFrequencies_SSB_Narrow = new List<int> { 1500, 200, 400, 600, 850, 1100, 1350, 1500, 1650, 1800, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500 };
@@ -121,8 +122,8 @@ namespace YAESU_FT_891_Front_End
         public event Action<string, object> UIValueChanged;
 
         public int NbValue { get; private set; }
-        public Ft891WidthCode WidthCode { get; private set; } = Ft891WidthCode.Code00;
-        public int WidthValue { get { return (int)WidthCode; } }
+        //public Ft891WidthCode WidthCode { get; private set; } = Ft891WidthCode.Code00;
+        //public int WidthValue { get { return (int)WidthCode; } }
         public bool WidthEnabled { get; private set; } = true;
 
         public int NotchFrequency { get; private set; } = Ft891FilterRanges.NotchFrequencyMinHz;
@@ -179,9 +180,9 @@ namespace YAESU_FT_891_Front_End
         private void SetWidthCodeInternal(int value)
         {
             value = Clamp(value, Ft891FilterRanges.WidthCodeMin, Ft891FilterRanges.WidthCodeMax);
-            WidthCode = (Ft891WidthCode)value;
-            OnPropertyChanged(nameof(WidthCode));
-            OnPropertyChanged(nameof(WidthValue));
+            FT891S_CatManager.currentRadioState.WidthValue = (WidthValues)value;
+            OnPropertyChanged(nameof(FT891S_CatManager.currentRadioState.WidthValue));
+            //OnPropertyChanged(nameof(WidthValue));
         }
 
         private void SetNotchFrequencyInternal(int value)
@@ -264,9 +265,11 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        public FilterWaveControl()
+        public FilterWaveControl(MainWindow mainWindow)
         {
             InitializeComponent();
+
+            this.mainWindow = mainWindow;
 
             Init_Filters();
 
@@ -313,7 +316,7 @@ namespace YAESU_FT_891_Front_End
         public void SetWidthValue(int value)
         {
             SetWidthCodeInternal(value);
-            if (WidthValueTextBlock != null) WidthValueTextBlock.Text = "WD: " + ((int)WidthCode).ToString("D2");
+            if (WidthValueTextBlock != null) WidthValueTextBlock.Text = "WD: " + ((int)FT891S_CatManager.currentRadioState.WidthValue).ToString("D2");
 
             if (WidthValueTextBlock != null)
             {
@@ -412,7 +415,7 @@ namespace YAESU_FT_891_Front_End
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - thumbHalfWidth;
 
-            double widthRatio = (int)WidthCode / (double)Ft891FilterRanges.WidthCodeMax;
+            double widthRatio = (int)FT891S_CatManager.currentRadioState.WidthValue / (double)Ft891FilterRanges.WidthCodeMax;
             double wX = minX + (widthRatio * (maxX - minX));
             Canvas.SetLeft(WidthThumb, wX);
 
@@ -468,7 +471,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(ShiftThumb, CenterY - 8);
 
             if (WidthValueTextBlock != null)
-                WidthValueTextBlock.Text = "WD: " + ((int)WidthCode).ToString("D2");
+                WidthValueTextBlock.Text = "WD: " + ((int)FT891S_CatManager.currentRadioState.WidthValue).ToString("D2");
 
             if (NotchValueTextBlock != null)
                 NotchValueTextBlock.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
@@ -536,7 +539,7 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
 
-            UIValueChanged?.Invoke("WIDTH", (int)WidthCode);
+            UIValueChanged?.Invoke("WIDTH", (int)FT891S_CatManager.currentRadioState.WidthValue);
         }
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -786,7 +789,7 @@ namespace YAESU_FT_891_Front_End
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - 8.0;
 
-            double wX = minX + (((int)WidthCode / (double)Ft891FilterRanges.WidthCodeMax) * (maxX - minX)) + 8.0;
+            double wX = minX + (((int)FT891S_CatManager.currentRadioState.WidthValue / (double)Ft891FilterRanges.WidthCodeMax) * (maxX - minX)) + 8.0;
             Canvas.SetTop(WidthThumb, PeakY - 8);
 
             double dnrX = 598.0;
@@ -1015,7 +1018,7 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        public void ButtonSelection(byte button)
+        public async void ButtonSelection(byte button)
         {
             switch (button)
             {
@@ -1082,11 +1085,24 @@ namespace YAESU_FT_891_Front_End
                     else
                     {
                         filters[FilterTypes.Width].Enabled = false;
-                        filters[FilterTypes.Width].Value = (int)FT891S_CatManager.currentRadioState.DNRValue;
+                        filters[FilterTypes.Width].Value = (int)FT891S_CatManager.currentRadioState.WidthValue;
                         SetWidthValue(0);
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
-                    UIValueChanged?.Invoke("WIDTH", (int)WidthCode);
+
+                    if ((int)FT891S_CatManager.currentRadioState.WidthValue == 0)
+                    {
+                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+
+                    //remove once added to outgoing data loop
+                    await mainWindow._catManager.SendCatCommandAsync("SH", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                     break;
                 case FilterTypes.DNR:
                     if (!(filters[FilterTypes.DNR].Enabled))
@@ -1103,7 +1119,18 @@ namespace YAESU_FT_891_Front_End
                         DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
                     DNRValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.DNRValue).ToString();
-                    UIValueChanged?.Invoke("NR", FT891S_CatManager.currentRadioState.DNRValue);
+
+                    if (FT891S_CatManager.currentRadioState.DNRValue == 0)
+                    {
+                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
                     break;
                 case FilterTypes.Narrow:
                     if (!(filters[FilterTypes.Narrow].Enabled))
@@ -1118,13 +1145,22 @@ namespace YAESU_FT_891_Front_End
                         NarrowValue = 0;
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
-                    
-                    if (NarrowValue == 0)
-                        NarrowValueTextBlock.Text = "OFF";
-                    else
-                        NarrowValueTextBlock.Text = "ON";
 
-                    UIValueChanged?.Invoke("Narrow_ENABLED", NarrowValue);
+                    if (NarrowValue == 0)
+                    {
+                        NarrowValueTextBlock.Text = "OFF";
+                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        NarrowValueTextBlock.Text = "ON";
+                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+
+                    //remove once added to outgoing data loop
+                    await mainWindow._catManager.SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                     break;
                 case FilterTypes.AllOff:
                     filters[FilterTypes.Notch].Enabled = false;

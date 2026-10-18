@@ -79,6 +79,7 @@ namespace YAESU_FT_891_Front_End
 
         public Psudo3DWaterfall psudo3DWaterfall;
 
+        public FilterWaveControl filterWaveControl;
         public FilterWave filterWave;
 
         public FT891SpeechRecognition fT891SpeechRecognition;
@@ -229,7 +230,10 @@ namespace YAESU_FT_891_Front_End
             // 2. Assign the generated bitmap to the XAML Image control
             WaterfallImage.Source = psudo3DWaterfall.Bitmap;
 
-            filterWave = new FilterWave(this, MyFilterWave);
+            filterWaveControl = new FilterWaveControl(this);
+            FiltersCanvas.Children.Add(filterWaveControl);
+
+            filterWave = new FilterWave(this, filterWaveControl);
 
             //filterWave.UpdateFromRadio("NB", object value)
 

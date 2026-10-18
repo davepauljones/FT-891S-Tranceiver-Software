@@ -19,10 +19,8 @@ namespace YAESU_FT_891_Front_End
         private int _contourFreq;
         private bool _contourEnabled;
         private int _isValue;
-        //private int _dnrValue;
         private bool _dnfEnabled;
         private bool _apfEnabled;
-        private bool _narrowEnabled;
 
         public FilterWave(MainWindow mainWindow, FilterWaveControl uiControl)
         {
@@ -32,32 +30,32 @@ namespace YAESU_FT_891_Front_End
 
             if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
             {
-                mainWindow.MyFilterWave.WidthThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.MyFilterWave.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.MyFilterWave.NotchThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.MyFilterWave.ContourThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.MyFilterWave.ShiftThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.MyFilterWave.WidthMainSectionPath.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Visible;
+                mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Visible;
                 //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
-                mainWindow.MyFilterWave.WidthThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.MyFilterWave.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.MyFilterWave.NotchThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.MyFilterWave.ContourThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.MyFilterWave.ShiftThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.MyFilterWave.WidthMainSectionPath.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Collapsed;
+                mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Collapsed;
                 //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Collapsed;
             }
 
@@ -91,25 +89,25 @@ namespace YAESU_FT_891_Front_End
                             await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         case "WIDTH":
-                            _widthValue = (int)value;
+                            //_widthValue = (int)value;
 
-                            Console.WriteLine(">>>>> " + _widthValue);
+                            //Console.WriteLine(">>>>> " + _widthValue);
 
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (_widthValue == 0)
-                                    mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
+                            //mainWindow.Dispatcher.Invoke(() =>
+                            //{
+                            //    if (_widthValue == 0)
+                            //        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                            //    else
+                            //        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            //});
 
-                            if (_widthValue == 0)
-                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            else
-                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, _widthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //if (_widthValue == 0)
+                            //    await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //else
+                            //    await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, _widthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("SH", "0" , mainWindow._catManager.OutGoingDataLoopDelay);
+                            ////remove once added to outgoing data loop
+                            //await mainWindow._catManager.SendCatCommandAsync("SH", "0" , mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         case "NCH_FREQ":
                             _notchFreq = (int)value;
@@ -206,52 +204,6 @@ namespace YAESU_FT_891_Front_End
 
                             String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, _isValue);
                             await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
-
-                        case "NR":
-                            FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)value;
-
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (FT891S_CatManager.currentRadioState.DNRValue == 0)
-                                    mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
-
-                            if (FT891S_CatManager.currentRadioState.DNRValue == 0)
-                            {
-                                await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            }
-                            else
-                            {
-                                await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                                await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            }
-                            break;
-                        case "Narrow_ENABLED":
-                            if ((int)value == 0)
-                                _narrowEnabled = false;
-                            else
-                                _narrowEnabled = true;
-
-                            //_narrowEnabled = (bool)value;
-
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (!(_narrowEnabled))
-                                    mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
-
-                            if (!(_narrowEnabled))
-                                await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            else
-                                await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                     }
                 }
