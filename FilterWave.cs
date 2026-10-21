@@ -88,27 +88,7 @@ namespace YAESU_FT_891_Front_End
                             await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
-                        case "WIDTH":
-                            //_widthValue = (int)value;
-
-                            //Console.WriteLine(">>>>> " + _widthValue);
-
-                            //mainWindow.Dispatcher.Invoke(() =>
-                            //{
-                            //    if (_widthValue == 0)
-                            //        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                            //    else
-                            //        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            //});
-
-                            //if (_widthValue == 0)
-                            //    await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            //else
-                            //    await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, _widthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            
-                            ////remove once added to outgoing data loop
-                            //await mainWindow._catManager.SendCatCommandAsync("SH", "0" , mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
+                        
                         case "NCH_FREQ":
                             _notchFreq = (int)value;
 
@@ -171,39 +151,39 @@ namespace YAESU_FT_891_Front_End
                             await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         case "SHIFT":
-                            _isValue = (int)value;
+                            //_isValue = (int)value;
 
-                            Console.WriteLine(">>>>> " + _isValue);
+                            //Console.WriteLine(">>>>> " + _isValue);
                             
-                            int ShiftOnOff = 0;
-                            char _ShiftDirection = '+';
+                            //int ShiftOnOff = 0;
+                            //char _ShiftDirection = '+';
 
-                            if (_isValue > 0)
-                            {
-                                ShiftOnOff = 1;
-                                _ShiftDirection = '+';
-                            }
-                            else if (_isValue < 0)
-                            {
-                                ShiftOnOff = 1;
-                                _ShiftDirection = '-';
-                            }
-                            else
-                            {
-                                ShiftOnOff = 0;
-                                _ShiftDirection = '+';
-                            }
+                            //if (_isValue > 0)
+                            //{
+                            //    ShiftOnOff = 1;
+                            //    _ShiftDirection = '+';
+                            //}
+                            //else if (_isValue < 0)
+                            //{
+                            //    ShiftOnOff = 1;
+                            //    _ShiftDirection = '-';
+                            //}
+                            //else
+                            //{
+                            //    ShiftOnOff = 0;
+                            //    _ShiftDirection = '+';
+                            //}
 
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (_isValue == 0)
-                                    mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
+                            //mainWindow.Dispatcher.Invoke(() =>
+                            //{
+                            //    if (_isValue == 0)
+                            //        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                            //    else
+                            //        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            //});
 
-                            String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, _isValue);
-                            await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, _isValue);
+                            //await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                     }
                 }

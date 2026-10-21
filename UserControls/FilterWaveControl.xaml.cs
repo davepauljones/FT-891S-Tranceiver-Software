@@ -137,17 +137,17 @@ namespace YAESU_FT_891_Front_End
         public Ft891OnOff ContourState { get; private set; } = Ft891OnOff.Off;
         public bool ContourEnabled { get; private set; }
 
-        public int ShiftValue { get; private set; }
+        //public int ShiftValue { get; private set; }
         public Ft891IfShiftState ShiftState { get; private set; } = Ft891IfShiftState.On;
         public Ft891IfShiftDirection ShiftDirection
         {
             get
             {
-                if (ShiftValue < 0) return Ft891IfShiftDirection.Minus;
+                if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz < 0) return Ft891IfShiftDirection.Minus;
                 return Ft891IfShiftDirection.Plus;
             }
         }
-        public int ShiftMagnitude { get { return Math.Abs(ShiftValue); } }
+        public int ShiftMagnitude { get { return Math.Abs(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz); } }
 
         //public int DnrValue { get; private set; }
         
@@ -212,9 +212,9 @@ namespace YAESU_FT_891_Front_End
             value = SnapToStep(value, Ft891FilterRanges.IfShiftMinHz,
                 Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
 
-            if (ShiftValue == value) return;
-            ShiftValue = value;
-            OnPropertyChanged(nameof(ShiftValue));
+            if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == value) return;
+            FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = value;
+            OnPropertyChanged(nameof(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz));
             OnPropertyChanged(nameof(ShiftDirection));
             OnPropertyChanged(nameof(ShiftMagnitude));
         }
@@ -358,28 +358,28 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        public void SetDnrValue(int value, DNRValues dNRValues)
-        {
-            dNRValues = (DNRValues)Clamp(value, 0, 15);
-            OnPropertyChanged(nameof(dNRValues));
+        //public void SetDnrValue(int value, DNRValues dNRValues)
+        //{
+        //    dNRValues = (DNRValues)Clamp(value, 0, 15);
+        //    OnPropertyChanged(nameof(dNRValues));
             
-            if (DNRValueTextBlock != null)
-            {
-                if (dNRValues == 0)
-                {
-                    DNRValueTextBlock.Text = "0";
-                    ButtonState(FilterTypes.DNR, States.Off);
-                }
-                else
-                {
-                    DNRValueTextBlock.Text = dNRValues.ToString("D2");
-                    ButtonState(FilterTypes.DNR, States.On);
-                }
-            }
+        //    if (DNRValueTextBlock != null)
+        //    {
+        //        if (dNRValues == 0)
+        //        {
+        //            DNRValueTextBlock.Text = "0";
+        //            ButtonState(FilterTypes.DNR, States.Off);
+        //        }
+        //        else
+        //        {
+        //            DNRValueTextBlock.Text = dNRValues.ToString("D2");
+        //            ButtonState(FilterTypes.DNR, States.On);
+        //        }
+        //    }
 
-            UpdateThumbPositions();
-            UpdateWaveform();
-        }
+        //    UpdateThumbPositions();
+        //    UpdateWaveform();
+        //}
 
        
         //public void SetContourEnabled(bool value)
@@ -409,7 +409,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
             // 2. WIDTH Position
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             const double thumbHalfWidth = 8.0;
             double minX = currentCenter;
@@ -480,7 +480,7 @@ namespace YAESU_FT_891_Front_End
                 ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
 
             if (ShiftValueTextBlock != null)
-                ShiftValueTextBlock.Text = "SF: " + (ShiftValue > 0 ? "+" : "") + ShiftValue;
+                ShiftValueTextBlock.Text = "SF: " + (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz > 0 ? "+" : "") + FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
 
             _isUpdatingProgrammatically = false;
         }
@@ -489,8 +489,8 @@ namespace YAESU_FT_891_Front_End
         {
             if (_isUpdatingProgrammatically) return;
 
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
-            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+            //double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             double halfWidth = Math.Max(0.0, Canvas.GetLeft(WidthThumb) + 8.0 - currentCenter);
 
             double currentBaseRightX = currentCenter + halfWidth + FixedSlopeWidth;
@@ -514,14 +514,14 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
 
-            UIValueChanged?.Invoke("SHIFT", ShiftValue);
+            UIValueChanged?.Invoke("SHIFT", FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
         }
 
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (_isUpdatingProgrammatically) return;
 
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
             double currentLeft = Canvas.GetLeft(WidthThumb);
             double newLeft = currentLeft + e.HorizontalChange;
 
@@ -578,7 +578,7 @@ namespace YAESU_FT_891_Front_End
         {
             if (_isUpdatingProgrammatically) return;
 
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
             double wX = Canvas.GetLeft(WidthThumb) + 8;
             double halfWidth = Math.Max(0, wX - currentCenter);
 
@@ -637,7 +637,7 @@ namespace YAESU_FT_891_Front_End
 
         private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
             double currentLeft = Canvas.GetLeft(ContourThumb);
             double currentTop = Canvas.GetTop(ContourThumb);
 
@@ -689,84 +689,33 @@ namespace YAESU_FT_891_Front_End
             double travelSpace = CenterY - 5;
             double pct = (CenterY - newTop) / travelSpace;
 
-            FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)Math.Round(pct * 15);
-            if (newTop <= 5) FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)15;
-            if (newTop >= CenterY) FT891S_CatManager.currentRadioState.DNRValue = 0;
-            OnPropertyChanged(nameof(FT891S_CatManager.currentRadioState.DNRValue));
+            int newProposedValue = (int)Math.Round(pct * 15);
 
-            if (DNRValueTextBlock != null)
+            bool buttonState = States.Off;
+
+            if (newTop <= 5) FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)15;
+
+            if (newTop >= CenterY)
             {
-                if (FT891S_CatManager.currentRadioState.DNRValue == 0)
+                if (newProposedValue == 0)
                 {
-                    DNRValueTextBlock.Text = "0";
-                    ButtonState(FilterTypes.DNR, States.Off);
-                }
-                else
-                {
-                    DNRValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.DNRValue).ToString();
-                    ButtonState(FilterTypes.DNR, States.On);
+                    FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_OFF;
+                    FT891S_CatManager.currentRadioState.DNRValue = DNRValues.DNR_01;
+                    buttonState = States.Off;
                 }
             }
 
+            if (newProposedValue >= 1 && newProposedValue <= 15)
+            {
+                FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_ON;
+                FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)newProposedValue;
+                buttonState = States.On;
+            }
+
+            ButtonState(FilterTypes.DNR, buttonState);
+
             UpdateWaveform();
-            UIValueChanged?.Invoke("NR", FT891S_CatManager.currentRadioState.DNRValue);
         }
-
-        //private void ToggleButton_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (_isUpdatingProgrammatically) return;
-        //    ToggleButton btn = sender as ToggleButton;
-        //    if (btn != null)
-        //    {
-        //        if (btn == ContourBtn)
-        //        {
-        //            ContourEnabled = true;
-        //            OnPropertyChanged(nameof(ContourEnabled));
-        //            ContourState = Ft891OnOff.On;
-        //            UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
-        //            ContourThumb.Visibility = Visibility.Visible;
-        //            ContourPath.Visibility = Visibility.Visible;
-        //            UpdateWaveform();
-        //        }
-        //        else if (btn == NotchBtn)
-        //        {
-        //            OnPropertyChanged(nameof(NotchEnabled));
-        //            NotchState = Ft891OnOff.On;
-        //            UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
-        //            NotchThumb.Visibility = Visibility.Visible;
-        //            NotchPath.Visibility = Visibility.Visible;
-        //        }
-        //        UIValueChanged?.Invoke(btn.Content.ToString(), true);
-        //    }
-        //}
-
-        //private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
-        //{
-        //    if (_isUpdatingProgrammatically) return;
-        //    ToggleButton btn = sender as ToggleButton;
-        //    if (btn != null)
-        //    {
-        //        if (btn == ContourBtn)
-        //        {
-        //            ContourEnabled = false;
-        //            OnPropertyChanged(nameof(ContourEnabled));
-        //            ContourState = Ft891OnOff.Off;
-        //            UIValueChanged?.Invoke("CONTOUR_ENABLED", ContourEnabled);
-        //            ContourThumb.Visibility = Visibility.Hidden;
-        //            ContourPath.Visibility = Visibility.Hidden;
-        //            UpdateWaveform();
-        //        }
-        //        else if (btn == NotchBtn)
-        //        {
-        //            OnPropertyChanged(nameof(NotchEnabled));
-        //            NotchState = Ft891OnOff.Off;
-        //            UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
-        //            NotchThumb.Visibility = Visibility.Hidden;
-        //            NotchPath.Visibility = Visibility.Hidden;
-        //        }
-        //        UIValueChanged?.Invoke(btn.Content.ToString(), false);
-        //    }
-        //}
 
         private void UpdateWaveform()
         {
@@ -784,7 +733,7 @@ namespace YAESU_FT_891_Front_End
             double nbX = 42.0;
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
-            double currentCenter = BaseCenter + ShiftToPixels(ShiftValue);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - 8.0;
@@ -824,12 +773,6 @@ namespace YAESU_FT_891_Front_End
             cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
 
             if (!ContourEnabled) cY = PeakY;
-
-            //if (NbBadge != null) { Canvas.SetLeft(NbBadge, nbX - 22); Canvas.SetTop(NbBadge, nbY - 22); }
-            //if (WidthBadge != null) { Canvas.SetLeft(WidthBadge, border1X + 15); Canvas.SetTop(WidthBadge, 75); }
-            //if (NotchBadge != null) { Canvas.SetLeft(NotchBadge, border2X - 110); Canvas.SetTop(NotchBadge, 75); }
-            //if (DnrBadge != null) { Canvas.SetLeft(DnrBadge, dnrX - 22); Canvas.SetTop(DnrBadge, dnrY - 22); }
-            //if (ShiftValueTextBlock != null) { Canvas.SetLeft(ShiftValueTextBlock, currentBaseRightX - 15); }
 
             // NB Section
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
@@ -931,15 +874,9 @@ namespace YAESU_FT_891_Front_End
             uint switchValue = uint.Parse(code);
 
             ButtonSelection(Convert.ToByte(switchValue));
-
-            //if (mainWindow.ConsoleDebugLevel == ConsoleDebugLevels.All)
-            //{
-            //    Console.Write("SimulatedWaterfall_MouseLeftButtonDown = ");
-            //    Console.WriteLine(switchValue);
-            //}
         }
 
-        public void ButtonState(byte button, bool state)
+        public async void ButtonState(byte button, bool state)
         {
             switch (button)
             {
@@ -1008,11 +945,25 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.DNR].Enabled = true;
                         DNRTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
                     }
                     else
                     {
                         filters[FilterTypes.DNR].Enabled = false;
                         DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                    }
+                    
+                    DNRValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.DNRValue).ToString();
+
+                    if (FT891S_CatManager.currentRadioState.DNRMode == DNRModes.NR_OFF)
+                    {
+                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     break;
             }
@@ -1067,13 +1018,44 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Shift].Enabled))
                     {
                         filters[FilterTypes.Shift].Enabled = true;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 1;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = filters[FilterTypes.Shift].Value;
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                     }
                     else
                     {
                         filters[FilterTypes.Shift].Enabled = false;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 0;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = filters[FilterTypes.Shift].Value;
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
+
+                    int ShiftOnOff = 0;
+                    char _ShiftDirection = '+';
+
+                    if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz > 0)
+                    {
+                        ShiftOnOff = 1;
+                        _ShiftDirection = '+';
+                    }
+                    else if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz < 0)
+                    {
+                        ShiftOnOff = 1;
+                        _ShiftDirection = '-';
+                    }
+                    else
+                    {
+                        ShiftOnOff = 0;
+                        _ShiftDirection = '+';
+                    }
+
+                    if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == 0)
+                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                    else
+                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
+
+                    String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                    await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                     break;
                 case FilterTypes.Width:
                     if (!(filters[FilterTypes.Width].Enabled))
@@ -1108,28 +1090,14 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.DNR].Enabled))
                     {
                         filters[FilterTypes.DNR].Enabled = true;
-                        FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)filters[FilterTypes.DNR].Value;
-                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_ON;
+                        ButtonState(FilterTypes.DNR, States.On);
                     }
                     else
                     {
                         filters[FilterTypes.DNR].Enabled = false;
-                        filters[FilterTypes.DNR].Value = (int)FT891S_CatManager.currentRadioState.DNRValue;
-                        FT891S_CatManager.currentRadioState.DNRValue = 0;
-                        DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                    }
-                    DNRValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.DNRValue).ToString();
-
-                    if (FT891S_CatManager.currentRadioState.DNRValue == 0)
-                    {
-                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                    }
-                    else
-                    {
-                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                        await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                        await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_OFF;
+                        ButtonState(FilterTypes.DNR, States.Off);
                     }
                     break;
                 case FilterTypes.Narrow:

@@ -68,7 +68,7 @@ namespace FT891S_CatControl
         public int NoiseBlankerLevel { get; set; } = 0;
         
         public DNRModes DNRMode { get; set; }
-        public DNRValues DNRValue { get; set; } = 0;
+        public DNRValues DNRValue { get; set; } = DNRValues.DNR_01;
 
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
