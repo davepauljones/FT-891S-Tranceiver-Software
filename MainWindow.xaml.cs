@@ -235,6 +235,8 @@ namespace YAESU_FT_891_Front_End
 
             filterWave = new FilterWave(this, filterWaveControl);
 
+            filterWaveControl.Background = new SolidColorBrush(Colors.Transparent);
+
             //filterWave.UpdateFromRadio("NB", object value)
 
             if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
