@@ -221,7 +221,7 @@
             <!-- Interactives Canvas -->
             <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="35" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
-                <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta" />
+                <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta"/>
                 <!-- NotchThumb locked to baseline Y (PeakY = 20) -->
                 <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta"/>

@@ -1230,7 +1230,7 @@ namespace FT891S_CatControl
                     case TranceiverModes.BootUp:
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
 
-                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '-', 300);
+                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', 300);
                         await SendCatCommandAsync("IS", BuiltIsCommand, OutGoingDataLoopDelay);
                         await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
                         break;
@@ -1239,6 +1239,12 @@ namespace FT891S_CatControl
                     case TranceiverModes.StationScope:
                         break;
                     case TranceiverModes.NoiseFilters:
+                        await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
+                        mainWindow.Dispatcher.Invoke(() =>
+                        {
+                            mainWindow.filterWaveControl.UpdateThumbPositions();
+                            mainWindow.filterWaveControl.UpdateWaveform();
+                        });  
                         break;
                     case TranceiverModes.MorseCode:
                         break;

@@ -5,11 +5,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using YAESU_FT_891_Front_End.Models;
 using static System.Windows.Forms.AxHost;
 using static YAESU_FT_891_Front_End.MyStructs;
-using YAESU_FT_891_Front_End.Models;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -265,13 +265,6 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        public void SetShiftValue(int value)
-        {
-            SetShiftValueInternal(value);
-            UpdateThumbPositions();
-            UpdateWaveform();
-        }
-
         public FilterWaveControl(MainWindow mainWindow)
         {
             InitializeComponent();
@@ -301,54 +294,91 @@ namespace YAESU_FT_891_Front_End
         }
         private void Init_Width()
         {
-            WidthExtractedValues wev = SetWidth_BandWidth(WidthFrequencies_SSB_Wide, RadioMode.USB, WidthValues.WDH_14);
-            int widthNumberOfPixels = GetWidth_BandWidth_AsPixels(wev);
-            DisplayWidth(widthNumberOfPixels, BaseCenter);
+            //WidthExtractedValues wev = SetWidth_BandWidth(WidthFrequencies_SSB_Wide, RadioMode.USB, WidthValues.WDH_14);
+            //int widthNumberOfPixels = GetWidth_BandWidth_AsPixels(wev);
+            
+            //DisplayWidth(widthNumberOfPixels, BaseCenter);
 
-            FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = (int)BaseCenter;
+            //FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = (int)BaseCenter;
 
-            Canvas.SetLeft(WidthThumb, RH_TrapezoidSide.Point.X - FixedSlopeWidth*2);
+            //Canvas.SetLeft(WidthThumb, RH_TrapezoidSide.Point.X - FixedSlopeWidth*2);
         }
 
-        private WidthExtractedValues SetWidth_BandWidth(List<int> WidthFrequenceyList, RadioMode Mode, WidthValues SelectedBandWidth)
-        {
-            WidthExtractedValues widthExtractedValues = new WidthExtractedValues();
+        //private WidthExtractedValues SetWidth_BandWidth(List<int> WidthFrequenceyList, RadioMode Mode, WidthValues SelectedBandWidth)
+        //{
+        //    WidthExtractedValues widthExtractedValues = new WidthExtractedValues();
 
-            widthExtractedValues.BandWidth = WidthFrequenceyList[(int)SelectedBandWidth];
-            widthExtractedValues.RadioMode = Mode;
-            widthExtractedValues.WidthValue = SelectedBandWidth;
+        //    widthExtractedValues.BandWidth = WidthFrequenceyList[(int)SelectedBandWidth];
+        //    widthExtractedValues.RadioMode = Mode;
+        //    widthExtractedValues.WidthValue = SelectedBandWidth;
 
-            return widthExtractedValues;
-        }
-        private int GetWidth_BandWidth_AsPixels(WidthExtractedValues widthExtractedValues)
-        {
-            int numberOfPixelsToReturn;
+        //    return widthExtractedValues;
+        //}
+        //private int GetWidth_BandWidth_AsPixels(WidthExtractedValues widthExtractedValues)
+        //{
+        //    int numberOfPixelsToReturn;
 
-            numberOfPixelsToReturn = widthExtractedValues.BandWidth / 10;
+        //    numberOfPixelsToReturn = widthExtractedValues.BandWidth / 10;
 
-            return numberOfPixelsToReturn;
-        }
-        private void DisplayWidth(int numberOfPixels, Double center)
-        {
-            Double widthLH = center - (numberOfPixels / 2);
-            Double widthRH = center + (numberOfPixels / 2);
+        //    return numberOfPixelsToReturn;
+        //}
+        //private void DisplayWidth(int numberOfPixels, Double center)
+        //{
+        //    Double widthLH = center - (numberOfPixels / 2);
+        //    Double widthRH = center + (numberOfPixels / 2);
 
-            LH_TrapezoidSide.Point = new Point(widthLH, 51);
-            LH_TrapezoidWallSegment.Point = new Point(widthLH + FixedSlopeWidth, PeakY);
-            WidthPassbandEnd.Point = new Point(widthRH - FixedSlopeWidth, PeakY);
-            RH_TrapezoidSide.Point = new Point(widthRH, 51);
-        }
+        //    LH_TrapezoidSide.Point = new Point(widthLH, 51);
+        //    LH_TrapezoidWallSegment.Point = new Point(widthLH + FixedSlopeWidth, PeakY);
+        //    WidthPassbandEnd.Point = new Point(widthRH - FixedSlopeWidth, PeakY);
+        //    RH_TrapezoidSide.Point = new Point(widthRH, 51);
+        //}
+
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            WidthExtractedValues wev = SetWidth_BandWidth(WidthFrequencies_SSB_Wide, RadioMode.USB, WidthValues.WDH_14);
-            int widthNumberOfPixels = GetWidth_BandWidth_AsPixels(wev);
+            if (_isUpdatingProgrammatically) return;
 
-            DisplayWidth(widthNumberOfPixels + (int)e.HorizontalChange, BaseCenter);
+            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+            double currentLeft = Canvas.GetLeft(WidthThumb);
+            double newLeft = currentLeft + e.HorizontalChange;
 
-            FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = (int)BaseCenter;
+            double minX = currentCenter;
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double maxX = currentCenter + maxHalfWidth - 8.0;
 
-            Canvas.SetLeft(WidthThumb, RH_TrapezoidSide.Point.X - FixedSlopeWidth * 2);
+            if (newLeft < minX) newLeft = minX;
+            if (newLeft > maxX) newLeft = maxX;
+
+            double percentage = ((newLeft - minX) / (maxX - minX));
+            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
+
+            SetWidthCodeInternal(code);
+            UpdateThumbPositions();
+            UpdateWaveform();
+
+            UIValueChanged?.Invoke("WIDTH", (int)FT891S_CatManager.currentRadioState.WidthValue);
         }
+        //bool WidthDragStarted;
+        //int widthNumberOfPixels;
+        //WidthExtractedValues wev;
+        //private void WidthThumb_DragStarted(object sender, DragStartedEventArgs e)
+        //{
+        //    WidthDragStarted = true;
+        //    wev = SetWidth_BandWidth(WidthFrequencies_SSB_Wide, RadioMode.USB, WidthValues.WDH_14);
+        //    widthNumberOfPixels = GetWidth_BandWidth_AsPixels(wev);
+        //}
+
+        //private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        //{
+        //    wev = SetWidth_BandWidth(WidthFrequencies_SSB_Wide, RadioMode.USB, WidthValues.WDH_14);
+
+        //    widthNumberOfPixels = GetWidth_BandWidth_AsPixels(wev);
+
+        //    DisplayWidth(widthNumberOfPixels + (int)e.HorizontalChange, BaseCenter);
+
+        //    FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = (int)BaseCenter;
+
+        //    Canvas.SetLeft(WidthThumb, RH_TrapezoidSide.Point.X - FixedSlopeWidth * 2);
+        //}
 
         public void SetNbValue(int value)
         {
@@ -418,7 +448,7 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        private void UpdateThumbPositions()
+        public void UpdateThumbPositions()
         {
             if (NbThumb == null || WidthThumb == null || NotchThumb == null ||
                 DnrThumb == null || ContourThumb == null || ShiftThumb == null) return;
@@ -431,7 +461,24 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
             // 2. WIDTH Position
-            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+            double currentCenter = BaseCenter;
+            
+            if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 1)
+            {
+                if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1)
+                {
+                    currentCenter = BaseCenter - ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                }
+                else
+                {
+                    currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                }
+            }
+            else
+            {
+                currentCenter = BaseCenter - ShiftToPixels(0);
+            }
+
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             const double thumbHalfWidth = 8.0;
             double minX = currentCenter;
@@ -535,33 +582,13 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
 
+            //******HERE sort out the drag
+            ButtonState(FilterTypes.Shift, false);
+
             UIValueChanged?.Invoke("SHIFT", FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
         }
 
-        private void WidthThumb_DragDeltaOld(object sender, DragDeltaEventArgs e)
-        {
-            if (_isUpdatingProgrammatically) return;
-
-            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
-            double currentLeft = Canvas.GetLeft(WidthThumb);
-            double newLeft = currentLeft + e.HorizontalChange;
-
-            double minX = currentCenter;
-            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
-            double maxX = currentCenter + maxHalfWidth - 8.0;
-
-            if (newLeft < minX) newLeft = minX;
-            if (newLeft > maxX) newLeft = maxX;
-
-            double percentage = ((newLeft - minX) / (maxX - minX));
-            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
-
-            SetWidthCodeInternal(code);
-            UpdateThumbPositions();
-            UpdateWaveform();
-
-            UIValueChanged?.Invoke("WIDTH", (int)FT891S_CatManager.currentRadioState.WidthValue);
-        }
+        
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -738,7 +765,7 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        private void UpdateWaveform()
+        public void UpdateWaveform()
         {
             if (NbThumb == null || WidthThumb == null || NotchThumb == null || DnrThumb == null || ContourThumb == null || ShiftThumb == null ||
                 Segment1 == null || Segment2 == null || PathFigureEndPoint == null ||
@@ -754,7 +781,24 @@ namespace YAESU_FT_891_Front_End
             double nbX = 42.0;
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
-            double currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+            double currentCenter = BaseCenter;
+
+            if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 1)
+            {
+                if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1)
+                {
+                    currentCenter = BaseCenter - ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                }
+                else
+                {
+                    currentCenter = BaseCenter + ShiftToPixels(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                }
+            }
+            else
+            {
+                currentCenter = BaseCenter - ShiftToPixels(0);
+            }
+
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             double minX = currentCenter;
             double maxX = currentCenter + maxHalfWidth - 8.0;
@@ -947,6 +991,22 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Shift].Enabled = false;
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+
+                    String BuiltIsCommand;
+                    if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 0)
+                    {
+                        BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 0, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                        await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1)
+                            BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '-', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                        else
+                            BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+
+                        await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     break;
                 case FilterTypes.Width:
@@ -1173,5 +1233,6 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        
     }
 }
