@@ -226,7 +226,7 @@
                 <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta"/>
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
-                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta"/>
+                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta" DragCompleted="ShiftThumb_DragCompleted"/>
             </Canvas>
         </Grid>
 

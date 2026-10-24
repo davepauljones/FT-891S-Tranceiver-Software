@@ -1239,12 +1239,15 @@ namespace FT891S_CatControl
                     case TranceiverModes.StationScope:
                         break;
                     case TranceiverModes.NoiseFilters:
-                        await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
+                        if (!(mainWindow.filterWaveControl.ShiftIsBeingDragged))
                         {
-                            mainWindow.filterWaveControl.UpdateThumbPositions();
-                            mainWindow.filterWaveControl.UpdateWaveform();
-                        });  
+                            await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                mainWindow.filterWaveControl.UpdateThumbPositions();
+                                mainWindow.filterWaveControl.UpdateWaveform();
+                            });
+                        }
                         break;
                     case TranceiverModes.MorseCode:
                         break;
