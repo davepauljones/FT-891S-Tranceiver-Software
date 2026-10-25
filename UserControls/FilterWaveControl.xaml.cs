@@ -1,4 +1,5 @@
 ﻿using FT891S_CatControl;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -217,29 +218,32 @@ namespace YAESU_FT_891_Front_End
 
         private void SetShiftValueInternal(int value)
         {
-            value = SnapToStep(value, Ft891FilterRanges.IfShiftMinHz,
-                Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
+            value = SnapToStep(value, Ft891FilterRanges.IfShiftMinHz, Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
 
-            if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == value) return;
+            // Calculate current signed value to check for changes accurately
+            var state = FT891S_CatManager.currentRadioState.IfShiftHz;
+            int currentSignedValue = state.IfShiftHz * state.IfShiftDirection;
+            if (currentSignedValue == value) return;
 
-            // Atomically update direction and onoff flags alongside the value
+            // Update direction, on/off, and store the absolute magnitude in IfShiftHz
             if (value < 0)
             {
-                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = -1;
-                FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 1;
+                state.IfShiftDirection = -1;
+                state.OnOff = 1;
+                state.IfShiftHz = -value; // Store as positive magnitude
             }
             else if (value > 0)
             {
-                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = 1;
-                FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 1;
+                state.IfShiftDirection = 1;
+                state.OnOff = 1;
+                state.IfShiftHz = value;
             }
             else
             {
-                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = 1;
-                // Leave OnOff as is or handle zero case cleanly
+                state.IfShiftDirection = 1;
+                state.OnOff = 0;
+                state.IfShiftHz = 0;
             }
-
-            FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = value;
         }
 
         private void SetNotchEnabledInternal(bool enabled)
@@ -305,6 +309,8 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
+
+            Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
         }
 
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -399,7 +405,48 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
         }
+        private void Update_Shift_ThumbPostion()
+        {
+            if (ShiftThumb == null) return;
 
+            Canvas.SetLeft(ShiftThumb, ShiftTrapezoidRightBottomLineSegment.Point.X - 8);
+        }
+        public void Update_Shift_TrapezoidPostion(IS_Shift IFShiftHz)
+        {
+            Double pixelPosition;
+
+            float value = IFShiftHz.IfShiftHz / 5.5f;
+            pixelPosition = (IFShiftHz.IfShiftDirection == -1) ? -value : value;
+
+            const int CenterOfFilterArea = 320;
+            const int TrapezoidSideWidth = 8;
+
+            ShiftTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - (TrapezoidSideWidth*2), 51);
+            ShiftTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - TrapezoidSideWidth, 21);
+            ShiftTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 21);
+            ShiftTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth*2), 51);
+
+            if (ShiftValueTextBlock != null)
+            {
+                var shiftInfo = FT891S_CatManager.currentRadioState.IfShiftHz;
+                bool isNegative = (shiftInfo.IfShiftDirection == -1) || (shiftInfo.IfShiftHz < 0);
+                double absHz = Math.Abs(shiftInfo.IfShiftHz);
+                ShiftValueTextBlock.Text = (isNegative && absHz > 0 ? "-" : "") + absHz + "Hz";
+            }
+
+            Update_Shift_ThumbPostion();
+
+            if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == 0)
+            {
+                ButtonState(FilterTypes.Shift, false);
+                mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                ButtonState(FilterTypes.Shift, true);
+                mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
         public void UpdateThumbPositions()
         {
             if (NbThumb == null || WidthThumb == null || NotchThumb == null ||
@@ -414,22 +461,6 @@ namespace YAESU_FT_891_Front_End
 
             // 2. WIDTH & IF SHIFT Position
             double currentCenter = BaseCenter;
-
-            if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 1)
-            {
-                var shiftInfo = FT891S_CatManager.currentRadioState.IfShiftHz;
-                double shiftHz = shiftInfo.IfShiftHz;
-
-                // Correctly evaluate whether the shift is negative via direction flag or signed value
-                bool isNegative = (shiftInfo.IfShiftDirection == -1) || (shiftHz < 0);
-                double pixelOffset = ShiftToPixels((int)Math.Abs(shiftHz));
-
-                currentCenter = isNegative ? (BaseCenter - pixelOffset) : (BaseCenter + pixelOffset);
-            }
-            else
-            {
-                currentCenter = BaseCenter;
-            }
 
             double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
             const double thumbHalfWidth = 8.0;
@@ -500,59 +531,32 @@ namespace YAESU_FT_891_Front_End
             if (ContourValueTextBlock != null)
                 ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
 
-            if (ShiftValueTextBlock != null)
-            {
-                var shiftInfo = FT891S_CatManager.currentRadioState.IfShiftHz;
-                bool isNegative = (shiftInfo.IfShiftDirection == -1) || (shiftInfo.IfShiftHz < 0);
-                double absHz = Math.Abs(shiftInfo.IfShiftHz);
-                ShiftValueTextBlock.Text = (isNegative && absHz > 0 ? "-" : "") + absHz + "Hz";
-            }
-
             _isUpdatingProgrammatically = false;
         }
 
-        public bool ShiftIsBeingDragged;
         private void ShiftThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (_isUpdatingProgrammatically) return;
-
-            if (!ShiftIsBeingDragged)
-            {
-                mainWindow._catManager.StopOutgoingDataLoop();
-            }
-
-            ShiftIsBeingDragged = true;
-
             // Directly calculate the pixel change from the drag delta and map it to Hz
-            // Since ShiftThumb is at the right shoulder, moving it left/right directly scales the shift offset.
             const double maxPixelShift = ((border2X - border1X) / 2.0) - FixedSlopeWidth;
 
-            // Get current shift in pixels
-            double currentShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
+            // Get current shift state and apply direction to get the true signed Hz value
+            var shiftState = FT891S_CatManager.currentRadioState.IfShiftHz;
+            double currentShiftHz = shiftState.IfShiftHz * shiftState.IfShiftDirection;
+
             double currentPixelOffset = (currentShiftHz / (double)Ft891FilterRanges.IfShiftMaxHz) * maxPixelShift;
 
             // Add the horizontal drag change
             double newPixelOffset = currentPixelOffset + e.HorizontalChange;
 
-            // Convert back to Hz and clamp within allowed ranges
+            // Convert back to Hz and clamp within allowed ranges (min/max handles negatives)
             double newShiftHz = (newPixelOffset / maxPixelShift) * Ft891FilterRanges.IfShiftMaxHz;
             int targetShift = SnapToStep((int)Math.Round(newShiftHz), Ft891FilterRanges.IfShiftMinHz, Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
 
             SetShiftValueInternal(targetShift);
 
-            UpdateThumbPositions();
-            UpdateWaveform();
+            // Pass the updated state or target shift depending on your implementation
+            Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
         }
-        private async void ShiftThumb_DragCompleted(object sender, DragCompletedEventArgs e)
-        {
-            ShiftIsBeingDragged = false;
-  
-            //******HERE sort out the drag
-            ButtonState(FilterTypes.Shift, false);
-
-            mainWindow._catManager.StartOutgoingDataLoop();
-        }
-
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -969,6 +973,9 @@ namespace YAESU_FT_891_Front_End
                         else
                             BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
 
+                        lastIS_Shift.IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection;
+                        lastIS_Shift.IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
+
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     break;
@@ -1012,7 +1019,8 @@ namespace YAESU_FT_891_Front_End
                     break;
             }
         }
-
+        private IS_Shift lastIS_Shift = new IS_Shift { IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection,
+                                                       IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz};
         public async void ButtonSelection(byte button)
         {
             switch (button)
@@ -1062,43 +1070,32 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Shift].Enabled))
                     {
                         filters[FilterTypes.Shift].Enabled = true;
+
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = lastIS_Shift.IfShiftDirection;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = lastIS_Shift.IfShiftHz;
+                        
                         FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 1;
-                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = filters[FilterTypes.Shift].Value;
+
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                     }
                     else
                     {
                         filters[FilterTypes.Shift].Enabled = false;
+                        
+                        lastIS_Shift.IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection;
+                        lastIS_Shift.IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
+
                         FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 0;
-                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = filters[FilterTypes.Shift].Value;
+
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
 
-                    int ShiftOnOff = 0;
-                    char _ShiftDirection = '+';
+                    char _ShiftDirection = (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1) ? '-' : '+';
 
-                    if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz > 0)
-                    {
-                        ShiftOnOff = 1;
-                        _ShiftDirection = '+';
-                    }
-                    else if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz < 0)
-                    {
-                        ShiftOnOff = 1;
-                        _ShiftDirection = '-';
-                    }
-                    else
-                    {
-                        ShiftOnOff = 0;
-                        _ShiftDirection = '+';
-                    }
+                    // Sends the existing shift magnitude and direction along with the new OnOff state
+                    String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, FT891S_CatManager.currentRadioState.IfShiftHz.OnOff,
+                                                                _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
 
-                    if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == 0)
-                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                    else
-                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
-
-                    String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
                     await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                     break;
                 case FilterTypes.Width:

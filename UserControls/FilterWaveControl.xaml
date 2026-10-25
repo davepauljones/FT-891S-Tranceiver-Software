@@ -147,6 +147,29 @@
                 </Path.Data>
             </Path>
 
+            <!-- 2. Shift Main Section -->
+            <Path x:Name="ShiftMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
+                        <GradientStop Color="SlateGray" Offset="0.0" />
+                        <GradientStop Color="Black" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="84,51">
+                            <PathFigure.Segments>
+                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,51"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,21"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,21"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,51"/>
+                                <LineSegment Point="556,51"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
             <!-- 2. Width Main Section -->
             <Path x:Name="WidthMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
                 <Path.Fill>
@@ -226,7 +249,7 @@
                 <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="NotchThumb_DragDelta" />
                 <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta"/>
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
-                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta" DragCompleted="ShiftThumb_DragCompleted"/>
+                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta"/>
             </Canvas>
         </Grid>
 
