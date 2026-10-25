@@ -1244,6 +1244,21 @@ namespace FT891S_CatControl
                         {
                             mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
                         });
+
+                        await SendCatCommandAsync("SH", "0", OutGoingDataLoopDelay);
+                        mainWindow.Dispatcher.Invoke(() =>
+                        {
+                            mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
+                        });
+
+                        await SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                        mainWindow.Dispatcher.Invoke(() =>
+                        {
+                            if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false);
+                            else
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true);
+                        });
                         break;
                     case TranceiverModes.MorseCode:
                         break;

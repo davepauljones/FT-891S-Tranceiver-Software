@@ -147,8 +147,8 @@
                 </Path.Data>
             </Path>
 
-            <!-- 2. Shift Main Section -->
-            <Path x:Name="ShiftMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+            <!-- 2. Width Main Section -->
+            <Path x:Name="WidthMainSectionPathh" Stroke="Firebrick" StrokeThickness="2" Visibility="Collapsed">
                 <Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
@@ -159,11 +159,11 @@
                     <PathGeometry>
                         <PathFigure StartPoint="84,51">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,51"/>
-                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,21"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,21"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,51"/>
-                                <LineSegment Point="556,51"/>
+                                <LineSegment x:Name="LH_TrapezoidSide" Point="84,51"/>
+                                <LineSegment x:Name="LH_TrapezoidWallSegment" Point="300,51"/>
+                                <LineSegment x:Name="WidthPassbandEnd" Point="350,51"/>
+                                <LineSegment x:Name="RH_TrapezoidSide" Point="556,51"/>
+                                <LineSegment x:Name="PathFigureEndPoint" Point="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -182,11 +182,34 @@
                     <PathGeometry>
                         <PathFigure StartPoint="84,51">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="LH_TrapezoidSide" Point="84,51"/>
-                                <LineSegment x:Name="LH_TrapezoidWallSegment" Point="300,51"/>
-                                <LineSegment x:Name="WidthPassbandEnd" Point="350,51"/>
-                                <LineSegment x:Name="RH_TrapezoidSide" Point="556,51"/>
-                                <LineSegment x:Name="PathFigureEndPoint" Point="556,51"/>
+                                <LineSegment x:Name="WidthTrapezoidLeftBottomLineSegment" Point="200,51"/>
+                                <LineSegment x:Name="WidthTrapezoidLeftTopLineSegment" Point="208,21"/>
+                                <LineSegment x:Name="WidthTrapezoidRightTopLineSegment" Point="432,21"/>
+                                <LineSegment x:Name="WidthTrapezoidRightBottomLineSegment" Point="440,51"/>
+                                <LineSegment Point="556,51"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- 3. Shift Main Section -->
+            <Path x:Name="ShiftMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
+                        <GradientStop Color="SlateGray" Offset="0.0" />
+                        <GradientStop Color="Black" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="84,51">
+                            <PathFigure.Segments>
+                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,51"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,21"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,21"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,51"/>
+                                <LineSegment Point="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>

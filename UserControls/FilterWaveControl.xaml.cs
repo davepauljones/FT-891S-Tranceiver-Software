@@ -79,13 +79,13 @@ namespace YAESU_FT_891_Front_End
         Plus = 1
     }
 
-    public enum Ft891WidthCode
-    {
-        Code00 = 0, Code01 = 1, Code02 = 2, Code03 = 3, Code04 = 4, Code05 = 5,
-        Code06 = 6, Code07 = 7, Code08 = 8, Code09 = 9, Code10 = 10, Code11 = 11,
-        Code12 = 12, Code13 = 13, Code14 = 14, Code15 = 15, Code16 = 16, Code17 = 17,
-        Code18 = 18, Code19 = 19, Code20 = 20, Code21 = 21
-    }
+    //public enum Ft891WidthCode
+    //{
+    //    Code00 = 0, Code01 = 1, Code02 = 2, Code03 = 3, Code04 = 4, Code05 = 5,
+    //    Code06 = 6, Code07 = 7, Code08 = 8, Code09 = 9, Code10 = 10, Code11 = 11,
+    //    Code12 = 12, Code13 = 13, Code14 = 14, Code15 = 15, Code16 = 16, Code17 = 17,
+    //    Code18 = 18, Code19 = 19, Code20 = 20, Code21 = 21
+    //}
 
     public static class Ft891FilterRanges
     {
@@ -103,6 +103,7 @@ namespace YAESU_FT_891_Front_End
 
         public const int WidthCodeMin = 0;
         public const int WidthCodeMax = 21;
+        public const int WidthStepHz = 22;
     }
 
     public partial class FilterWaveControl : UserControl, INotifyPropertyChanged
@@ -110,12 +111,19 @@ namespace YAESU_FT_891_Front_End
         MainWindow mainWindow;
         public List<FilterClass> filters = new List<FilterClass>();
 
-        public readonly List<int> WidthFrequencies_SSB_Narrow = new List<int> { 1500, 200, 400, 600, 850, 1100, 1350, 1500, 1650, 1800, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500 };
-        public readonly List<int> WidthFrequencies_SSB_Wide = new List<int> { 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 1800, 1950, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3200 };
-        public readonly List<int> WidthFrequencies_CW_Narrow = new List<int> { 500, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500 };
-        public readonly List<int> WidthFrequencies_CW_Wide = new List<int> { 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 500, 800, 1200, 1400, 1700, 2000, 3000, 2400, 2400, 2400, 2400, 2400 };
-        public readonly List<int> WidthFrequencies_RTTY_PSK_Narrow = new List<int> { 300, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300 };
-        public readonly List<int> WidthFrequencies_RTTY_PSK_Wide = new List<int> { 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 800, 1200, 1400, 1700, 2000, 2400, 3000, 500, 500, 500, 500 };
+        public readonly List<int> WidthFrequencies_SSB_Narrow = new List<int> { 1500, 200, 400, 600, 850, 1100, 1350, 1500, 1650, 1800, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        public readonly List<int> WidthFrequencies_SSB_Wide = new List<int> { 2400, -1, -1, -1, -1, -1, -1, -1, -1, 1800, 1950, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3200 };
+        public readonly List<int> WidthFrequencies_CW_Narrow = new List<int> { 500, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        public readonly List<int> WidthFrequencies_CW_Wide = new List<int> { 2400, -1, -1, -1, -1, -1, -1, -1, -1, -1, 500, 800, 1200, 1400, 1700, 2000, 2400, 3000, -1, -1, -1, -1 };
+        public readonly List<int> WidthFrequencies_RTTY_PSK_Narrow = new List<int> { 300, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 300, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        public readonly List<int> WidthFrequencies_RTTY_PSK_Wide = new List<int> { 500, -1, -1, -1, -1, -1, -1, -1, -1, -1, 500, 800, 1200, 1400, 1700, 2000, 2400, 3000, -1, -1, -1, -1 };
+        
+        public readonly int WidthFrequencies_SSB_Narrow_MinimumValue = 200;
+        public readonly int WidthFrequencies_SSB_Wide_MinimumValue = 1800;
+        public readonly int WidthFrequencies_CW_Narrow_MinimumValue = 50;
+        public readonly int WidthFrequencies_CW_Wide_MinimumValue = 500;
+        public readonly int WidthFrequencies_RTTY_PSK_Narrow_MinimumValue = 50;
+        public readonly int WidthFrequencies_RTTY_PSK_Wide_MinimumValue = 500;
 
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
@@ -161,7 +169,6 @@ namespace YAESU_FT_891_Front_End
         //public int DnrValue { get; private set; }
         
         private double _contourVisualOffset = 0.0;
-        public int NarrowValue { get; private set; }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -190,7 +197,7 @@ namespace YAESU_FT_891_Front_End
         {
             value = Clamp(value, Ft891FilterRanges.WidthCodeMin, Ft891FilterRanges.WidthCodeMax);
             FT891S_CatManager.currentRadioState.WidthValue = (WidthValues)value;
-            OnPropertyChanged(nameof(FT891S_CatManager.currentRadioState.WidthValue));
+            //OnPropertyChanged(nameof(FT891S_CatManager.currentRadioState.WidthValue));
             //OnPropertyChanged(nameof(WidthValue));
         }
 
@@ -311,9 +318,11 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
 
             Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
+
+            Update_Width_TrapezoidPostion(WidthValues.WDH_10);
         }
 
-        private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        private void WidthThumb_DragDeltaa(object sender, DragDeltaEventArgs e)
         {
             if (_isUpdatingProgrammatically) return;
 
@@ -404,6 +413,155 @@ namespace YAESU_FT_891_Front_End
 
             UpdateThumbPositions();
             UpdateWaveform();
+        }
+        private void Update_Width_ThumbPostion()
+        {
+            if (WidthThumb == null) return;
+
+            Canvas.SetLeft(WidthThumb, WidthTrapezoidRightBottomLineSegment.Point.X - 8);
+        }
+        public void Update_Width_TrapezoidPostion(WidthValues WidthValue)
+        {
+            int freqInHz = WidthFrequencies_SSB_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+
+            switch (FT891S_CatManager.currentRadioState.OperatingMode)
+            {
+                case RadioMode.LSB:
+                case RadioMode.USB:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_SSB_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_SSB_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_SSB_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_SSB_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.CW_L:
+                case RadioMode.CW_U:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_CW_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_CW_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_CW_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_CW_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.AM:
+                    break;
+                case RadioMode.AM_N:
+                    break;
+                case RadioMode.FM:
+                    break;
+                case RadioMode.FM_N:
+                    break;
+                case RadioMode.DATA_L:
+                case RadioMode.DATA_U:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.DATA_FM:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.DATA_FM_N:
+                    //we have both logics set to wide, because DATA_FM_N ?
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.RTTY_L:
+                case RadioMode.RTTY_U:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.PSK:
+                    if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
+                    }
+                    else
+                    {
+                        freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)FT891S_CatManager.currentRadioState.WidthValue];
+                        if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
+                    }
+                    break;
+                case RadioMode.PRESET:
+                    break;
+            }
+
+            Double pixelPosition;
+
+            float value = (int)freqInHz / 11.5f;
+
+            Console.Write("freqInHz = ");
+            Console.WriteLine(freqInHz);
+
+            pixelPosition = value/2;
+
+            const int CenterOfFilterArea = 320;
+            const int TrapezoidSideWidth = 8;
+
+            WidthTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - (TrapezoidSideWidth * 2), 51);
+            WidthTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - TrapezoidSideWidth, 21);
+            WidthTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 21);
+            WidthTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth * 2), 51);
+
+            if (WidthValueTextBlock != null)
+            {
+                
+                WidthValueTextBlock.Text = freqInHz + "Hz";
+            }
+
+            Update_Width_ThumbPostion();
+
+            if (FT891S_CatManager.currentRadioState.WidthMode == WidthModes.SH_OFF)
+            {
+                ButtonState(FilterTypes.Width, false);
+                mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                ButtonState(FilterTypes.Width, true);
+                mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
+            }
         }
         private void Update_Shift_ThumbPostion()
         {
@@ -533,7 +691,54 @@ namespace YAESU_FT_891_Front_End
 
             _isUpdatingProgrammatically = false;
         }
+        private void WidthThumb_DragDeltaaa(object sender, DragDeltaEventArgs e)
+        {
+            double currentCenter = BaseCenter;
+            double currentLeft = Canvas.GetLeft(WidthThumb);
+            double newLeft = currentLeft + e.HorizontalChange;
 
+            double minX = currentCenter;
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double maxX = currentCenter + maxHalfWidth - 8.0;
+
+
+            // Directly calculate the pixel change from the drag delta and map it to Hz
+            const double maxPixelShift = ((border2X - border1X) / 2.0) - FixedSlopeWidth;
+
+            double currentPixelOffset = ((int)FT891S_CatManager.currentRadioState.WidthValue / (double)Ft891FilterRanges.WidthCodeMax) * maxPixelShift;
+
+            // Add the horizontal drag change
+            double newPixelOffset = currentPixelOffset + e.HorizontalChange;
+
+            // Convert back to Hz and clamp within allowed ranges (min/max handles negatives)
+            double newWidthHz = (newPixelOffset / maxPixelShift) * Ft891FilterRanges.WidthCodeMax;
+            int targetWidth = SnapToStep((int)Math.Round(newWidthHz), Ft891FilterRanges.WidthCodeMin, Ft891FilterRanges.WidthCodeMax, Ft891FilterRanges.WidthStepHz);
+
+            SetWidthCodeInternal(targetWidth);
+
+            // Pass the updated state or target width depending on your implementation
+            Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
+        }
+        private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            double currentCenter = BaseCenter + ShiftToPixels((int)FT891S_CatManager.currentRadioState.WidthValue);
+            double currentLeft = Canvas.GetLeft(WidthThumb);
+            double newLeft = currentLeft + e.HorizontalChange;
+
+            double minX = currentCenter;
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double maxX = currentCenter + maxHalfWidth - 8.0;
+
+            if (newLeft < minX) newLeft = minX;
+            if (newLeft > maxX) newLeft = maxX;
+
+            double percentage = ((newLeft - minX) / (maxX - minX));
+            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
+
+            SetWidthCodeInternal(code);
+            // Pass the updated state or target width depending on your implementation
+            Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
+        }
         private void ShiftThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             // Directly calculate the pixel change from the drag delta and map it to Hz
@@ -990,6 +1195,17 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.Width].Enabled = false;
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     }
+
+                    if (FT891S_CatManager.currentRadioState.WidthMode == WidthModes.SH_OFF)
+                    {
+                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
                     break;
                 case FilterTypes.DNR:
                     if (state)
@@ -1015,6 +1231,22 @@ namespace YAESU_FT_891_Front_End
                     {
                         await mainWindow._catManager.SendCatCommandAsync("NR", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
                         await mainWindow._catManager.SendCatCommandAsync("RL", new object[] { 0, (int)FT891S_CatManager.currentRadioState.DNRValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    break;
+                case FilterTypes.Narrow:
+                    if (state)
+                    {
+                        filters[FilterTypes.Narrow].Enabled = true;
+                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        NarrowValueTextBlock.Text = "ON";
+                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                    }
+                    else
+                    {
+                        filters[FilterTypes.Narrow].Enabled = false;
+                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        NarrowValueTextBlock.Text = "OFF";
+                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
                     }
                     break;
             }
@@ -1145,31 +1377,19 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Narrow].Enabled))
                     {
                         filters[FilterTypes.Narrow].Enabled = true;
-                        NarrowValue = 1;
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                    }
-                    else
-                    {
-                        filters[FilterTypes.Narrow].Enabled = false;
-                        NarrowValue = 0;
-                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                    }
-
-                    if (NarrowValue == 0)
-                    {
-                        NarrowValueTextBlock.Text = "OFF";
-                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                    }
-                    else
-                    {
                         NarrowValueTextBlock.Text = "ON";
                         mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
                         await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
-
-                    //remove once added to outgoing data loop
-                    await mainWindow._catManager.SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                    else
+                    {
+                        filters[FilterTypes.Narrow].Enabled = false;
+                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        NarrowValueTextBlock.Text = "OFF";
+                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
                     break;
                 case FilterTypes.AllOff:
                     filters[FilterTypes.Notch].Enabled = false;
