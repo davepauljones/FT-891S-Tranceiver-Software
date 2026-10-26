@@ -194,7 +194,7 @@
             </Path>
 
             <!-- 3. Shift Main Section -->
-            <Path x:Name="ShiftMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
+            <Path x:Name="ShiftMainSectionPath" Stroke="Yellow" StrokeThickness="2" Visibility="Visible">
                 <Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
@@ -203,13 +203,13 @@
                 </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,51">
+                        <PathFigure StartPoint="84,53">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,51"/>
-                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,21"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,21"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,51"/>
-                                <LineSegment Point="556,51"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,53"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,23"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,23"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,53"/>
+                                <LineSegment Point="556,53"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -217,7 +217,7 @@
             </Path>
 
             <!-- 4. Notch Section (Fixed Size V-shape, pined to baseline) -->
-            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="2.5" Fill="#444444" Visibility="Visible" Panel.ZIndex="1">
+            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="2.5" Fill="#444444" Visibility="Collapsed" Panel.ZIndex="1">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="NotchFigureStart" StartPoint="300,20">
@@ -229,18 +229,40 @@
                     </PathGeometry>
                 </Path.Data>
             </Path>
-
-            <!-- 5. Contour Section (Fixed Size V-shape, pined to baseline) -->
-            <Path x:Name="ContourPath"  Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
+            <Path x:Name="NotchMainSectionPath" Stroke="Orange" StrokeThickness="2" Visibility="Visible">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
+                        <GradientStop Color="SlateGray" Offset="0.0" />
+                        <GradientStop Color="Black" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure x:Name="ContourFigureStart" StartPoint="300,51">
+                        <PathFigure StartPoint="84,55">
                             <PathFigure.Segments>
-                                <ArcSegment x:Name="ContourArcSegment" 
-                                Point="328,51" 
-                                Size="14,0" 
-                                SweepDirection="Clockwise" 
-                                IsLargeArc="False"/>
+                                <LineSegment x:Name="NotchTrapezoidLeftBottomLineSegment" Point="200,55"/>
+                                <LineSegment x:Name="NotchTrapezoidLeftTopLineSegment" Point="208,25"/>
+                                <LineSegment x:Name="NotchTrapezoidLeftTopLineVSegment" Point="310,25"/>
+                                <LineSegment x:Name="NotchTrapezoidCentreLineVSegment" Point="320,55"/>
+                                <LineSegment x:Name="NotchTrapezoidRightTopLineVSegment" Point="330,25"/>
+                                <LineSegment x:Name="NotchTrapezoidRightTopLineSegment" Point="432,25"/>
+                                <LineSegment x:Name="NotchTrapezoidRightBottomLineSegment" Point="440,55"/>
+                                <LineSegment Point="556,55"/>
+                            </PathFigure.Segments>
+                        </PathFigure>
+                    </PathGeometry>
+                </Path.Data>
+            </Path>
+
+            <!-- 5. Contour Section (Fixed Size V-shape, pined to baseline) -->
+            <Path x:Name="ContourPath" Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
+                <Path.Data>
+                    <PathGeometry>
+                        <PathFigure StartPoint="84,25">
+                            <PathFigure.Segments>
+                                <LineSegment x:Name="ContourFigureStart" Point="300,25"/>
+                                <ArcSegment x:Name="ContourArcSegment" Point="340,25" Size="14,0" SweepDirection="Clockwise" IsLargeArc="False"/>
+                                <LineSegment Point="556,25"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
