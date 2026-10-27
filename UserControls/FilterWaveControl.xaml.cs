@@ -3,6 +3,7 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -128,6 +129,7 @@ namespace YAESU_FT_891_Front_End
         private const double CanvasHeight = 102;
         private const double CenterY = 51;
         private const double PeakY = 25.0;
+        private const double ContourPeakY = 51.0;
         private bool _isUpdatingProgrammatically = false;
 
         private const double BaseCenter = 320.0;
@@ -414,6 +416,11 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
         }
+        // Inside your Window or Page class
+        public void BringToFront(UIElement element)
+        {
+            Canvas.SetZIndex(element, 1);
+        }
         private void Update_Width_ThumbPostion()
         {
             if (WidthThumb == null) return;
@@ -423,6 +430,8 @@ namespace YAESU_FT_891_Front_End
         public void Update_Width_TrapezoidPostion(WidthValues WidthValue)
         {
             int freqInHz = WidthFrequencies_SSB_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
+
+            BringToFront(WidthMainSectionPath);
 
             switch (FT891S_CatManager.currentRadioState.OperatingMode)
             {
@@ -573,16 +582,19 @@ namespace YAESU_FT_891_Front_End
         {
             Double pixelPosition;
 
+            //BringToFront(ShiftMainSectionPath);
+            //BringToFront(ShiftThumb);
+
             float value = IFShiftHz.IfShiftHz / 5.5f;
             pixelPosition = (IFShiftHz.IfShiftDirection == -1) ? -value : value;
 
             const int CenterOfFilterArea = 320;
-            const int TrapezoidSideWidth = 8;
+            const int TrapezoidSideWidth = 6;
 
-            ShiftTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - (TrapezoidSideWidth*2), 53);
-            ShiftTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - TrapezoidSideWidth, 23);
-            ShiftTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 23);
-            ShiftTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth*2), 53);
+            ShiftTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - (TrapezoidSideWidth*2), 105);
+            ShiftTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - TrapezoidSideWidth, 85);
+            ShiftTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 85);
+            ShiftTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth*2), 105);
 
             if (ShiftValueTextBlock != null)
             {
@@ -667,9 +679,10 @@ namespace YAESU_FT_891_Front_End
             cX = Math.Max(border1X, Math.Min(border2X, cX));
             Canvas.SetLeft(ContourThumb, cX - 8);
 
-            double contourCenterY = PeakY + _contourVisualOffset;
-            if (!ContourEnabled) contourCenterY = PeakY;
-            Canvas.SetTop(ContourThumb, contourCenterY - 8);
+            // Use ContourPeakY (51.0) instead of PeakY (25.0) and allow full range up to 105
+            double contourCenterY = ContourPeakY + _contourVisualOffset;
+            if (!ContourEnabled) contourCenterY = ContourPeakY;
+            Canvas.SetTop(ContourThumb, Math.Max(5, Math.Min(105, contourCenterY)) - 8);
 
             // 5. DNR Position
             double travelSpaceDnr = CenterY - 5;
@@ -678,7 +691,7 @@ namespace YAESU_FT_891_Front_End
 
             // 6. IF SHIFT Position
             Canvas.SetLeft(ShiftThumb, currentBaseRightX);
-            Canvas.SetTop(ShiftThumb, CenterY - 8);
+            Canvas.SetTop(ShiftThumb, 105 - 8);
 
             if (WidthValueTextBlock != null)
                 WidthValueTextBlock.Text = "WD: " + ((int)FT891S_CatManager.currentRadioState.WidthValue).ToString("D2");
@@ -858,36 +871,85 @@ namespace YAESU_FT_891_Front_End
 
         private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            double currentLeft = Canvas.GetLeft(ContourThumb);
-            double currentTop = Canvas.GetTop(ContourThumb);
+            double targetX = Canvas.GetLeft(ContourThumb) + 8 + e.HorizontalChange;
+            double targetY = Canvas.GetTop(ContourThumb) + 8 + e.VerticalChange;
 
-            double targetCenterX = currentLeft + 8 + e.HorizontalChange;
-            double targetCenterY = currentTop + 8 + e.VerticalChange;
+            double clampedX = Math.Max(border1X, Math.Min(border2X, targetX));
 
-            double clampedCenterX = Math.Max(border1X, Math.Min(border2X, targetCenterX));
-            double clampedTop = Math.Max(5, Math.Min(CenterY, targetCenterY));
+            // Clamp Y to exactly 24 pixels above and below ContourPeakY (51) -> min: 27, max: 75
+            double clampedY = Math.Max(ContourPeakY - 24.0, Math.Min(ContourPeakY + 24.0, targetY));
 
-            Canvas.SetLeft(ContourThumb, clampedCenterX - 8);
-            Canvas.SetTop(ContourThumb, clampedTop - 8);
-
+            double ratio = (clampedX - border1X) / (border2X - border1X);
             int frequency = (int)Math.Round(
                 Ft891FilterRanges.ContourFrequencyMinHz +
-                ((clampedCenterX - border1X) / (border2X - border1X)) *
-                (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
+                ratio * (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
 
             SetContourFrequencyInternal(frequency);
 
-            _contourVisualOffset = clampedTop + 8 - PeakY;
-            _contourVisualOffset = Math.Max(-(PeakY - 5), Math.Min(CenterY - PeakY, _contourVisualOffset));
+            _contourVisualOffset = clampedY + 8 - ContourPeakY;
+            _contourVisualOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
 
             ContourEnabled = true;
             OnPropertyChanged(nameof(ContourEnabled));
 
-            if (ContourValueTextBlock != null)
-                ContourValueTextBlock.Text = "CNT: " + ContourFrequency + " Hz";
+            UpdateContourAndWaveform();
 
-            UpdateWaveform();
             UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
+        }
+        public void UpdateContourAndWaveform()
+        {
+            if (ContourThumb == null || ContourArcSegment == null || ContourFigureStart == null) return;
+
+            // --- 1. UPDATE THUMB POSITION ---
+            double contourRatio = (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
+                                  (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
+
+            double cX = Math.Max(border1X, Math.Min(border2X, border1X + contourRatio * (border2X - border1X)));
+            Canvas.SetLeft(ContourThumb, cX - 8);
+
+            // Limit thumb travel strictly to 24 pixels up/down from ContourPeakY
+            double clampedOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
+            double contourCenterY = ContourPeakY + clampedOffset;
+            if (!ContourEnabled) contourCenterY = ContourPeakY;
+            Canvas.SetTop(ContourThumb, contourCenterY - 8);
+
+            if (ContourValueTextBlock != null)
+                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+
+            // --- 2. UPDATE WAVEFORM ARC ---
+            double cY = contourCenterY;
+            cX = Math.Max(border1X, Math.Min(border2X, cX));
+
+            const double totalArcWidth = 30.0;
+            double halfArcWidth = totalArcWidth / 2.0;
+
+            double startX = cX - halfArcWidth;
+            double endX = cX + halfArcWidth;
+
+            if (startX < border1X) { startX = border1X; endX = border1X + totalArcWidth; }
+            if (endX > border2X) { endX = border2X; startX = border2X - totalArcWidth; }
+
+            ContourFigureStart.Point = new Point(startX, ContourPeakY);
+            ContourArcSegment.Point = new Point(endX, ContourPeakY);
+
+            double arcRadiusX = totalArcWidth / 2.0;
+            double offset = cY - ContourPeakY;
+
+            if (Math.Abs(offset) < 0.5)
+            {
+                ContourArcSegment.Size = new Size(arcRadiusX, 0);
+                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+            }
+            else if (offset < 0) // Dragged Up
+            {
+                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(Math.Abs(offset), 24.0));
+            }
+            else // Dragged Down
+            {
+                ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
+                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(offset, 24.0));
+            }
         }
 
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -1040,7 +1102,7 @@ namespace YAESU_FT_891_Front_End
             cY = Canvas.GetTop(ContourThumb) + 8;
             cX = Math.Max(border1X, Math.Min(border2X, cX));
 
-            if (!ContourEnabled) cY = PeakY;
+            if (!ContourEnabled) cY = ContourPeakY;
 
             // ... (other sections)
 
@@ -1049,44 +1111,59 @@ namespace YAESU_FT_891_Front_End
             {
                 cX = Math.Max(border1X, Math.Min(border2X, cX));
 
-                double maxArcWidth = Math.Min(60.0, border2X - border1X);
-                double halfArcWidth = maxArcWidth / 2.0;
+                // Define a constant fixed width for the arc (e.g., 60 pixels total)
+                const double totalArcWidth = 60.0;
+                double halfArcWidth = totalArcWidth / 2.0;
 
-                double startX = Math.Max(border1X, cX - halfArcWidth);
-                double endX = Math.Min(border2X, cX + halfArcWidth);
-                double actualSpan = endX - startX;
+                double startX = cX - halfArcWidth;
+                double endX = cX + halfArcWidth;
 
-                ContourFigureStart.Point = new Point(startX, PeakY);
-                ContourArcSegment.Point = new Point(endX, PeakY);
+                // Shift the fixed-width window if it hits the boundaries so it never compresses
+                if (startX < border1X)
+                {
+                    startX = border1X;
+                    endX = border1X + totalArcWidth;
+                }
+                if (endX > border2X)
+                {
+                    endX = border2X;
+                    startX = border2X - totalArcWidth;
+                }
 
-                double offset = cY - PeakY;
+                ContourFigureStart.Point = new Point(startX, ContourPeakY);
+                ContourArcSegment.Point = new Point(endX, ContourPeakY);
+
+                double arcRadiusX = totalArcWidth / 2.0;
+                double offset = cY - ContourPeakY;
 
                 if (Math.Abs(offset) < 0.5)
                 {
-                    ContourArcSegment.Size = new Size(actualSpan / 2.0, 0);
+                    ContourArcSegment.Size = new Size(arcRadiusX, 0);
                     ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
                 }
                 else if (offset < 0)
                 {
-                    double maxUpTravel = PeakY - 5.0;
+                    double maxUpTravel = ContourPeakY - 5.0;
+                    // 1:1 height tracking with the thumb (removed / 2.0)
                     double currentHeight = Math.Min(Math.Abs(offset), maxUpTravel);
 
                     ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
-                    ContourArcSegment.Size = new Size(actualSpan / 2.0, currentHeight);
+                    ContourArcSegment.Size = new Size(arcRadiusX, currentHeight);
                 }
                 else
                 {
-                    double maxDownTravel = CenterY - PeakY;
+                    double maxDownTravel = 105 - ContourPeakY;
+                    // 1:1 height tracking with the thumb (removed / 2.0)
                     double currentHeight = Math.Min(offset, maxDownTravel);
 
                     ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
-                    ContourArcSegment.Size = new Size(actualSpan / 2.0, currentHeight);
+                    ContourArcSegment.Size = new Size(arcRadiusX, currentHeight);
                 }
             }
             else if (ContourArcSegment != null)
             {
-                ContourFigureStart.Point = new Point(border2X, PeakY);
-                ContourArcSegment.Point = new Point(border2X, PeakY);
+                ContourFigureStart.Point = new Point(border2X, ContourPeakY);
+                ContourArcSegment.Point = new Point(border2X, ContourPeakY);
                 ContourArcSegment.Size = new Size(0, 0);
             }
 

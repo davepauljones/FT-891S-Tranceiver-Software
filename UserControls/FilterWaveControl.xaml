@@ -4,11 +4,11 @@
              Width="643" Height="154" Background="#444444">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="102"/>
+            <RowDefinition Height="107"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Canvas Grid.Row="0" Width="640" Height="107" HorizontalAlignment="Left" VerticalAlignment="Top"
+        <Canvas Grid.Row="0" Width="640" Height="106" HorizontalAlignment="Left" VerticalAlignment="Top"
                 RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True"
                 TextOptions.TextRenderingMode="Grayscale" RenderOptions.ClearTypeHint="Enabled">
 
@@ -40,7 +40,8 @@
 
             <!-- ================= AREA 2: FILTER PASSBAND (CENTER) ================= -->
             <Polygon Canvas.Left="84" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
-            <Polygon Canvas.Left="107" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+
+            <!--<Polygon Canvas.Left="107" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="149" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="192" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="235" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
@@ -50,13 +51,13 @@
             <Polygon Canvas.Left="405" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="448" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="491" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="533" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
+            <Polygon Canvas.Left="533" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>-->
 
-            <Canvas Canvas.Left="84" Canvas.Top="29" Width="472" Height="12">
+            <Canvas Canvas.Left="84" Canvas.Top="29" Width="472" Height="12" Visibility="Collapsed">
                 <TextBlock x:Name="WidthNotchTextBlock" Text="WIDTH/NOTCH/SHIFT" Foreground="#FFFFFFFF" Width="472" FontSize="12" FontWeight="Bold" TextAlignment="Center"/>
             </Canvas>
 
-            <Polygon Canvas.Left="84" Canvas.Top="55" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <!--<Polygon Canvas.Left="84" Canvas.Top="55" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="84" Canvas.Top="59" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="84" Canvas.Top="63" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="84" Canvas.Top="67" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
@@ -67,7 +68,7 @@
             <Polygon Canvas.Left="84" Canvas.Top="87" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="84" Canvas.Top="91" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
             <Polygon Canvas.Left="84" Canvas.Top="95" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
-            <Polygon Canvas.Left="84" Canvas.Top="99" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>
+            <Polygon Canvas.Left="84" Canvas.Top="99" Points="0,0 472,0 472,1 0,1" Fill="Gray"/>-->
 
             <!-- ================= AREA 3: DIGITAL NOISE REDUCTION (NR) ================= -->
             <Polygon Canvas.Left="556" Canvas.Top="0" Points="0,0 0,107 1,107 1,1" Fill="#FFCC0000"/>
@@ -106,7 +107,7 @@
             <Polygon Canvas.Left="1" Canvas.Top="51" Points="0,0 640,0 640,1 0,1" Fill="#33FFFFFF"/>
 
             <!-- Fixed Background Trapeszoid -->
-            <Path Stroke="Firebrick" StrokeThickness="0" Fill="#33FFFFFF" Opacity="0.8" Visibility="Visible">
+            <Path Stroke="Firebrick" StrokeThickness="0" Fill="#33FFFFFF" Opacity="0.8" Visibility="Collapsed">
                 <!--<Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.2">
                         <GradientStop Color="Orange" Offset="0.0" />
@@ -203,13 +204,13 @@
                 </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,53">
+                        <PathFigure StartPoint="84,105">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,53"/>
-                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="316,23"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="323,23"/>
-                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,53"/>
-                                <LineSegment Point="556,53"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,105"/>
+                                <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="314,85"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="325,85"/>
+                                <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,105"/>
+                                <LineSegment Point="556,105"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -217,7 +218,7 @@
             </Path>
 
             <!-- 4. Notch Section (Fixed Size V-shape, pined to baseline) -->
-            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="2.5" Fill="#444444" Visibility="Collapsed" Panel.ZIndex="1">
+            <Path x:Name="NotchPath" Stroke="Orange" StrokeThickness="2.5" Fill="#444444" Visibility="Collapsed">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="NotchFigureStart" StartPoint="300,20">
@@ -258,11 +259,11 @@
             <Path x:Name="ContourPath" Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,25">
+                        <PathFigure StartPoint="84,51">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="ContourFigureStart" Point="300,25"/>
-                                <ArcSegment x:Name="ContourArcSegment" Point="340,25" Size="14,0" SweepDirection="Clockwise" IsLargeArc="False"/>
-                                <LineSegment Point="556,25"/>
+                                <LineSegment x:Name="ContourFigureStart" Point="300,51"/>
+                                <ArcSegment x:Name="ContourArcSegment" Point="340,51" Size="14,0" SweepDirection="Clockwise" IsLargeArc="False"/>
+                                <LineSegment Point="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -287,18 +288,18 @@
             </Path>
 
             <!-- Interactives Canvas -->
-            <Canvas x:Name="ControlCanvas" Width="643" Height="102" VerticalAlignment="Top">
+            <Canvas x:Name="ControlCanvas" Width="643" Height="106" VerticalAlignment="Top">
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="35" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
                 <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="WidthThumb_DragDelta"/>
                 <!-- NotchThumb locked to baseline Y (PeakY = 20) -->
                 <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="314" Canvas.Top="20" DragDelta="NotchThumb_DragDelta" />
-                <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="320" Canvas.Top="51" DragDelta="ContourThumb_DragDelta"/>
+                <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="312" Canvas.Top="44" DragDelta="ContourThumb_DragDelta"/>
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
-                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="51" DragDelta="ShiftThumb_DragDelta"/>
+                <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="320" Canvas.Top="105" DragDelta="ShiftThumb_DragDelta"/>
             </Canvas>
         </Grid>
 
-        <Canvas Grid.Row="1" Width="641" Height="52" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Canvas Grid.Row="1" Width="641" Height="47" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Canvas Canvas.Top="5">
 
                 <Border Canvas.Left="20" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
@@ -339,7 +340,7 @@
 
             </Canvas>
 
-            <Canvas Canvas.Top="27">
+            <Canvas Canvas.Top="22">
                 <Border Canvas.Left="-1" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" Width="20" CornerRadius="0,0,0,24" BorderThickness="0"/>
 
                 <Border Tag="0" Canvas.Left="20" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
