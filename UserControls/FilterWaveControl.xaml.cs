@@ -416,22 +416,130 @@ namespace YAESU_FT_891_Front_End
             UpdateThumbPositions();
             UpdateWaveform();
         }
-        // Inside your Window or Page class
-        public void BringToFront(UIElement element)
+
+        
+
+        private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Canvas.SetZIndex(element, 1);
+            double targetX = Canvas.GetLeft(ContourThumb) + 8 + e.HorizontalChange;
+            double targetY = Canvas.GetTop(ContourThumb) + 8 + e.VerticalChange;
+
+            double halfArcWidth = TotalArcWidth / 2.0;
+            double minCX = border1X + halfArcWidth;
+            double maxCX = border2X - halfArcWidth;
+
+            // Clamp X so the fixed-width arc never extends past border1X or border2X
+            double clampedX = Math.Max(minCX, Math.Min(maxCX, targetX));
+
+            // Clamp Y strictly to 24 pixels above and below ContourYPos
+            double clampedY = Math.Max(ContourYPos - 24.0, Math.Min(ContourYPos + 24.0, targetY));
+
+            // Map frequency ratio across the valid travel range (minCX to maxCX)
+            double ratio = (clampedX - minCX) / (maxCX - minCX);
+            int frequency = (int)Math.Round(
+                Ft891FilterRanges.ContourFrequencyMinHz +
+                ratio * (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
+
+            SetContourFrequencyInternal(frequency);
+
+            _contourVisualOffset = clampedY - ContourYPos;
+            _contourVisualOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
+
+            ContourEnabled = true;
+            OnPropertyChanged(nameof(ContourEnabled));
+
+            UpdateContourAndWaveform();
+
+            UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
+        }
+        public double ContourYPos = 90;
+        private const double TotalArcWidth = 30.0;
+        public void UpdateContourAndWaveform()
+        {
+            if (ContourThumb == null || ContourArcSegment == null || ContourFigureStart == null) return;
+
+            double halfArcWidth = TotalArcWidth / 2.0;
+            double minCX = border1X + halfArcWidth;
+            double maxCX = border2X - halfArcWidth;
+
+            double contourRatio = (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
+                                  (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
+
+            // cX stays strictly within bounds so the arc never overflows the borders
+            double cX = Math.Max(minCX, Math.Min(maxCX, minCX + contourRatio * (maxCX - minCX)));
+
+            // Enforce strict ±24 pixel limit from ContourYPos for the center Y
+            double clampedOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
+            double cY = ContourYPos + clampedOffset;
+            if (!ContourEnabled) cY = ContourYPos;
+
+            // --- THUMB IS ALWAYS DEAD-CENTER ON THE ARC ---
+            Canvas.SetLeft(ContourThumb, cX - 8);
+            Canvas.SetTop(ContourThumb, cY - 8);
+
+            if (ContourValueTextBlock != null)
+                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+
+            // --- FIXED WIDTH ARC (Always centered on cX) ---
+            double startX = cX - halfArcWidth;
+            double endX = cX + halfArcWidth;
+
+            ContourStartPoint.StartPoint = new Point(84, ContourYPos);
+            ContourFigureStart.Point = new Point(startX, ContourYPos);
+            ContourArcSegment.Point = new Point(endX, ContourYPos);
+            ContourEndPointLineSegment.Point = new Point(556, ContourYPos);
+
+            double arcRadiusX = halfArcWidth;
+            double offset = cY - ContourYPos;
+
+            // Adjust arc curve direction and height based on offset from ContourYPos
+            if (Math.Abs(offset) < 0.5)
+            {
+                ContourArcSegment.Size = new Size(arcRadiusX, 0);
+                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+            }
+            else if (offset < 0) // Dragged Up (Peak is above baseline)
+            {
+                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
+                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(Math.Abs(offset), 24.0));
+            }
+            else // Dragged Down (Peak is below baseline)
+            {
+                ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
+                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(offset, 24.0));
+            }
+        }
+        private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            double currentCenter = BaseCenter + ShiftToPixels((int)FT891S_CatManager.currentRadioState.WidthValue);
+            double currentLeft = Canvas.GetLeft(WidthThumb);
+            double newLeft = currentLeft + e.HorizontalChange;
+
+            double minX = currentCenter;
+            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
+            double maxX = currentCenter + maxHalfWidth - 8.0;
+
+            if (newLeft < minX) newLeft = minX;
+            if (newLeft > maxX) newLeft = maxX;
+
+            double percentage = ((newLeft - minX) / (maxX - minX));
+            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
+
+            SetWidthCodeInternal(code);
+            // Pass the updated state or target width depending on your implementation
+            Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
         }
         private void Update_Width_ThumbPostion()
         {
             if (WidthThumb == null) return;
 
             Canvas.SetLeft(WidthThumb, WidthTrapezoidRightBottomLineSegment.Point.X - 16);
+            Canvas.SetTop(WidthThumb, WidthYPos - 28);
         }
+        public readonly Double WidthYPos = 75;
         public void Update_Width_TrapezoidPostion(WidthValues WidthValue)
         {
             int freqInHz = WidthFrequencies_SSB_Wide[(int)FT891S_CatManager.currentRadioState.WidthValue];
-
-            BringToFront(WidthMainSectionPath);
 
             switch (FT891S_CatManager.currentRadioState.OperatingMode)
             {
@@ -546,12 +654,14 @@ namespace YAESU_FT_891_Front_End
             pixelPosition = value/2;
 
             const int CenterOfFilterArea = 320;
-            const int TrapezoidSideWidth = 8;
+            const int TrapezoidSideWidth = 6;
 
-            WidthTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - (TrapezoidSideWidth * 2), 51);
-            WidthTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - TrapezoidSideWidth, 21);
-            WidthTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 21);
-            WidthTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth * 2), 51);
+            WidthTrapezoidStartPoint.StartPoint = new Point(84, WidthYPos);
+            WidthTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - (TrapezoidSideWidth * 2), WidthYPos);
+            WidthTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea - pixelPosition) - TrapezoidSideWidth, WidthYPos -20);
+            WidthTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, WidthYPos -20);
+            WidthTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth * 2), WidthYPos);
+            WidthTrapezoidEndPointLineSegment.Point = new Point(556, WidthYPos);
 
             if (WidthValueTextBlock != null)
             {
@@ -572,18 +682,40 @@ namespace YAESU_FT_891_Front_End
                 mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
             }
         }
+        private void ShiftThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            // Directly calculate the pixel change from the drag delta and map it to Hz
+            const double maxPixelShift = ((border2X - border1X) / 2.0) - FixedSlopeWidth;
+
+            // Get current shift state and apply direction to get the true signed Hz value
+            var shiftState = FT891S_CatManager.currentRadioState.IfShiftHz;
+            double currentShiftHz = shiftState.IfShiftHz * shiftState.IfShiftDirection;
+
+            double currentPixelOffset = (currentShiftHz / (double)Ft891FilterRanges.IfShiftMaxHz) * maxPixelShift;
+
+            // Add the horizontal drag change
+            double newPixelOffset = currentPixelOffset + e.HorizontalChange;
+
+            // Convert back to Hz and clamp within allowed ranges (min/max handles negatives)
+            double newShiftHz = (newPixelOffset / maxPixelShift) * Ft891FilterRanges.IfShiftMaxHz;
+            int targetShift = SnapToStep((int)Math.Round(newShiftHz), Ft891FilterRanges.IfShiftMinHz, Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
+
+            SetShiftValueInternal(targetShift);
+
+            // Pass the updated state or target shift depending on your implementation
+            Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
+        }
         private void Update_Shift_ThumbPostion()
         {
             if (ShiftThumb == null) return;
 
             Canvas.SetLeft(ShiftThumb, ShiftTrapezoidRightBottomLineSegment.Point.X - 8);
+            Canvas.SetTop(ShiftThumb, ShiftYPos-10);
         }
+        public readonly Double ShiftYPos = 105;
         public void Update_Shift_TrapezoidPostion(IS_Shift IFShiftHz)
         {
             Double pixelPosition;
-
-            //BringToFront(ShiftMainSectionPath);
-            //BringToFront(ShiftThumb);
 
             float value = IFShiftHz.IfShiftHz / 5.5f;
             pixelPosition = (IFShiftHz.IfShiftDirection == -1) ? -value : value;
@@ -591,10 +723,14 @@ namespace YAESU_FT_891_Front_End
             const int CenterOfFilterArea = 320;
             const int TrapezoidSideWidth = 6;
 
-            ShiftTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - (TrapezoidSideWidth*2), 105);
-            ShiftTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - TrapezoidSideWidth, 85);
-            ShiftTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, 85);
-            ShiftTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth*2), 105);
+            ShiftTrapezoidStartPoint.StartPoint = new Point(84, ShiftYPos);
+            ShiftTrapezoidLeftBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - (TrapezoidSideWidth*2), ShiftYPos);
+            
+            ShiftTrapezoidLeftTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) - TrapezoidSideWidth, ShiftYPos-20);
+            ShiftTrapezoidRightTopLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + TrapezoidSideWidth, ShiftYPos-20);
+            
+            ShiftTrapezoidRightBottomLineSegment.Point = new Point((CenterOfFilterArea + pixelPosition) + (TrapezoidSideWidth*2), ShiftYPos);
+            ShiftTrapezoidEndPointLineSegment.Point = new Point(556, ShiftYPos);
 
             if (ShiftValueTextBlock != null)
             {
@@ -732,49 +868,8 @@ namespace YAESU_FT_891_Front_End
             // Pass the updated state or target width depending on your implementation
             Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
         }
-        private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            double currentCenter = BaseCenter + ShiftToPixels((int)FT891S_CatManager.currentRadioState.WidthValue);
-            double currentLeft = Canvas.GetLeft(WidthThumb);
-            double newLeft = currentLeft + e.HorizontalChange;
-
-            double minX = currentCenter;
-            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
-            double maxX = currentCenter + maxHalfWidth - 8.0;
-
-            if (newLeft < minX) newLeft = minX;
-            if (newLeft > maxX) newLeft = maxX;
-
-            double percentage = ((newLeft - minX) / (maxX - minX));
-            int code = (int)Math.Round(percentage * Ft891FilterRanges.WidthCodeMax);
-
-            SetWidthCodeInternal(code);
-            // Pass the updated state or target width depending on your implementation
-            Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
-        }
-        private void ShiftThumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            // Directly calculate the pixel change from the drag delta and map it to Hz
-            const double maxPixelShift = ((border2X - border1X) / 2.0) - FixedSlopeWidth;
-
-            // Get current shift state and apply direction to get the true signed Hz value
-            var shiftState = FT891S_CatManager.currentRadioState.IfShiftHz;
-            double currentShiftHz = shiftState.IfShiftHz * shiftState.IfShiftDirection;
-
-            double currentPixelOffset = (currentShiftHz / (double)Ft891FilterRanges.IfShiftMaxHz) * maxPixelShift;
-
-            // Add the horizontal drag change
-            double newPixelOffset = currentPixelOffset + e.HorizontalChange;
-
-            // Convert back to Hz and clamp within allowed ranges (min/max handles negatives)
-            double newShiftHz = (newPixelOffset / maxPixelShift) * Ft891FilterRanges.IfShiftMaxHz;
-            int targetShift = SnapToStep((int)Math.Round(newShiftHz), Ft891FilterRanges.IfShiftMinHz, Ft891FilterRanges.IfShiftMaxHz, Ft891FilterRanges.IfShiftStepHz);
-
-            SetShiftValueInternal(targetShift);
-
-            // Pass the updated state or target shift depending on your implementation
-            Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
-        }
+        
+        
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -869,88 +964,7 @@ namespace YAESU_FT_891_Front_End
             UIValueChanged?.Invoke("NCH_ENABLED", NotchEnabled);
         }
 
-        private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            double targetX = Canvas.GetLeft(ContourThumb) + 8 + e.HorizontalChange;
-            double targetY = Canvas.GetTop(ContourThumb) + 8 + e.VerticalChange;
-
-            double clampedX = Math.Max(border1X, Math.Min(border2X, targetX));
-
-            // Clamp Y to exactly 24 pixels above and below ContourPeakY (51) -> min: 27, max: 75
-            double clampedY = Math.Max(ContourPeakY - 24.0, Math.Min(ContourPeakY + 24.0, targetY));
-
-            double ratio = (clampedX - border1X) / (border2X - border1X);
-            int frequency = (int)Math.Round(
-                Ft891FilterRanges.ContourFrequencyMinHz +
-                ratio * (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
-
-            SetContourFrequencyInternal(frequency);
-
-            _contourVisualOffset = clampedY + 8 - ContourPeakY;
-            _contourVisualOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
-
-            ContourEnabled = true;
-            OnPropertyChanged(nameof(ContourEnabled));
-
-            UpdateContourAndWaveform();
-
-            UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
-        }
-        public void UpdateContourAndWaveform()
-        {
-            if (ContourThumb == null || ContourArcSegment == null || ContourFigureStart == null) return;
-
-            // --- 1. UPDATE THUMB POSITION ---
-            double contourRatio = (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
-                                  (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
-
-            double cX = Math.Max(border1X, Math.Min(border2X, border1X + contourRatio * (border2X - border1X)));
-            Canvas.SetLeft(ContourThumb, cX - 8);
-
-            // Limit thumb travel strictly to 24 pixels up/down from ContourPeakY
-            double clampedOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
-            double contourCenterY = ContourPeakY + clampedOffset;
-            if (!ContourEnabled) contourCenterY = ContourPeakY;
-            Canvas.SetTop(ContourThumb, contourCenterY - 8);
-
-            if (ContourValueTextBlock != null)
-                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
-
-            // --- 2. UPDATE WAVEFORM ARC ---
-            double cY = contourCenterY;
-            cX = Math.Max(border1X, Math.Min(border2X, cX));
-
-            const double totalArcWidth = 30.0;
-            double halfArcWidth = totalArcWidth / 2.0;
-
-            double startX = cX - halfArcWidth;
-            double endX = cX + halfArcWidth;
-
-            if (startX < border1X) { startX = border1X; endX = border1X + totalArcWidth; }
-            if (endX > border2X) { endX = border2X; startX = border2X - totalArcWidth; }
-
-            ContourFigureStart.Point = new Point(startX, ContourPeakY);
-            ContourArcSegment.Point = new Point(endX, ContourPeakY);
-
-            double arcRadiusX = totalArcWidth / 2.0;
-            double offset = cY - ContourPeakY;
-
-            if (Math.Abs(offset) < 0.5)
-            {
-                ContourArcSegment.Size = new Size(arcRadiusX, 0);
-                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
-            }
-            else if (offset < 0) // Dragged Up
-            {
-                ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
-                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(Math.Abs(offset), 24.0));
-            }
-            else // Dragged Down
-            {
-                ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
-                ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(offset, 24.0));
-            }
-        }
+        
 
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {

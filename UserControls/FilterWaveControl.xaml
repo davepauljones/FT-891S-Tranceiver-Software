@@ -181,13 +181,13 @@
                 </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,51">
+                        <PathFigure x:Name="WidthTrapezoidStartPoint" StartPoint="84,51">
                             <PathFigure.Segments>
                                 <LineSegment x:Name="WidthTrapezoidLeftBottomLineSegment" Point="200,51"/>
                                 <LineSegment x:Name="WidthTrapezoidLeftTopLineSegment" Point="208,21"/>
                                 <LineSegment x:Name="WidthTrapezoidRightTopLineSegment" Point="432,21"/>
                                 <LineSegment x:Name="WidthTrapezoidRightBottomLineSegment" Point="440,51"/>
-                                <LineSegment Point="556,51"/>
+                                <LineSegment x:Name="WidthTrapezoidEndPointLineSegment" Point="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -204,13 +204,13 @@
                 </Path.Fill>
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,105">
+                        <PathFigure x:Name="ShiftTrapezoidStartPoint" StartPoint="84,105">
                             <PathFigure.Segments>
                                 <LineSegment x:Name="ShiftTrapezoidLeftBottomLineSegment" Point="308,105"/>
                                 <LineSegment x:Name="ShiftTrapezoidLeftTopLineSegment" Point="314,85"/>
                                 <LineSegment x:Name="ShiftTrapezoidRightTopLineSegment" Point="325,85"/>
                                 <LineSegment x:Name="ShiftTrapezoidRightBottomLineSegment" Point="331,105"/>
-                                <LineSegment Point="556,105"/>
+                                <LineSegment x:Name="ShiftTrapezoidEndPointLineSegment" Point="556,105"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -255,15 +255,15 @@
                 </Path.Data>
             </Path>
 
-            <!-- 5. Contour Section (Fixed Size V-shape, pined to baseline) -->
+            <!-- 5. Contour Section (Fixed Size U-shape, pined to baseline) -->
             <Path x:Name="ContourPath" Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure StartPoint="84,51">
+                        <PathFigure x:Name="ContourStartPoint" StartPoint="84,51">
                             <PathFigure.Segments>
                                 <LineSegment x:Name="ContourFigureStart" Point="300,51"/>
                                 <ArcSegment x:Name="ContourArcSegment" Point="340,51" Size="14,0" SweepDirection="Clockwise" IsLargeArc="False"/>
-                                <LineSegment Point="556,51"/>
+                                <LineSegment x:Name="ContourEndPointLineSegment" Point="556,51"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
