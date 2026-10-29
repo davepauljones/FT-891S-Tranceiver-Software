@@ -238,19 +238,19 @@ namespace YAESU_FT_891_Front_End
             if (value < 0)
             {
                 state.IfShiftDirection = -1;
-                state.OnOff = 1;
+                state.OnOff = IFMode.IF_ON;
                 state.IfShiftHz = -value; // Store as positive magnitude
             }
             else if (value > 0)
             {
                 state.IfShiftDirection = 1;
-                state.OnOff = 1;
+                state.OnOff = IFMode.IF_ON;
                 state.IfShiftHz = value;
             }
             else
             {
                 state.IfShiftDirection = 1;
-                state.OnOff = 0;
+                state.OnOff = IFMode.IF_ON;
                 state.IfShiftHz = 0;
             }
         }
@@ -344,51 +344,6 @@ namespace YAESU_FT_891_Front_End
             UpdateWaveform();
         }
 
-        public void SetWidthValue(int value)
-        {
-            SetWidthCodeInternal(value);
-            if (WidthValueTextBlock != null) WidthValueTextBlock.Text = "WD: " + ((int)FT891S_CatManager.currentRadioState.WidthValue).ToString("D2");
-
-            if (WidthValueTextBlock != null)
-            {
-                //if (FT891S_CatManager.currentRadioState.OperatingMode == Models.RadioMode.)
-            }
-
-            UpdateThumbPositions();
-            UpdateWaveform();
-        }
-
-        public void SetNotchValues(int freq, bool enabled)
-        {
-            SetNotchFrequencyInternal(freq);
-            SetNotchEnabledInternal(enabled);
-
-            if (NotchValueTextBlock != null)
-                NotchValueTextBlock.Text = !NotchEnabled ? "NCH: OFF" : "NCH: " + NotchFrequency + " Hz";
-
-            UpdateThumbPositions();
-            UpdateWaveform();
-        }
-
-        // Compatibility overload for tuple/old signatures if needed
-        public void SetNotchValues(int freq, int depth)
-        {
-            SetNotchValues(freq, depth != 0);
-        }
-
-        public void SetContourValues(int value, bool enabled)
-        {
-            SetContourFrequencyInternal(value);
-            ContourEnabled = enabled;
-            OnPropertyChanged(nameof(ContourEnabled));
-
-            if (ContourValueTextBlock != null)
-                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
-
-            UpdateThumbPositions();
-            UpdateWaveform();
-        }
-
         private void NotchThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             const double notchHalfWidth = 12.0;
@@ -438,7 +393,7 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetTop(NotchThumb, NotchVBottomPoint.Point.Y - 8);
         }
 
-        public readonly Double NotchYPos = 2;
+        public readonly Double NotchYPos = 7;
 
         public void Update_Notch_PointPostion()
         {
@@ -768,8 +723,8 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetLeft(ShiftThumb, ShiftTrapezoidRightBottomLineSegment.Point.X - 8);
             Canvas.SetTop(ShiftThumb, ShiftYPos-10);
         }
-        public readonly Double ShiftYPos = 105;
-        public void Update_Shift_TrapezoidPostion(IS_Shift IFShiftHz)
+        public readonly Double ShiftYPos = 100;
+        public void Update_Shift_TrapezoidPostion(IfShiftResult IFShiftHz)
         {
             Double pixelPosition;
 
@@ -798,7 +753,7 @@ namespace YAESU_FT_891_Front_End
 
             Update_Shift_ThumbPostion();
 
-            if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == 0)
+            if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == IFMode.IF_OFF)
             {
                 ButtonState(FilterTypes.Shift, false);
                 mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
@@ -899,38 +854,46 @@ namespace YAESU_FT_891_Front_End
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            // Clamp newTop between the top limit (5) and bottom limit (CenterY)
             double newTop = Math.Max(5, Math.Min(CenterY, Canvas.GetTop(NbThumb) + e.VerticalChange));
             Canvas.SetTop(NbThumb, newTop);
 
+            // Calculate normalized travel percentage (0.0 at bottom/CenterY to 1.0 at top/5)
             double travelSpace = CenterY - 5;
-            double pct = (CenterY - newTop) / travelSpace;
+            double pct = travelSpace > 0 ? (CenterY - newTop) / travelSpace : 0;
 
-            NbValue = (int)Math.Round(pct * 10);
-            if (newTop <= 5) NbValue = 10;
-            if (newTop >= CenterY) NbValue = 0;
-            OnPropertyChanged(nameof(NbValue));
+            // Map percentage to range [-1, 10] (11 intervals / 12 steps)
+            // pct = 1.0 (top) -> 10
+            // pct = 0.0 (bottom) -> -1
+            int newProposedValue = (int)Math.Round(pct * 11) - 1;
 
-            if (NBValueTextBlock != null)
+            // Strict boundary enforcement
+            if (newTop <= 5) newProposedValue = 10;
+            else if (newTop >= CenterY) newProposedValue = -1;
+
+            NbValue = newProposedValue;
+
+            bool buttonState = States.Off;
+
+            if (newProposedValue < 0)
             {
-                if (NbValue == 0)
-                {
-                    NBValueTextBlock.Text = "0";
-                    ButtonState(FilterTypes.NB, States.Off);
-                }
-                else
-                {
-                    NBValueTextBlock.Text = NbValue.ToString("D2");
-                    ButtonState(FilterTypes.NB, States.On);
-                }
+                // -1 state: Noise Blanker OFF
+                FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_OFF;
+                FT891S_CatManager.currentRadioState.NoiseBlankerLevel = 0;
+                buttonState = States.Off;
+            }
+            else
+            {
+                // 0 to 10 state: Noise Blanker ON
+                FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_ON;
+                FT891S_CatManager.currentRadioState.NoiseBlankerLevel = newProposedValue;
+                buttonState = States.On;
             }
 
+            ButtonState(FilterTypes.NB, buttonState);
+
             UpdateWaveform();
-            UIValueChanged?.Invoke("NB", NbValue);
         }
-
-        
-
-        
 
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -982,62 +945,9 @@ namespace YAESU_FT_891_Front_End
             double nbX = 42.0;
             double nbY = Canvas.GetTop(NbThumb) + 8;
 
-            double currentCenter = BaseCenter;
-
-            if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 1)
-            {
-                var shiftInfo = FT891S_CatManager.currentRadioState.IfShiftHz;
-                double shiftHz = shiftInfo.IfShiftHz;
-
-                bool isNegative = (shiftInfo.IfShiftDirection == -1) || (shiftHz < 0);
-                double pixelOffset = ShiftToPixels((int)Math.Abs(shiftHz));
-
-                currentCenter = isNegative ? (BaseCenter - pixelOffset) : (BaseCenter + pixelOffset);
-            }
-            else
-            {
-                currentCenter = BaseCenter;
-            }
-
-            double maxHalfWidth = (border2X - border1X - (2 * FixedSlopeWidth)) / 2.0;
-            double minX = currentCenter;
-            double maxX = currentCenter + maxHalfWidth - 8.0;
-
-            double wX = minX + (((int)FT891S_CatManager.currentRadioState.WidthValue / (double)Ft891FilterRanges.WidthCodeMax) * (maxX - minX)) + 8.0;
-            Canvas.SetTop(WidthThumb, PeakY - 8);
-
+            
             double dnrX = 598.0;
             double dnrY = Canvas.GetTop(DnrThumb) + 8;
-
-            double halfWidth = Math.Max(0, wX - currentCenter);
-            double leftShoulderX = currentCenter - halfWidth;
-            double rightShoulderX = currentCenter + halfWidth;
-
-            double currentBaseLeftX = leftShoulderX - FixedSlopeWidth;
-            double currentBaseRightX = rightShoulderX + FixedSlopeWidth;
-
-            if (currentBaseLeftX < border1X)
-            {
-                currentBaseLeftX = border1X;
-                leftShoulderX = currentBaseLeftX + FixedSlopeWidth;
-            }
-            if (currentBaseRightX > border2X - 1.0)
-            {
-                currentBaseRightX = border2X - 1.0;
-                rightShoulderX = currentBaseRightX - FixedSlopeWidth;
-            }
-
-            if (leftShoulderX > currentCenter) leftShoulderX = currentCenter;
-            if (rightShoulderX < currentCenter) rightShoulderX = currentCenter;
-
-            double nX = Canvas.GetLeft(NotchThumb) + 9;
-            nX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, nX));
-
-            double cX = Canvas.GetLeft(ContourThumb) + 8;
-            double cY = Canvas.GetTop(ContourThumb) + 8;
-            cX = Math.Max(leftShoulderX, Math.Min(rightShoulderX, cX));
-
-            if (!ContourEnabled) cY = PeakY;
 
             // NB Section
             Segment1.Point1 = new Point(border0X + (nbX - border0X) * 0.5, CenterY);
@@ -1048,81 +958,7 @@ namespace YAESU_FT_891_Front_End
             Segment2.Point2 = new Point(border1X - (border1X - nbX) * 0.5, CenterY);
             Segment2.Point3 = new Point(border1X, CenterY);
 
-            // Passband Main Section
-            Point pA = new Point(currentBaseLeftX, CenterY);
-            Point pB = new Point(currentBaseRightX, CenterY);
-
-          
-            // Contour Section (DodgerBlue)
-            cX = Canvas.GetLeft(ContourThumb) + 8;
-            cY = Canvas.GetTop(ContourThumb) + 8;
-            cX = Math.Max(border1X, Math.Min(border2X, cX));
-
-            if (!ContourEnabled) cY = ContourPeakY;
-
-            // ... (other sections)
-
-            // Contour Section (DodgerBlue)
-            if (ContourEnabled && ContourArcSegment != null)
-            {
-                cX = Math.Max(border1X, Math.Min(border2X, cX));
-
-                // Define a constant fixed width for the arc (e.g., 60 pixels total)
-                const double totalArcWidth = 60.0;
-                double halfArcWidth = totalArcWidth / 2.0;
-
-                double startX = cX - halfArcWidth;
-                double endX = cX + halfArcWidth;
-
-                // Shift the fixed-width window if it hits the boundaries so it never compresses
-                if (startX < border1X)
-                {
-                    startX = border1X;
-                    endX = border1X + totalArcWidth;
-                }
-                if (endX > border2X)
-                {
-                    endX = border2X;
-                    startX = border2X - totalArcWidth;
-                }
-
-                ContourFigureStart.Point = new Point(startX, ContourPeakY);
-                ContourArcSegment.Point = new Point(endX, ContourPeakY);
-
-                double arcRadiusX = totalArcWidth / 2.0;
-                double offset = cY - ContourPeakY;
-
-                if (Math.Abs(offset) < 0.5)
-                {
-                    ContourArcSegment.Size = new Size(arcRadiusX, 0);
-                    ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
-                }
-                else if (offset < 0)
-                {
-                    double maxUpTravel = ContourPeakY - 5.0;
-                    // 1:1 height tracking with the thumb (removed / 2.0)
-                    double currentHeight = Math.Min(Math.Abs(offset), maxUpTravel);
-
-                    ContourArcSegment.SweepDirection = SweepDirection.Clockwise;
-                    ContourArcSegment.Size = new Size(arcRadiusX, currentHeight);
-                }
-                else
-                {
-                    double maxDownTravel = 105 - ContourPeakY;
-                    // 1:1 height tracking with the thumb (removed / 2.0)
-                    double currentHeight = Math.Min(offset, maxDownTravel);
-
-                    ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
-                    ContourArcSegment.Size = new Size(arcRadiusX, currentHeight);
-                }
-            }
-            else if (ContourArcSegment != null)
-            {
-                ContourFigureStart.Point = new Point(border2X, ContourPeakY);
-                ContourArcSegment.Point = new Point(border2X, ContourPeakY);
-                ContourArcSegment.Size = new Size(0, 0);
-            }
-
+            
             // DNR Section
             DnrRightFigure.StartPoint = new Point(border2X, CenterY);
             DnrRightSegment.Point1 = new Point(border2X + (dnrX - border2X) * 0.5, CenterY);
@@ -1157,6 +993,20 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NB].Enabled = false;
                         NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    }
+
+                    NBValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.NoiseBlankerLevel).ToString();
+
+                    if (FT891S_CatManager.currentRadioState.NoiseBlankerMode == NBMode.NB_OFF)
+                    {
+                        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, FT891S_CatManager.currentRadioState.NoiseBlankerLevel }, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     break;
                 case FilterTypes.Notch:
@@ -1196,7 +1046,7 @@ namespace YAESU_FT_891_Front_End
                     }
 
                     String BuiltIsCommand;
-                    if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == 0)
+                    if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == IFMode.IF_OFF)
                     {
                         BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 0, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -1207,9 +1057,6 @@ namespace YAESU_FT_891_Front_End
                             BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '-', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
                         else
                             BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
-
-                        lastIS_Shift.IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection;
-                        lastIS_Shift.IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
 
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
@@ -1281,8 +1128,6 @@ namespace YAESU_FT_891_Front_End
                     break;
             }
         }
-        private IS_Shift lastIS_Shift = new IS_Shift { IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection,
-                                                       IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz};
         public async void ButtonSelection(byte button)
         {
             switch (button)
@@ -1291,33 +1136,26 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.NB].Enabled))
                     {
                         filters[FilterTypes.NB].Enabled = true;
-                        NbValue = filters[FilterTypes.NB].Value;
-                        NBTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_ON;
+                        ButtonState(FilterTypes.NB, States.On);
                     }
                     else
                     {
                         filters[FilterTypes.NB].Enabled = false;
-                        filters[FilterTypes.NB].Value = NbValue;
-                        NbValue = 0;
-                        NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_OFF;
+                        ButtonState(FilterTypes.NB, States.Off);
                     }
-                    NBValueTextBlock.Text = NbValue.ToString("D2");
-                    UIValueChanged?.Invoke("NB", NbValue);
                     break;
                 case FilterTypes.Notch:
                     if (!(filters[FilterTypes.Notch].Enabled))
                     {
                         filters[FilterTypes.Notch].Enabled = true;
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        //NotchPath.Visibility = Visibility.Visible;
-                        NotchThumb.Visibility = Visibility.Visible;
                     }
                     else
                     {
                         filters[FilterTypes.Notch].Enabled = false;
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        //NotchPath.Visibility = Visibility.Collapsed;
-                        NotchThumb.Visibility = Visibility.Collapsed;
                     }
                     break;
                 case FilterTypes.Contour:
@@ -1325,35 +1163,26 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Contour].Enabled = true;
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        ContourPath.Visibility = Visibility.Visible;
-                        ContourThumb.Visibility = Visibility.Visible;
                     }
                     else
                     {
                         filters[FilterTypes.Contour].Enabled = false;
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        ContourPath.Visibility = Visibility.Collapsed;
-                        ContourThumb.Visibility = Visibility.Collapsed;
                     }
                     break;
                 case FilterTypes.Shift:
                     if (!(filters[FilterTypes.Shift].Enabled))
                     {
                         filters[FilterTypes.Shift].Enabled = true;
-
-                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = lastIS_Shift.IfShiftDirection;
-                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = lastIS_Shift.IfShiftHz;
                         
-                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 1;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_ON;
 
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        ShiftMainSectionPath.Visibility = Visibility.Visible;
-                        ShiftThumb.Visibility = Visibility.Visible;
 
                         char _ShiftDirection = (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1) ? '-' : '+';
 
                         // Sends the existing shift magnitude and direction along with the new OnOff state
-                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, FT891S_CatManager.currentRadioState.IfShiftHz.OnOff,
+                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, (int)FT891S_CatManager.currentRadioState.IfShiftHz.OnOff,
                                                                     _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
 
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -1361,17 +1190,14 @@ namespace YAESU_FT_891_Front_End
                     else
                     {
                         filters[FilterTypes.Shift].Enabled = false;
-                        
-                        lastIS_Shift.IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection;
-                        lastIS_Shift.IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
 
                         FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 0;
 
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        ShiftMainSectionPath.Visibility = Visibility.Collapsed;
-                        ShiftThumb.Visibility = Visibility.Collapsed;
 
-                        String BuiltIsCommandOff = FT891S_CatCommandTypes.BuildIsCommand(0, 0, '+', 0);
+                        char _ShiftDirection = (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1) ? '-' : '+';
+
+                        String BuiltIsCommandOff = FT891S_CatCommandTypes.BuildIsCommand(0, 0, _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
 
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommandOff, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
@@ -1380,10 +1206,7 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Width].Enabled))
                     {
                         filters[FilterTypes.Width].Enabled = true;
-                        SetWidthValue(filters[FilterTypes.Width].Value);
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        WidthMainSectionPath.Visibility = Visibility.Visible;
-                        WidthThumb.Visibility = Visibility.Visible;
 
                         mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
                         await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -1392,10 +1215,7 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Width].Enabled = false;
                         filters[FilterTypes.Width].Value = (int)FT891S_CatManager.currentRadioState.WidthValue;
-                        SetWidthValue(0);
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        WidthMainSectionPath.Visibility = Visibility.Collapsed;
-                        WidthThumb.Visibility = Visibility.Collapsed;
 
                         mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Hidden;
                         await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);

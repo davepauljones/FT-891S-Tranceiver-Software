@@ -75,18 +75,18 @@ namespace YAESU_FT_891_Front_End
                     switch (parameter)
                     {
                         case "NB":
-                            _nbValue = (int)value;
+                            //_nbValue = (int)value;
 
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (_nbValue == 0)
-                                    mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
+                            //mainWindow.Dispatcher.Invoke(() =>
+                            //{
+                            //    if (_nbValue == 0)
+                            //        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                            //    else
+                            //        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            //});
                            
-                            await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         
                         case "NCH_FREQ":

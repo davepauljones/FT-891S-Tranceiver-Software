@@ -46,7 +46,7 @@
             <Polygon Canvas.Left="192" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="235" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="277" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
-            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#FF00FFCC"/>
+            <Polygon Canvas.Left="320" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="363" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="405" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
             <Polygon Canvas.Left="448" Canvas.Top="52" Points="0,0 0,54 1,54 1,1" Fill="#33FFFFFF"/>
@@ -149,13 +149,13 @@
             </Path>
 
             <!-- 2. Width Main Section -->
-            <Path x:Name="WidthMainSectionPath" Stroke="Firebrick" StrokeThickness="2" Visibility="Visible">
-                <Path.Fill>
+            <Path x:Name="WidthMainSectionPath" Stroke="Red" StrokeThickness="2" Visibility="Visible">
+                <!--<Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
                         <GradientStop Color="Black" Offset="1.0" />
                     </LinearGradientBrush>
-                </Path.Fill>
+                </Path.Fill>-->
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="WidthTrapezoidStartPoint" StartPoint="84,51">
@@ -173,12 +173,12 @@
 
             <!-- 3. Shift Main Section -->
             <Path x:Name="ShiftMainSectionPath" Stroke="Yellow" StrokeThickness="2" Visibility="Visible">
-                <Path.Fill>
+                <!--<Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
                         <GradientStop Color="Black" Offset="1.0" />
                     </LinearGradientBrush>
-                </Path.Fill>
+                </Path.Fill>-->
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="ShiftTrapezoidStartPoint" StartPoint="84,105">
@@ -196,20 +196,20 @@
 
             <!-- 4. Notch Section (Fixed Size V-shape, pined to baseline) -->
             <Path x:Name="NotchMainSectionPath" Stroke="Orange" StrokeThickness="2" Visibility="Visible">
-                <Path.Fill>
+                <!--<Path.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.6">
                         <GradientStop Color="SlateGray" Offset="0.0" />
                         <GradientStop Color="Black" Offset="1.0" />
                     </LinearGradientBrush>
-                </Path.Fill>
+                </Path.Fill>-->
                 <Path.Data>
                     <PathGeometry>
-                        <PathFigure x:Name="NotchStartStartPoint" StartPoint="84,2">
+                        <PathFigure x:Name="NotchStartStartPoint" StartPoint="84,7">
                             <PathFigure.Segments>
-                                <LineSegment x:Name="NotchVLeftPoint" Point="314,2"/>
-                                <LineSegment x:Name="NotchVBottomPoint" Point="320,22"/>
-                                <LineSegment x:Name="NotchVRightPoint" Point="326,2"/>
-                                <LineSegment x:Name="NotchEndPoint" Point="556,2"/>
+                                <LineSegment x:Name="NotchVLeftPoint" Point="314,7"/>
+                                <LineSegment x:Name="NotchVBottomPoint" Point="320,27"/>
+                                <LineSegment x:Name="NotchVRightPoint" Point="326,7"/>
+                                <LineSegment x:Name="NotchEndPoint" Point="556,7"/>
                             </PathFigure.Segments>
                         </PathFigure>
                     </PathGeometry>
@@ -217,7 +217,7 @@
             </Path>
 
             <!-- 5. Contour Section (Fixed Size U-shape, pined to baseline) -->
-            <Path x:Name="ContourPath" Stroke="DodgerBlue" StrokeThickness="2.5" Fill="#444444" Visibility="Visible">
+            <Path x:Name="ContourPath" Stroke="DodgerBlue" StrokeThickness="2" Visibility="Visible">
                 <Path.Data>
                     <PathGeometry>
                         <PathFigure x:Name="ContourStartPoint" StartPoint="84,51">
@@ -253,8 +253,8 @@
                 <Thumb x:Name="NbThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="35" Canvas.Top="45" DragDelta="NbThumb_DragDelta" />
                 <Thumb x:Name="WidthThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="424" Canvas.Top="14" DragDelta="WidthThumb_DragDelta"/>
                 <!-- NotchThumb locked to baseline Y (PeakY = 20) -->
-                <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="312" Canvas.Top="16" DragDelta="NotchThumb_DragDelta" />
-                <Thumb x:Name="ContourThumb" Style="{StaticResource ContourHandleStyle}" Canvas.Left="312" Canvas.Top="44" DragDelta="ContourThumb_DragDelta"/>
+                <Thumb x:Name="NotchThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="312" Canvas.Top="21" DragDelta="NotchThumb_DragDelta" />
+                <Thumb x:Name="ContourThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="312" Canvas.Top="44" DragDelta="ContourThumb_DragDelta"/>
                 <Thumb x:Name="DnrThumb" Style="{StaticResource WaveHandleStyle}" Canvas.Left="591" Canvas.Top="45" DragDelta="DnrThumb_DragDelta" />
                 <Thumb x:Name="ShiftThumb" Style="{StaticResource WaveHandleStyle}" Cursor="SizeWE" Canvas.Left="323" Canvas.Top="97" DragDelta="ShiftThumb_DragDelta"/>
             </Canvas>
@@ -285,7 +285,7 @@
                 </Border>
                 <Border Canvas.Left="320" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="WidthValueTextBlock" Text="WIDTH" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Firebrick"/>
+                        <TextBlock x:Name="WidthValueTextBlock" Text="WIDTH" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Red"/>
                     </StackPanel>
                 </Border>
                 <Border Canvas.Left="395" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">

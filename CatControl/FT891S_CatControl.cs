@@ -27,13 +27,7 @@ namespace FT891S_CatControl
     // =========================================================================
     // 1. GLOBAL RADIO STATE VARIABLES (WPF / UI Reference Points)
     // =========================================================================
-    public class IS_Shift
-    {
-        public int Fixed;
-        public int OnOff;
-        public int IfShiftDirection;
-        public int IfShiftHz;
-    }
+
     public class RadioState
     {
         public Int32 ID { get; set; }
@@ -45,7 +39,7 @@ namespace FT891S_CatControl
         public RadioMode OperatingMode { get; set; }
         public int AgcBandSelection { get; set; }
         public AgcMode CurrentAgcMode { get; set; }
-        public IS_Shift IfShiftHz { get; set; }
+        public IfShiftResult IfShiftHz { get; set; }
         public MeterTypes ActiveMeterType { get; set; }
         public int CurrentMeterReading { get; set; }
         public int BusyMode { get; set; }
@@ -258,7 +252,8 @@ namespace FT891S_CatControl
     public enum ScanMode { Scan_OFF = 0, ScanUpward_ON = 1, ScanDownward_ON= 2 }
 
     public enum NBMode { NB_OFF = 0, NB_ON = 1 }
-    
+    public enum IFMode { IF_OFF = 0, IF_ON = 1 }
+
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
     public enum NotchModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
     public enum ContourModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
@@ -322,7 +317,7 @@ namespace FT891S_CatControl
     public class IfShiftResult
     {
         public int Fixed { get; set; }
-        public int OnOff { get; set; }// on the 710 it is just Fixed at 0
+        public IFMode OnOff { get; set; }// on the 710 it is just Fixed at 0
         public int IfShiftDirection { get; set; }// +/- it needs to see a character "+" or "-"
         public int IfShiftHz { get; set; }// SHift from 0-1200Hz in 20Hz steps
     }
@@ -552,7 +547,7 @@ namespace FT891S_CatControl
             dict => new IfShiftResult
             {
                 Fixed = int.Parse(dict["P1"]),//0
-                OnOff = int.Parse(dict["P2"]),//0 or 1
+                OnOff = (IFMode)int.Parse(dict["P2"]),//0 or 1
                 IfShiftDirection = dict["P3"] == "+" ? 1 : -1, // Safely maps '+' to 1 and '-' to -1
                 IfShiftHz = int.Parse(dict["P4"]) // 0-1200Hz Steps on 20Hz
             },
@@ -560,7 +555,7 @@ namespace FT891S_CatControl
                 // Ensure the object instance exists before setting its properties
                 if (FT891S_CatManager.currentRadioState.IfShiftHz == null)
                 {
-                    FT891S_CatManager.currentRadioState.IfShiftHz = new IS_Shift();
+                    FT891S_CatManager.currentRadioState.IfShiftHz = new IfShiftResult();
                 }
                 FT891S_CatManager.currentRadioState.IfShiftHz.Fixed = result.Fixed;
                 FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = result.OnOff;
