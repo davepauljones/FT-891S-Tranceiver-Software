@@ -979,6 +979,8 @@ namespace YAESU_FT_891_Front_End
             ButtonSelection(Convert.ToByte(switchValue));
         }
 
+        IfShiftResult Last_IfShiftResult = new IfShiftResult { IfShiftDirection = 1, IfShiftHz = 0 };
+
         public async void ButtonState(byte button, bool state)
         {
             switch (button)
@@ -1046,7 +1048,7 @@ namespace YAESU_FT_891_Front_End
                     }
 
                     String BuiltIsCommand;
-                    if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == IFMode.IF_OFF)
+                    if (filters[FilterTypes.Shift].Enabled == false)
                     {
                         BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 0, '+', FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -1174,10 +1176,13 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Shift].Enabled))
                     {
                         filters[FilterTypes.Shift].Enabled = true;
-                        
-                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_ON;
 
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+
+                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_ON;
+                        
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = Last_IfShiftResult.IfShiftDirection;
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = Last_IfShiftResult.IfShiftHz;
 
                         char _ShiftDirection = (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1) ? '-' : '+';
 
@@ -1191,13 +1196,19 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Shift].Enabled = false;
 
-                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = 0;
-
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+                        FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_OFF;
+
+                        Last_IfShiftResult.IfShiftDirection = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection;
+                        Last_IfShiftResult.IfShiftHz = FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz;
+
+                        FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = 0;
 
                         char _ShiftDirection = (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection == -1) ? '-' : '+';
 
-                        String BuiltIsCommandOff = FT891S_CatCommandTypes.BuildIsCommand(0, 0, _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
+                        String BuiltIsCommandOff = FT891S_CatCommandTypes.BuildIsCommand(0, (int)FT891S_CatManager.currentRadioState.IfShiftHz.OnOff,
+                                                                    _ShiftDirection, FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz);
 
                         await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommandOff, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
