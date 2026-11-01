@@ -98,24 +98,24 @@ namespace YAESU_FT_891_Front_End
                             await mainWindow._catManager.SendCatCommandAsync("BP", "01", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         case "NCH_ENABLED":
-                            _notchEnabled = (bool)value;
+                            //_notchEnabled = (bool)value;
 
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (!(_notchEnabled))
-                                    mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
+                            //mainWindow.Dispatcher.Invoke(() =>
+                            //{
+                            //    if (!(_notchEnabled))
+                            //        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                            //    else
+                            //        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            //});
 
-                            //Note to actually switch on and off the NCH Notch on the radio, has to be done in P3, not P2
-                            if (!(_notchEnabled))
-                                await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            else
-                                await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            ////Note to actually switch on and off the NCH Notch on the radio, has to be done in P3, not P2
+                            //if (!(_notchEnabled))
+                            //    await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //else
+                            //    await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("BP", "00", mainWindow._catManager.OutGoingDataLoopDelay);
+                            ////remove once added to outgoing data loop
+                            //await mainWindow._catManager.SendCatCommandAsync("BP", "00", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                         case "NCH_DEPTH":
                             _notchDepth = (int)value;

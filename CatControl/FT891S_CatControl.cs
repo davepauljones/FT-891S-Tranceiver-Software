@@ -67,7 +67,7 @@ namespace FT891S_CatControl
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
         
-        public NotchModes NotchMode { get; set; }
+        public NotchPayloadModes NotchPayloadMode { get; set; }
         public int NotchValue { get; set; } = 0;
         
         public ContourModes ContourMode { get; set; }
@@ -256,10 +256,11 @@ namespace FT891S_CatControl
     public enum IFMode { IF_OFF = 0, IF_ON = 1 }
 
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
-    public enum NotchModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
+    public enum NotchPayloadModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
     public enum ContourModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
     public enum NAMode { NA_OFF = 0, NA_ON = 1 }//Narrow
     public enum BCMode { BC_OFF = 0, BC_ON = 1 }//DNF
+    public enum NotchOnOffModes { BP_OFF = 0, BP_ON = 1 }//BP = Manual Notch
 
     public enum DNRModes { NR_OFF = 0, NR_ON = 1 }
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
@@ -307,7 +308,7 @@ namespace FT891S_CatControl
     public class NotchResult
     {
         public int Fixed { get; set; }
-        public NotchModes Switch { get; set; }
+        public NotchPayloadModes Switch { get; set; }
         public int Values { get; set; }
     }
     public class ContourResult
@@ -574,12 +575,12 @@ namespace FT891S_CatControl
             dict => new NotchResult
             {
                 Fixed = int.Parse(dict["P1"]),
-                Switch = dict.ContainsKey("P2") ? (NotchModes)int.Parse(dict["P2"]) : 0,
+                Switch = dict.ContainsKey("P2") ? (NotchPayloadModes)int.Parse(dict["P2"]) : 0,
                 Values = dict.ContainsKey("P3") ? int.Parse(dict["P3"]) : 0
             },
             result => {
                 //Do nothing with Fixed
-                FT891S_CatManager.currentRadioState.NotchMode = result.Switch;
+                FT891S_CatManager.currentRadioState.NotchPayloadMode = result.Switch;
                 FT891S_CatManager.currentRadioState.NotchValue = result.Values;
             }
         );
@@ -1273,6 +1274,29 @@ namespace FT891S_CatControl
                                 mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false);
                             else
                                 mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true);
+                        });
+                        
+                        //BP = Notch On Off State
+                        await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+                        mainWindow.Dispatcher.Invoke(() =>
+                        {
+                            if (FT891S_CatManager.currentRadioState.NotchPayloadMode == NotchPayloadModes.ManualNotchOnOff)
+                            {
+                                if (FT891S_CatManager.currentRadioState.NotchValue == (int)NotchOnOffModes.BP_OFF)
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Notch, false);
+                                else
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Notch, true);
+                            }
+                        });
+                        
+                        //BP = Notch Value
+                        await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+                        mainWindow.Dispatcher.Invoke(() =>
+                        {
+                            if (FT891S_CatManager.currentRadioState.NotchPayloadMode == NotchPayloadModes.ManualNotchFrequency)
+                            {
+                                mainWindow.filterWaveControl.Update_Notch_PointPostion();
+                            }
                         });
                         break;
                     case TranceiverModes.MorseCode:
