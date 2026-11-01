@@ -68,8 +68,8 @@ namespace FT891S_CatControl
         public WidthValues WidthValue { get; set; } = 0;
         
         public NotchPayloadModes NotchPayloadMode { get; set; }
-        public int NotchValue { get; set; } = 0;
-        
+        public int NotchValue { get; set; } = 0; //could be OnOff or NotchFreq
+
         public ContourModes ContourMode { get; set; }
         public int ContourValue { get; set; } = 0;
         public NAMode NarrowMode { get; set; }
@@ -1248,22 +1248,22 @@ namespace FT891S_CatControl
                         await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
                         mainWindow.Dispatcher.Invoke(() =>
                         {
-                            mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
+                            mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
                         });
 
                         await SendCatCommandAsync("SH", "0", OutGoingDataLoopDelay);
                         mainWindow.Dispatcher.Invoke(() =>
                         {
-                            mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
+                            mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
                         });
 
                         await SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                         mainWindow.Dispatcher.Invoke(() =>
                         {
                             if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false);
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false, false);
                             else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true);
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true, false);
                         });
                         
                         //BC = DNF
@@ -1271,32 +1271,25 @@ namespace FT891S_CatControl
                         mainWindow.Dispatcher.Invoke(() =>
                         {
                             if (FT891S_CatManager.currentRadioState.DNFMode == BCMode.BC_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false);
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false, false);
                             else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true);
+                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true, false);
                         });
                         
                         //BP = Notch On Off State
                         await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
                         mainWindow.Dispatcher.Invoke(() =>
                         {
-                            if (FT891S_CatManager.currentRadioState.NotchPayloadMode == NotchPayloadModes.ManualNotchOnOff)
-                            {
-                                if (FT891S_CatManager.currentRadioState.NotchValue == (int)NotchOnOffModes.BP_OFF)
-                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Notch, false);
-                                else
-                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Notch, true);
-                            }
+                            mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
                         });
-                        
+
                         //BP = Notch Value
                         await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
                         mainWindow.Dispatcher.Invoke(() =>
                         {
-                            if (FT891S_CatManager.currentRadioState.NotchPayloadMode == NotchPayloadModes.ManualNotchFrequency)
-                            {
-                                mainWindow.filterWaveControl.Update_Notch_PointPostion();
-                            }
+                            // 4. Update internal frequency state
+                            mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchValue*10);
+                            mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
                         });
                         break;
                     case TranceiverModes.MorseCode:

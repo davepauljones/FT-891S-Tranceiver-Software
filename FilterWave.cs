@@ -74,54 +74,7 @@ namespace YAESU_FT_891_Front_End
 
                     switch (parameter)
                     {
-                        case "NB":
-                            //_nbValue = (int)value;
-
-                            //mainWindow.Dispatcher.Invoke(() =>
-                            //{
-                            //    if (_nbValue == 0)
-                            //        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                            //    else
-                            //        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            //});
-                           
-                            //await mainWindow._catManager.SendCatCommandAsync("NB", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            //await mainWindow._catManager.SendCatCommandAsync("NL", new object[] { 0, _nbValue }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
-                        
-                        case "NCH_FREQ":
-                            _notchFreq = (int)value;
-
-                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 1, _notchFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("BP", "01", mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
-                        case "NCH_ENABLED":
-                            //_notchEnabled = (bool)value;
-
-                            //mainWindow.Dispatcher.Invoke(() =>
-                            //{
-                            //    if (!(_notchEnabled))
-                            //        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                            //    else
-                            //        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            //});
-
-                            ////Note to actually switch on and off the NCH Notch on the radio, has to be done in P3, not P2
-                            //if (!(_notchEnabled))
-                            //    await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            //else
-                            //    await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                            ////remove once added to outgoing data loop
-                            //await mainWindow._catManager.SendCatCommandAsync("BP", "00", mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
-                        case "NCH_DEPTH":
-                            _notchDepth = (int)value;
-                            bool active = _notchDepth > 0;
-                            // Example: await mainWindow._catManager.SendCatCommandAsync("NT", new object[] { 0, active ? 1 : 0 }, ...);
-                            break;
+                       
                         case "CONTOUR_FREQ":
                             _contourFreq = (int)value;
 
@@ -150,41 +103,7 @@ namespace YAESU_FT_891_Front_End
                             //remove once added to outgoing data loop
                             await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
-                        case "SHIFT":
-                            //_isValue = (int)value;
-
-                            //Console.WriteLine(">>>>> " + _isValue);
-                            
-                            //int ShiftOnOff = 0;
-                            //char _ShiftDirection = '+';
-
-                            //if (_isValue > 0)
-                            //{
-                            //    ShiftOnOff = 1;
-                            //    _ShiftDirection = '+';
-                            //}
-                            //else if (_isValue < 0)
-                            //{
-                            //    ShiftOnOff = 1;
-                            //    _ShiftDirection = '-';
-                            //}
-                            //else
-                            //{
-                            //    ShiftOnOff = 0;
-                            //    _ShiftDirection = '+';
-                            //}
-
-                            //mainWindow.Dispatcher.Invoke(() =>
-                            //{
-                            //    if (_isValue == 0)
-                            //        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                            //    else
-                            //        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            //});
-
-                            //String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, ShiftOnOff, _ShiftDirection, _isValue);
-                            //await mainWindow._catManager.SendCatCommandAsync("IS", BuiltIsCommand, mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
+                       
                     }
                 }
                 catch (Exception ex)
