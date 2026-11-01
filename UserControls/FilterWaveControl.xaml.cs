@@ -26,7 +26,7 @@ namespace YAESU_FT_891_Front_End
         public const int Width = 4;
         public const int DNR = 5;
         public const int Narrow = 6;
-        public const int AllOff = 7;
+        public const int DNF = 7;
     }
     public struct States
     {
@@ -169,8 +169,6 @@ namespace YAESU_FT_891_Front_End
         }
         public int ShiftMagnitude { get { return Math.Abs(FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz); } }
 
-        //public int DnrValue { get; private set; }
-        
         private double _contourVisualOffset = 0.0;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -357,7 +355,7 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.AllOff, Name = "ALLOFF", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.DNF, Name = "DNF", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
 
             Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz);
             Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue);
@@ -1165,16 +1163,40 @@ namespace YAESU_FT_891_Front_End
                     if (state)
                     {
                         filters[FilterTypes.Narrow].Enabled = true;
+
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                         NarrowValueTextBlock.Text = "ON";
                         mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     else
                     {
                         filters[FilterTypes.Narrow].Enabled = false;
+
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
                         NarrowValueTextBlock.Text = "OFF";
                         mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    break;
+                case FilterTypes.DNF:
+                    if (state)
+                    {
+                        filters[FilterTypes.DNF].Enabled = true;
+
+                        DNFTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        DNFValueTextBlock.Text = "ON";
+                        mainWindow.DNFLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        await mainWindow._catManager.SendCatCommandAsync("BC", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.DNF].Enabled = false;
+
+                        DNFTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        DNFValueTextBlock.Text = "OFF";
+                        mainWindow.DNFLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        await mainWindow._catManager.SendCatCommandAsync("BC", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
                     }
                     break;
             }
@@ -1283,73 +1305,25 @@ namespace YAESU_FT_891_Front_End
                     if (!(filters[FilterTypes.Narrow].Enabled))
                     {
                         filters[FilterTypes.Narrow].Enabled = true;
-                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        NarrowValueTextBlock.Text = "ON";
-                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        ButtonState(FilterTypes.Narrow, States.On);
                     }
                     else
                     {
                         filters[FilterTypes.Narrow].Enabled = false;
-                        NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        NarrowValueTextBlock.Text = "OFF";
-                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                        await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        ButtonState(FilterTypes.Narrow, States.Off);
                     }
                     break;
-                case FilterTypes.AllOff:
-                    if (!filters[FilterTypes.AllOff].Enabled)
+                case FilterTypes.DNF:
+                    if (!(filters[FilterTypes.DNF].Enabled))
                     {
-                        filters[FilterTypes.AllOff].Enabled = true;
-
-                        // 1. Pick the correct table based on OperatingMode and NarrowMode
-                        List<int> activeTable = GetActiveWidthTable();
-
-                        // 2. Find the index of the last valid (non -1) item, skipping index 0
-                        int maxIndex = activeTable
-                            .Select((val, idx) => new { Value = val, Index = idx })
-                            .Where(x => x.Index > 0 && x.Value != -1)
-                            .Last()
-                            .Index;
-
-                        Update_Width_TrapezoidPostion((WidthValues)maxIndex);
+                        filters[FilterTypes.DNF].Enabled = true;
+                        ButtonState(FilterTypes.DNF, States.On);
                     }
                     else
                     {
-                        //filters[FilterTypes.AllOff].Enabled = false;
-
-                        //// 1. Pick the correct table based on OperatingMode and NarrowMode
-                        //List<int> activeTable = GetActiveWidthTable();
-
-                        //// 2. Find the index of the first valid (non -1) item, skipping index 0
-                        //int minIndex = activeTable
-                        //    .Select((val, idx) => new { Value = val, Index = idx })
-                        //    .Where(x => x.Index > 0 && x.Value != -1)
-                        //    .First()
-                        //    .Index;
-
-                        //Update_Width_TrapezoidPostion((WidthValues)minIndex);
-
-                        await SetWidthByValueAsync((int)WidthValues.WDH_09);
+                        filters[FilterTypes.DNF].Enabled = false;
+                        ButtonState(FilterTypes.DNF, States.Off);
                     }
-
-                    //filters[FilterTypes.Notch].Enabled = false;
-                    //NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
-
-                    //filters[FilterTypes.Contour].Enabled = false;
-                    //ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
-
-                    //filters[FilterTypes.Width].Enabled = false;
-                    //WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
-
-                    //filters[FilterTypes.Shift].Enabled = false;
-                    //ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
-
-                    //filters[FilterTypes.NB].Enabled = false;
-                    //NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
-
-                    //filters[FilterTypes.DNR].Enabled = false;
-                    //DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
                     break;
             }
         }
