@@ -379,14 +379,6 @@ namespace FT891S_CatControl
             }
         );
 
-        //public static readonly FT891S_CatCommand<int> SH = new FT891S_CatCommand<int>(
-        //    "SH",
-        //    new CatStructure().Expect("P1", 1).Expect("P2", 4),
-        //    new CatStructure().Expect("P1", 1).Expect("P2", 4),
-        //    dict => int.Parse(dict["P1"] + dict["P2"]),
-        //    result => FT891S_CatManager.currentRadioState.IfShiftHz = result
-        //);
-
         public static readonly FT891S_CatCommand<MeterResult> RM = new FT891S_CatCommand<MeterResult>(
             "RM",
 
@@ -543,27 +535,32 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.PowerSwitch = (PowerSwitchModes)result
         );
-        public static readonly FT891S_CatCommand<IfShiftResult> IS = new FT891S_CatCommand<IfShiftResult>(
+        public static readonly FT891S_CatCommand<IfShiftResult> IS = new FT891S_CatCommand<IfShiftResult>
+        (
             "IS",
             new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 1).Expect("P4", 4),
             new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 1).Expect("P4", 4),
-            dict => new IfShiftResult
-            {
-                Fixed = int.Parse(dict["P1"]),//0
-                OnOff = (IFMode)int.Parse(dict["P2"]),//0 or 1
-                IfShiftDirection = dict["P3"] == "+" ? 1 : -1, // Safely maps '+' to 1 and '-' to -1
-                IfShiftHz = int.Parse(dict["P4"]) // 0-1200Hz Steps on 20Hz
+            dict => {
+                // 1. Grab the existing instance from global state (or create one only if it's null)
+                var shift = FT891S_CatManager.currentRadioState.IfShiftHz;
+                if (shift == null)
+                {
+                    shift = new IfShiftResult();
+                    FT891S_CatManager.currentRadioState.IfShiftHz = shift;
+                }
+
+                // 2. Mutate the existing object's properties in-place
+                shift.Fixed = int.Parse(dict["P1"]);                   // 0
+                shift.OnOff = (IFMode)int.Parse(dict["P2"]);           // 0 or 1
+                shift.IfShiftDirection = dict["P3"] == "+" ? 1 : -1;   // Maps '+' to 1 and '-' to -1
+                shift.IfShiftHz = int.Parse(dict["P4"]);               // 0-1200Hz Steps on 20Hz
+
+                // 3. Return the exact same reference
+                return shift;
             },
             result => {
-                // Ensure the object instance exists before setting its properties
-                if (FT891S_CatManager.currentRadioState.IfShiftHz == null)
-                {
-                    FT891S_CatManager.currentRadioState.IfShiftHz = new IfShiftResult();
-                }
-                FT891S_CatManager.currentRadioState.IfShiftHz.Fixed = result.Fixed;
-                FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = result.OnOff;
-                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftDirection = result.IfShiftDirection;
-                FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz = result.IfShiftHz;
+                // Since the parser already updated the existing instance in-place, 
+                // no extra copying is required here.
             }
         );
         //BP = Manual Notch, Values are 001-320 x10Hz
@@ -735,6 +732,8 @@ namespace FT891S_CatControl
             // Cache the WPF UI synchronization context
             this.mainWindow = mainWindow;
             _uiDispatcher = currentDispatcher;
+
+            currentRadioState.IfShiftHz = new IfShiftResult();
         }
 
         public async Task SendCatCommandAsync(string opCode, string manualParameters, int delayMs = 0)
@@ -1226,7 +1225,7 @@ namespace FT891S_CatControl
 
             while (!token.IsCancellationRequested)
             {
-                if (packet == 11)
+                if (packet == 6)
                     packet = 0;
 
                 await MainWaterfallOutGoingData(packet);
@@ -1236,61 +1235,73 @@ namespace FT891S_CatControl
                     case TranceiverModes.BootUp:
                         await SendCatCommandAsync("ID", OutGoingDataLoopDelay);
 
-                        String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', 300);
-                        await SendCatCommandAsync("IS", BuiltIsCommand, OutGoingDataLoopDelay);
-                        await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
+                        //String BuiltIsCommand = FT891S_CatCommandTypes.BuildIsCommand(0, 1, '+', 300);
+                        //await SendCatCommandAsync("IS", BuiltIsCommand, OutGoingDataLoopDelay);
+                        //await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
                         break;
                     case TranceiverModes.MainWaterfall:
                         break;
                     case TranceiverModes.StationScope:
                         break;
                     case TranceiverModes.NoiseFilters:
-                        await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
-                        });
+                        //if (packet == 0)
+                        //{
+                            await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
+                            });
 
-                        await SendCatCommandAsync("SH", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
-                        });
+                            await SendCatCommandAsync("SH", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
+                            });
+                        //}
 
-                        await SendCatCommandAsync("NA", "0", mainWindow._catManager.OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true, false);
-                        });
-                        
-                        //BC = DNF
-                        await SendCatCommandAsync("BC", "0", mainWindow._catManager.OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.DNFMode == BCMode.BC_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true, false);
-                        });
-                        
-                        //BP = Notch On Off State
-                        await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
-                        });
+                        //if (packet == 2)
+                        //{
+                            await SendCatCommandAsync("NA", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false, false);
+                                else
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true, false);
+                            });
 
-                        //BP = Notch Value
-                        await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            // 4. Update internal frequency state
-                            mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchValue*10);
-                            mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
-                        });
+                            //BC = DNF
+                            await SendCatCommandAsync("BC", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (FT891S_CatManager.currentRadioState.DNFMode == BCMode.BC_OFF)
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false, false);
+                                else
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true, false);
+                            });
+                        //}
+
+                        //if (packet == 4)
+                        //{
+                            //BP = Notch On Off State
+                            await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
+                            });
+                        //}
+
+                        //if (packet == 5)
+                        //{
+                            //BP = Notch Value
+                            await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                // 4. Update internal frequency state
+                                mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchValue * 10);
+                                mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
+                            });
+                        //}
                         break;
                     case TranceiverModes.MorseCode:
                         break;
