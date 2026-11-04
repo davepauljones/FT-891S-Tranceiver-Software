@@ -20,6 +20,7 @@ using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MainWindow;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
+using static YAESU_FT_891_Front_End.SRRSManager;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
 
 namespace FT891S_CatControl
@@ -69,6 +70,7 @@ namespace FT891S_CatControl
         
         public NotchPayloadModes NotchPayloadMode { get; set; }
         public int NotchValue { get; set; } = 0; //could be OnOff or NotchFreq
+        public int NotchSwitchValue { get; set; } = 0;
 
         public ContourModes ContourMode { get; set; }
         public int ContourValue { get; set; } = 0;
@@ -1283,24 +1285,34 @@ namespace FT891S_CatControl
 
                         //if (packet == 4)
                         //{
-                            //BP = Notch On Off State
-                            await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+                        //BP = Notch On Off State
+                        await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+
+                        //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 1, Origins.Rig, false);
+                        //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                        //{
                             mainWindow.Dispatcher.Invoke(() =>
                             {
                                 mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
                             });
                         //}
+                        //}
 
                         //if (packet == 5)
                         //{
-                            //BP = Notch Value
-                            await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+                        //BP = Notch Value
+                        await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+
+                        //SRRSManager.SRRSCriteria NotchValueReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterValue, FT891S_CatManager.currentRadioState.NotchValue, Origins.Rig, false);
+                        //if (NotchValueReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                        //{
                             mainWindow.Dispatcher.Invoke(() =>
                             {
                                 // 4. Update internal frequency state
                                 mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchValue * 10);
                                 mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
                             });
+                        //}
                         //}
                         break;
                     case TranceiverModes.MorseCode:

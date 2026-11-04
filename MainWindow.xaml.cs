@@ -67,6 +67,8 @@ namespace YAESU_FT_891_Front_End
 
         public FT891S_CatManager _catManager;
 
+        public SRRSManager _SRRSManager;
+
         public GainManagement gainManagement;
 
         public PacketManagement packetManagement;
@@ -200,6 +202,8 @@ namespace YAESU_FT_891_Front_End
             waterFallSweep = new WaterFallSweep(this, BandScopeCanvas, SweepYellowCursorCanvas);
 
             _catManager = new FT891S_CatManager(this, this.Dispatcher);
+
+            _SRRSManager = new SRRSManager(this);
 
             gainManagement = new GainManagement(this);
 

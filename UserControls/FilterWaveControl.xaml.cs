@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using YAESU_FT_891_Front_End.Models;
+using static YAESU_FT_891_Front_End.SRRSManager;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -959,9 +960,13 @@ namespace YAESU_FT_891_Front_End
 
                         if (sendCAT)
                         {
-                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 1, Origins.Software, sendCAT);
+                            //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                                await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 1, NotchFrequency/10 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //SRRSManager.SRRSCriteria NotchValueReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterValue, NotchFrequency, Origins.Software, sendCAT);
+                            //if (NotchValueReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                                await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 1, NotchFrequency/10 }, mainWindow._catManager.OutGoingDataLoopDelay);
                         } 
                     }
                     else
@@ -973,7 +978,9 @@ namespace YAESU_FT_891_Front_End
 
                         if (sendCAT)
                         {
-                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 0, Origins.Software, sendCAT);
+                            //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                               await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                     }
 

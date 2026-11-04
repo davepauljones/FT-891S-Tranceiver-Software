@@ -169,6 +169,7 @@
     <Compile Include="Speech\FT891SpeechRecognition.cs" />
     <Compile Include="Management\GainManagement.cs" />
     <Compile Include="RadioMode\FTX1ModeMapper.cs" />
+    <Compile Include="SRRSManager.cs" />
     <Compile Include="UserControls\EventHorizonRequesterInformation.xaml.cs">
       <DependentUpon>EventHorizonRequesterInformation.xaml</DependentUpon>
     </Compile>
