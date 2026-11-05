@@ -66,8 +66,8 @@ namespace YAESU_FT_891_Front_End
 
         private void Init_SRRSManager()
         {
-            SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.NotchFilterSwitch, CurrentValue = 0, LastValue = FT891S_CatManager.currentRadioState.NotchSwitchValue, DefaultValue = 0, MinValue = 0, MaxValue = 1, StepValue = 0, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });
-            SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.NotchFilterValue, CurrentValue = 1600, LastValue = FT891S_CatManager.currentRadioState.NotchValue, DefaultValue = 1600, MinValue = 10, MaxValue = 3200, StepValue = 10, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });
+            SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.NotchFilterSwitch, CurrentValue = 0, LastValue = (int)FT891S_CatManager.currentRadioState.NotchSwitch, DefaultValue = 0, MinValue = 0, MaxValue = 1, StepValue = 0, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });
+            SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.NotchFilterValue, CurrentValue = 1600, LastValue = FT891S_CatManager.currentRadioState.NotchFreq, DefaultValue = 1600, MinValue = 10, MaxValue = 3200, StepValue = 10, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });
             
             SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.WidthFilter, CurrentValue = 14, LastValue = 14, DefaultValue = 14, MinValue = 0, MaxValue = 21, StepValue = 0, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });
             SRRSCriteriaList.Add(new SRRSCriteria { ID = SRRSManagedItems.ShiftFilter, CurrentValue = 0, LastValue = 0, DefaultValue = 0, MinValue = 0, MaxValue = 1200, StepValue = 20, LastUpdateDateTime = DateTime.Now, Origin = Origins.Init });

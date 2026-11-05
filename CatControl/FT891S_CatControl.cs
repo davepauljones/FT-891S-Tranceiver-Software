@@ -67,10 +67,12 @@ namespace FT891S_CatControl
 
         public WidthModes WidthMode { get; set; }
         public WidthValues WidthValue { get; set; } = 0;
-        
-        public NotchPayloadModes NotchPayloadMode { get; set; }
-        public int NotchValue { get; set; } = 0; //could be OnOff or NotchFreq
-        public int NotchSwitchValue { get; set; } = 0;
+
+        public NotchPayloadModes NotchSwitchPayloadMode { get; set; }
+        public NotchOnOffModes NotchSwitch { get; set; } = 0;
+
+        public NotchPayloadModes NotchFreqPayloadMode { get; set; }
+        public int NotchFreq { get; set; } = 0;
 
         public ContourModes ContourMode { get; set; }
         public int ContourValue { get; set; } = 0;
@@ -570,7 +572,6 @@ namespace FT891S_CatControl
             "BP",
             new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 3),
             new CatStructure().Expect("P1", 1).Expect("P2", 1).Expect("P3", 3),
-
             dict => new NotchResult
             {
                 Fixed = int.Parse(dict["P1"]),
@@ -578,9 +579,17 @@ namespace FT891S_CatControl
                 Values = dict.ContainsKey("P3") ? int.Parse(dict["P3"]) : 0
             },
             result => {
-                //Do nothing with Fixed
-                FT891S_CatManager.currentRadioState.NotchPayloadMode = result.Switch;
-                FT891S_CatManager.currentRadioState.NotchValue = result.Values;
+                // Automatically route to either switch or frequency state based on P2
+                if (result.Switch == NotchPayloadModes.ManualNotchOnOff)
+                {
+                    FT891S_CatManager.currentRadioState.NotchSwitchPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.NotchSwitch = (NotchOnOffModes)result.Values;
+                }
+                else
+                {
+                    FT891S_CatManager.currentRadioState.NotchFreqPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.NotchFreq = result.Values;
+                }
             }
         );
         //CO = Contour / APF, Values are 001-320 x10Hz APF values 0000-0050 -250 to 250
@@ -747,7 +756,7 @@ namespace FT891S_CatControl
             // 2. Formatting: Construct the string without manual string concatenation in your logic
             // We trim any existing semicolons from the parameters to ensure we only have one at the end.
             string paramsClean = (manualParameters ?? "").Replace(";", "").Trim();
-            string catString = $"{opCode.ToUpper()}{paramsClean};";
+            string catString = $"{opCode.ToUpper()}{paramsClean};";    
 
             // 3. Serial Port Communication
             if (mainWindow.fT891S_SerialPort._port != null &&
@@ -1283,37 +1292,37 @@ namespace FT891S_CatControl
                             });
                         //}
 
-                        //if (packet == 4)
-                        //{
-                        //BP = Notch On Off State
-                        await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+                        if (!(mainWindow.filterWaveControl.NotchIsBeingDragged))
+                        {
+                            //BP = Notch On Off State
+                            await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
 
-                        //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 1, Origins.Rig, false);
-                        //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
-                        //{
+                            //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 1, Origins.Rig, false);
+                            //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                            //{
                             mainWindow.Dispatcher.Invoke(() =>
                             {
                                 mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
                             });
-                        //}
-                        //}
 
-                        //if (packet == 5)
-                        //{
-                        //BP = Notch Value
-                        await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+                            
 
-                        //SRRSManager.SRRSCriteria NotchValueReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterValue, FT891S_CatManager.currentRadioState.NotchValue, Origins.Rig, false);
-                        //if (NotchValueReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
-                        //{
+                            //BP = Notch Value
+                            await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
+
+                            //SRRSManager.SRRSCriteria NotchValueReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterValue, FT891S_CatManager.currentRadioState.NotchValue, Origins.Rig, false);
+                            //if (NotchValueReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
+                            //{
+                            
+
                             mainWindow.Dispatcher.Invoke(() =>
                             {
                                 // 4. Update internal frequency state
-                                mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchValue * 10);
+                                mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchFreq * 10);
                                 mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
                             });
-                        //}
-                        //}
+                            //await Task.Delay(50);
+                        }
                         break;
                     case TranceiverModes.MorseCode:
                         break;
