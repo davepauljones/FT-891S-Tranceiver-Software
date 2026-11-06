@@ -19,12 +19,15 @@ namespace YAESU_FT_891_Front_End
         public const int NB = 0;
         public const int NotchSwitch = 1;
         public const int NotchFreq = 2;
-        public const int Contour = 3;
-        public const int Shift = 4;
-        public const int Width = 5;
-        public const int DNR = 6;
-        public const int Narrow = 7;
-        public const int DNF = 8;
+        public const int ContourSwitch = 3;
+        public const int ContourFreq = 4;
+        public const int APFSwitch = 5;
+        public const int APFFreq = 6;
+        public const int Shift = 7;
+        public const int Width = 8;
+        public const int DNR = 9;
+        public const int Narrow = 10;
+        public const int DNF = 11;
     }
     public struct States
     {
@@ -38,6 +41,7 @@ namespace YAESU_FT_891_Front_End
         public int Value { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
+        public int StepValue { get; set; }
         public int DefaultValue { get; set; }
         public bool Enabled { get; set; }
     }
@@ -88,6 +92,8 @@ namespace YAESU_FT_891_Front_End
         public const int ContourFrequencyMinHz = 10;
         public const int ContourFrequencyMaxHz = 3200;
         public const int ContourFrequencyStepHz = 10;
+        public const int APFFrequencyMinHz = -250;
+        public const int APFFrequencyMaxHz = 250;
 
         public const int IfShiftMinHz = -1200;
         public const int IfShiftMaxHz = 1200;
@@ -135,11 +141,7 @@ namespace YAESU_FT_891_Front_End
         //public Ft891OnOff NotchState { get; private set; } = Ft891OnOff.Off;
         //public bool NotchEnabled { get { return NotchState == Ft891OnOff.On; } }
 
-        public int NotchFreq { get; private set; }
-
-        public int ContourFrequency { get; private set; } = 1600;
-        public int ContourValue { get { return ContourFrequency; } }
-        public Ft891OnOff ContourState { get; private set; } = Ft891OnOff.Off;
+        //public int ContourFrequency { get; private set; } = 1600;
         public bool ContourEnabled { get; private set; }
 
         public Ft891IfShiftState ShiftState { get; private set; } = Ft891IfShiftState.On;
@@ -254,15 +256,13 @@ namespace YAESU_FT_891_Front_End
             FT891S_CatManager.currentRadioState.NotchFreq = value;
         }
 
-        private void SetContourFrequencyInternal(int value)
+        public void SetContourFrequencyInternal(int value)
         {
             value = SnapToStep(value, Ft891FilterRanges.ContourFrequencyMinHz,
                 Ft891FilterRanges.ContourFrequencyMaxHz, Ft891FilterRanges.ContourFrequencyStepHz);
 
-            if (ContourFrequency == value) return;
-            ContourFrequency = value;
-            //OnPropertyChanged(nameof(ContourFrequency));
-            //OnPropertyChanged(nameof(ContourValue));
+            if (FT891S_CatManager.currentRadioState.ContourFreq == value) return;
+            FT891S_CatManager.currentRadioState.ContourFreq = value;
         }
 
         private void SetShiftValueInternal(int value)
@@ -314,17 +314,21 @@ namespace YAESU_FT_891_Front_End
 
         private void Init_Filters()
         {
-            filters.Add(new FilterClass { ID = FilterTypes.NB, Name = "NB", Value = 0, MinValue = 0, MaxValue = 10, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.NotchSwitch, Name = "NOTCH SWITCH", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.NotchFreq, Name = "NOTCH FREQ", Value = 0, MinValue = 1, MaxValue = 320, DefaultValue = 1, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.Contour, Name = "CONTOUR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.Shift, Name = "SHIFT", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.DNF, Name = "DNF", Value = 0, MinValue = 0, MaxValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.NB, Name = "NB", Value = 0, MinValue = 0, MaxValue = 10, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.NotchSwitch, Name = "NOTCH SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.NotchFreq, Name = "NOTCH FREQ", Value = 1, MinValue = 1, MaxValue = 320, StepValue = 10, DefaultValue = 1, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.ContourSwitch, Name = "CONTOUR SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.ContourFreq, Name = "CONTOUR FREQ", Value = 10, MinValue = 10, MaxValue = 3200, StepValue = 10, DefaultValue = 10, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.APFSwitch, Name = "APF SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.APFFreq, Name = "APF FREQ", Value = 0, MinValue = 0, MaxValue = 50, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Shift, Name = "SHIFT", Value = 0, MinValue = 0, MaxValue = 1200, StepValue = 20, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Width, Name = "WIDTH", Value = 0, MinValue = 0, MaxValue = 21, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.DNR, Name = "DNR", Value = 0, MinValue = 0, MaxValue = 15, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
+            filters.Add(new FilterClass { ID = FilterTypes.DNF, Name = "DNF", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
 
             Update_Notch_PointPostion(false);
+            Update_Contour_Waveform(false);
             Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
             Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
         }
@@ -425,8 +429,11 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        public bool ContourIsBeingDragged;
         private void ContourThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
+            ContourIsBeingDragged = true;
+
             double targetX = Canvas.GetLeft(ContourThumb) + 8 + e.HorizontalChange;
             double targetY = Canvas.GetTop(ContourThumb) + 8 + e.VerticalChange;
 
@@ -452,24 +459,39 @@ namespace YAESU_FT_891_Front_End
             _contourVisualOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
 
             ContourEnabled = true;
-            OnPropertyChanged(nameof(ContourEnabled));
+            //OnPropertyChanged(nameof(ContourEnabled));
 
-            UpdateContourAndWaveform();
+            if (!(filters[FilterTypes.ContourSwitch].Enabled))
+                ButtonState(FilterTypes.ContourSwitch, true, true);
 
-            UIValueChanged?.Invoke("CONTOUR_FREQ", ContourFrequency);
+            if (!(filters[FilterTypes.ContourFreq].Enabled))
+                ButtonState(FilterTypes.ContourFreq, true, true);
+
+            Update_Contour_Waveform(true);
+        }
+        private void ContourThumb_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            ContourIsBeingDragged = false;
+        }
+        private void Update_Contour_ThumbPostion(Point cXcY)
+        {
+            if (ContourThumb == null) return;
+
+            Canvas.SetLeft(ContourThumb, cXcY.X - 8);
+            Canvas.SetTop(ContourThumb, cXcY.Y - 8);
         }
         public double ContourYPos = 51;
         private const double TotalArcWidth = 30.0;
-        public void UpdateContourAndWaveform()
+        public void Update_Contour_Waveform(bool sendCAT)
         {
-            if (ContourThumb == null || ContourArcSegment == null || ContourFigureStart == null) return;
+            if (ContourArcSegment == null || ContourFigureStart == null) return;
 
             double halfArcWidth = TotalArcWidth / 2.0;
             double minCX = border1X + halfArcWidth;
             double maxCX = border2X - halfArcWidth;
 
-            double contourRatio = (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
-                                  (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
+            double contourRatio = (FT891S_CatManager.currentRadioState.ContourFreq - filters[FilterTypes.ContourFreq].MinValue) /
+                                  (double)(filters[FilterTypes.ContourFreq].MaxValue - filters[FilterTypes.ContourFreq].MinValue);
 
             // cX stays strictly within bounds so the arc never overflows the borders
             double cX = Math.Max(minCX, Math.Min(maxCX, minCX + contourRatio * (maxCX - minCX)));
@@ -477,14 +499,7 @@ namespace YAESU_FT_891_Front_End
             // Enforce strict ±24 pixel limit from ContourYPos for the center Y
             double clampedOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
             double cY = ContourYPos + clampedOffset;
-            if (!ContourEnabled) cY = ContourYPos;
-
-            // --- THUMB IS ALWAYS DEAD-CENTER ON THE ARC ---
-            Canvas.SetLeft(ContourThumb, cX - 8);
-            Canvas.SetTop(ContourThumb, cY - 8);
-
-            if (ContourValueTextBlock != null)
-                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
+            if (!filters[FilterTypes.ContourSwitch].Enabled) cY = ContourYPos;
 
             // --- FIXED WIDTH ARC (Always centered on cX) ---
             double startX = cX - halfArcWidth;
@@ -513,6 +528,16 @@ namespace YAESU_FT_891_Front_End
             {
                 ContourArcSegment.SweepDirection = SweepDirection.Counterclockwise;
                 ContourArcSegment.Size = new Size(arcRadiusX, Math.Min(offset, 24.0));
+            }
+
+            Update_Contour_ThumbPostion(new Point(cX,cY));
+
+            if (FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode == ContourPayloadModes.ContourFrequency)
+            {
+                if (!(filters[FilterTypes.ContourFreq].Enabled))
+                    ButtonState(FilterTypes.ContourFreq, false, sendCAT);
+                else
+                    ButtonState(FilterTypes.ContourFreq, true, sendCAT);
             }
         }
         private void WidthThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -774,27 +799,24 @@ namespace YAESU_FT_891_Front_End
             double nbTop = CenterY - ((NbValue / 10.0) * travelSpaceNb);
             Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
-            // 4. CONTOUR Position
-            double contourRatio =
-                (ContourFrequency - Ft891FilterRanges.ContourFrequencyMinHz) /
-                (double)(Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz);
+            //// 4. CONTOUR Position
+            //double contourRatio =
+            //    (ContourFrequency - filters[FilterTypes.ContourFreq].MinValue) /
+            //    (double)(filters[FilterTypes.ContourFreq].MaxValue - filters[FilterTypes.ContourFreq].MinValue);
 
-            double cX = border1X + (contourRatio * (border2X - border1X));
-            cX = Math.Max(border1X, Math.Min(border2X, cX));
-            Canvas.SetLeft(ContourThumb, cX - 8);
+            //double cX = border1X + (contourRatio * (border2X - border1X));
+            //cX = Math.Max(border1X, Math.Min(border2X, cX));
+            //Canvas.SetLeft(ContourThumb, cX - 8);
 
-            // Use ContourPeakY (51.0) instead of PeakY (25.0) and allow full range up to 105
-            double contourCenterY = ContourPeakY + _contourVisualOffset;
-            if (!ContourEnabled) contourCenterY = ContourPeakY;
-            Canvas.SetTop(ContourThumb, Math.Max(5, Math.Min(105, contourCenterY)) - 8);
+            //// Use ContourPeakY (51.0) instead of PeakY (25.0) and allow full range up to 105
+            //double contourCenterY = ContourPeakY + _contourVisualOffset;
+            //if (!ContourEnabled) contourCenterY = ContourPeakY;
+            //Canvas.SetTop(ContourThumb, Math.Max(5, Math.Min(105, contourCenterY)) - 8);
 
             // 5. DNR Position
             double travelSpaceDnr = CenterY - 5;
             double dnrTop = CenterY - (((int)FT891S_CatManager.currentRadioState.DNRValue / 15.0) * travelSpaceDnr);
             Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
-
-            if (ContourValueTextBlock != null)
-                ContourValueTextBlock.Text = !ContourEnabled ? "CNT: OFF" : "CNT: " + ContourFrequency + " Hz";
         }
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -926,6 +948,7 @@ namespace YAESU_FT_891_Front_End
 
         IfShiftResult Last_IfShiftResult = new IfShiftResult { IfShiftDirection = 1, IfShiftHz = 0 };
         NotchResult Last_NotchResult_Values = new NotchResult { Switch = (NotchPayloadModes)NotchOnOffModes.BP_ON, Values = 1600 };
+        ContourResult Last_ContourResult_Values = new ContourResult { Switch = (ContourPayloadModes)ContourOnOffModes.CO_ON, Values = 1600 };
 
         public async void ButtonState(byte button, bool state, bool sendCAT)
         {
@@ -1011,17 +1034,86 @@ namespace YAESU_FT_891_Front_End
                     //if (FT891S_CatManager.currentRadioState.NotchFreq < 1600)
                     //    Console.WriteLine("******** GLITCH HAPPENED HERE");
                     break;
-                case FilterTypes.Contour:
+                case FilterTypes.ContourSwitch:
                     if (state)
                     {
-                        filters[FilterTypes.Contour].Enabled = true;
+                        filters[FilterTypes.ContourSwitch].Enabled = true;
+
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
+
+                        if (sendCAT)
+                        {
+                            await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, (int)ContourPayloadModes.ContourOnOff, (int)ContourOnOffModes.CO_ON }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
                     }
                     else
                     {
-                        filters[FilterTypes.Contour].Enabled = false;
+                        filters[FilterTypes.ContourSwitch].Enabled = false;
+
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+
+                        if (sendCAT)
+                        {
+                            await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, (int)ContourPayloadModes.ContourOnOff, (int)ContourOnOffModes.CO_OFF }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
                     }
+                    break;
+                case FilterTypes.ContourFreq:
+                    if (state)
+                    {
+                        filters[FilterTypes.ContourFreq].Enabled = true;
+
+                        if (sendCAT)
+                        {
+                            await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, (int)ContourPayloadModes.ContourFrequency, FT891S_CatManager.currentRadioState.ContourFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
+                        }
+                    }
+                    else
+                    {
+                        filters[FilterTypes.ContourFreq].Enabled = false;
+                    }
+
+                    ContourValueTextBlock.Text = FT891S_CatManager.currentRadioState.ContourFreq.ToString() + "Hz";
+                    break;
+                case FilterTypes.APFSwitch:
+                    //if (state)
+                    //{
+                    //    filters[FilterTypes.APFSwitch].Enabled = true;
+
+                    //    ConTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    //    mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
+
+                    //    if (sendCAT)
+                    //    {
+                    //        await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, ContourPayloadModes.ContourOnOff, ContourOnOffModes.CO_ON }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    filters[FilterTypes.APFSwitch].Enabled = false;
+
+                    //    ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    //    mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+
+                    //    if (sendCAT)
+                    //    {
+                    //        await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, ContourPayloadModes.ContourOnOff, ContourOnOffModes.CO_OFF }, mainWindow._catManager.OutGoingDataLoopDelay);
+                    //    }
+                    //}
+                    break;
+                case FilterTypes.APFFreq:
+                    //if (state)
+                    //{
+                    //    filters[FilterTypes.APFFreq].Enabled = true;
+                    //    ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                    //}
+                    //else
+                    //{
+                    //    filters[FilterTypes.APFFreq].Enabled = false;
+                    //    ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    //}
                     break;
                 case FilterTypes.Shift:
                     String BuiltIsCommand;
@@ -1224,16 +1316,36 @@ namespace YAESU_FT_891_Front_End
                         ButtonState(FilterTypes.NotchFreq, States.Off, true);
                     }
                     break;
-                case FilterTypes.Contour:
-                    if (!(filters[FilterTypes.Contour].Enabled))
+                case FilterTypes.ContourSwitch:
+                    if (!(filters[FilterTypes.ContourSwitch].Enabled))
                     {
-                        filters[FilterTypes.Contour].Enabled = true;
-                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
+                        filters[FilterTypes.ContourSwitch].Enabled = true;
+
+                        ButtonState(FilterTypes.ContourSwitch, States.On, true);
                     }
                     else
                     {
-                        filters[FilterTypes.Contour].Enabled = false;
-                        ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        filters[FilterTypes.ContourSwitch].Enabled = false;
+
+                        ButtonState(FilterTypes.ContourSwitch, States.Off, true);
+                    }
+                    break;
+                case FilterTypes.ContourFreq:
+                    if (!(filters[FilterTypes.ContourFreq].Enabled))
+                    {
+                        filters[FilterTypes.ContourFreq].Enabled = true;
+
+                        FT891S_CatManager.currentRadioState.ContourFreq = Last_ContourResult_Values.Values;
+
+                        ButtonState(FilterTypes.ContourFreq, States.On, true);
+                    }
+                    else
+                    {
+                        filters[FilterTypes.ContourFreq].Enabled = false;
+
+                        Last_ContourResult_Values.Values = FT891S_CatManager.currentRadioState.ContourFreq;
+
+                        ButtonState(FilterTypes.ContourFreq, States.Off, true);
                     }
                     break;
                 case FilterTypes.Shift:

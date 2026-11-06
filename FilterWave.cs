@@ -76,32 +76,32 @@ namespace YAESU_FT_891_Front_End
                     {
                        
                         case "CONTOUR_FREQ":
-                            _contourFreq = (int)value;
+                            //_contourFreq = (int)value;
 
-                            await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 1, _contourFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 1, _contourFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("CO", "01", mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
+                            ////remove once added to outgoing data loop
+                            //await mainWindow._catManager.SendCatCommandAsync("CO", "01", mainWindow._catManager.OutGoingDataLoopDelay);
+                            //break;
                         case "CONTOUR_ENABLED":
-                            _contourEnabled = (bool)value;
+                            //_contourEnabled = (bool)value;
 
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                if (!(_contourEnabled))
-                                    mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                                else
-                                    mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            });
+                            //mainWindow.Dispatcher.Invoke(() =>
+                            //{
+                            //    if (!(_contourEnabled))
+                            //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                            //    else
+                            //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                            //});
 
-                            //Note to actually switch on and off the CNT COntour on the radio, has to be done in P3, not P2
-                            if (!(_contourEnabled))
-                                await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            else
-                                await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            ////Note to actually switch on and off the CNT COntour on the radio, has to be done in P3, not P2
+                            //if (!(_contourEnabled))
+                            //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            //else
+                            //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            //remove once added to outgoing data loop
-                            await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
+                            ////remove once added to outgoing data loop
+                            //await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                        
                     }

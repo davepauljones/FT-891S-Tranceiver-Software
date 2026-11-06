@@ -70,12 +70,16 @@ namespace FT891S_CatControl
 
         public NotchPayloadModes NotchSwitchPayloadMode { get; set; }
         public NotchOnOffModes NotchSwitch { get; set; } = 0;
-
         public NotchPayloadModes NotchFreqPayloadMode { get; set; }
         public int NotchFreq { get; set; } = 0;
 
-        public ContourModes ContourMode { get; set; }
-        public int ContourValue { get; set; } = 0;
+        public ContourPayloadModes ContourSwitchPayloadMode { get; set; }
+        public ContourOnOffModes ContourSwitch { get; set; } = 0;
+        public int ContourFreq {  get; set; } = 0;
+        public APFOnOffModes APFSwitch { get; set; } = 0;
+        public int APFFreq { get; set; } = 0;
+
+
         public NAMode NarrowMode { get; set; }
         public BCMode DNFMode { get; set; }
 
@@ -261,10 +265,12 @@ namespace FT891S_CatControl
 
     public enum WidthModes { SH_OFF = 0, SH_ON = 1 }
     public enum NotchPayloadModes { ManualNotchOnOff = 0, ManualNotchFrequency = 1 }
-    public enum ContourModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
+    public enum ContourPayloadModes { ContourOnOff = 0, ContourFrequency = 1, APFOnOff = 2, APFFrequency = 3 }
     public enum NAMode { NA_OFF = 0, NA_ON = 1 }//Narrow
     public enum BCMode { BC_OFF = 0, BC_ON = 1 }//DNF
     public enum NotchOnOffModes { BP_OFF = 0, BP_ON = 1 }//BP = Manual Notch
+    public enum ContourOnOffModes { CO_OFF = 0, CO_ON = 1 }
+    public enum APFOnOffModes { APF_OFF = 0, APF_ON = 1 }
 
     public enum DNRModes { NR_OFF = 0, NR_ON = 1 }
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
@@ -318,7 +324,7 @@ namespace FT891S_CatControl
     public class ContourResult
     {
         public int Fixed { get; set; }
-        public ContourModes Switch { get; set; }
+        public ContourPayloadModes Switch { get; set; }
         public int Values { get; set; }
     }
     public class IfShiftResult
@@ -601,13 +607,37 @@ namespace FT891S_CatControl
             dict => new ContourResult
             {
                 Fixed = int.Parse(dict["P1"]),
-                Switch = dict.ContainsKey("P2") ? (ContourModes)int.Parse(dict["P2"]) : 0,
+                Switch = dict.ContainsKey("P2") ? (ContourPayloadModes)int.Parse(dict["P2"]) : 0,
                 Values = dict.ContainsKey("P3") ? int.Parse(dict["P3"]) : 0
             },
             result => {
                 //Do nothing with Fixed
-                FT891S_CatManager.currentRadioState.ContourMode = result.Switch;
-                FT891S_CatManager.currentRadioState.ContourValue = result.Values;
+
+                // Automatically route to either switch or frequency state based on P2
+                if (result.Switch == ContourPayloadModes.ContourOnOff)
+                {
+                    FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.ContourSwitch = (ContourOnOffModes)result.Values;
+                }
+                else if (result.Switch == ContourPayloadModes.ContourFrequency)
+                {
+                    FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.ContourFreq = result.Values;
+                }
+                else if (result.Switch == ContourPayloadModes.APFOnOff)
+                {
+                    FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.APFSwitch = (APFOnOffModes)result.Values;
+                }
+                else if (result.Switch == ContourPayloadModes.APFFrequency)
+                {
+                    FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode = result.Switch;
+                    FT891S_CatManager.currentRadioState.APFFreq = result.Values;
+                }
+                else
+                {
+                    //Do nothing
+                }
             }
         );
         public static readonly FT891S_CatCommand<int> QI = new FT891S_CatCommand<int>(
@@ -1320,6 +1350,28 @@ namespace FT891S_CatControl
                                 // 4. Update internal frequency state
                                 mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchFreq * 10);
                                 mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
+                            });
+                            //await Task.Delay(50);
+                        }
+
+                        if (!(mainWindow.filterWaveControl.ContourIsBeingDragged))
+                        {
+                            //CO =Contour On Off State
+                            await SendCatCommandAsync("CO", "00", OutGoingDataLoopDelay);
+
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                mainWindow.filterWaveControl.Update_Contour_Waveform(false);
+                            });
+
+                            //CO = Contour Freq
+                            await SendCatCommandAsync("CO", "01", OutGoingDataLoopDelay);
+
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                // 4. Update internal frequency state
+                                mainWindow.filterWaveControl.SetContourFrequencyInternal(currentRadioState.ContourFreq);
+                                mainWindow.filterWaveControl.Update_Contour_Waveform(false);
                             });
                             //await Task.Delay(50);
                         }
