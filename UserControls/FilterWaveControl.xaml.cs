@@ -256,6 +256,27 @@ namespace YAESU_FT_891_Front_End
             FT891S_CatManager.currentRadioState.NotchFreq = value;
         }
 
+        // /add - How long a user edit of the notch frequency is protected from being overwritten by a
+        //        rig answer that was already in flight when the user let go of the slider.
+        private const double NotchUserEditHoldMs = 500;
+        private DateTime _lastNotchUserEdit = DateTime.MinValue;
+
+        // /add - Apply the notch frequency last reported by the rig, but only when it cannot fight the user:
+        //        not while the slider is being dragged, and not within NotchUserEditHoldMs of the last user edit.
+        //        An out of range rig value is ignored, never clamped - clamping is what used to throw the
+        //        slider to one of its two ends.
+        public void ApplyRigNotchFrequency(int rigFrequencyHz)
+        {
+            if (rigFrequencyHz < Ft891FilterRanges.NotchFrequencyMinHz ||
+                rigFrequencyHz > Ft891FilterRanges.NotchFrequencyMaxHz) return;
+
+            if (NotchIsBeingDragged) return;
+
+            if ((DateTime.Now - _lastNotchUserEdit).TotalMilliseconds < NotchUserEditHoldMs) return;
+
+            SetNotchFrequencyInternal(rigFrequencyHz);
+        }
+
         public void SetContourFrequencyInternal(int value)
         {
             value = SnapToStep(value, Ft891FilterRanges.ContourFrequencyMinHz,
@@ -263,6 +284,27 @@ namespace YAESU_FT_891_Front_End
 
             if (FT891S_CatManager.currentRadioState.ContourFreq == value) return;
             FT891S_CatManager.currentRadioState.ContourFreq = value;
+        }
+
+        // /add - How long a user edit of the contour frequency is protected from being overwritten by a
+        //        rig answer that was already in flight when the user let go of the slider.
+        private const double ContourUserEditHoldMs = 500;
+        private DateTime _lastContourUserEdit = DateTime.MinValue;
+
+        // /add - Apply the contour frequency last reported by the rig, but only when it cannot fight the user:
+        //        not while the slider is being dragged, and not within ContourUserEditHoldMs of the last user edit.
+        //        An out of range rig value is ignored, never clamped - clamping is what used to throw the
+        //        slider to one of its two ends.
+        public void ApplyRigContourFrequency(int rigFrequencyHz)
+        {
+            if (rigFrequencyHz < Ft891FilterRanges.ContourFrequencyMinHz ||
+                rigFrequencyHz > Ft891FilterRanges.ContourFrequencyMaxHz) return;
+
+            if (ContourIsBeingDragged) return;
+
+            if ((DateTime.Now - _lastContourUserEdit).TotalMilliseconds < ContourUserEditHoldMs) return;
+
+            SetContourFrequencyInternal(rigFrequencyHz);
         }
 
         private void SetShiftValueInternal(int value)
@@ -316,7 +358,8 @@ namespace YAESU_FT_891_Front_End
         {
             filters.Add(new FilterClass { ID = FilterTypes.NB, Name = "NB", Value = 0, MinValue = 0, MaxValue = 10, StepValue = 1, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.NotchSwitch, Name = "NOTCH SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
-            filters.Add(new FilterClass { ID = FilterTypes.NotchFreq, Name = "NOTCH FREQ", Value = 1, MinValue = 1, MaxValue = 320, StepValue = 10, DefaultValue = 1, Enabled = false });
+            // /edit - Notch frequency is in Hz everywhere in the app (10-3200), not in the rig's 10 Hz units.
+            filters.Add(new FilterClass { ID = FilterTypes.NotchFreq, Name = "NOTCH FREQ", Value = 1600, MinValue = 10, MaxValue = 3200, StepValue = 10, DefaultValue = 1600, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.ContourSwitch, Name = "CONTOUR SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.ContourFreq, Name = "CONTOUR FREQ", Value = 10, MinValue = 10, MaxValue = 3200, StepValue = 10, DefaultValue = 10, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.APFSwitch, Name = "APF SWITCH", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
@@ -362,6 +405,8 @@ namespace YAESU_FT_891_Front_End
                 Ft891FilterRanges.NotchFrequencyMaxHz, Ft891FilterRanges.NotchFrequencyStepHz);
 
             // 4. Update internal frequency state
+            // /add - Stamp the user edit so a rig answer in flight cannot overwrite it.
+            _lastNotchUserEdit = DateTime.Now;
             SetNotchFrequencyInternal(frequency);
 
             if (!(filters[FilterTypes.NotchSwitch].Enabled))
@@ -453,6 +498,8 @@ namespace YAESU_FT_891_Front_End
                 Ft891FilterRanges.ContourFrequencyMinHz +
                 ratio * (Ft891FilterRanges.ContourFrequencyMaxHz - Ft891FilterRanges.ContourFrequencyMinHz));
 
+            // /add - Stamp the user edit so a rig answer in flight cannot overwrite it.
+            _lastContourUserEdit = DateTime.Now;
             SetContourFrequencyInternal(frequency);
 
             _contourVisualOffset = clampedY - ContourYPos;
@@ -1303,6 +1350,8 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NotchFreq].Enabled = true;
 
+                        // /add - Stamp the user edit so a rig answer in flight cannot overwrite it.
+                        _lastNotchUserEdit = DateTime.Now;
                         FT891S_CatManager.currentRadioState.NotchFreq = Last_NotchResult_Values.Values;
 
                         ButtonState(FilterTypes.NotchFreq, States.On, true);
@@ -1335,6 +1384,8 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.ContourFreq].Enabled = true;
 
+                        // /add - Stamp the user edit so a rig answer in flight cannot overwrite it.
+                        _lastContourUserEdit = DateTime.Now;
                         FT891S_CatManager.currentRadioState.ContourFreq = Last_ContourResult_Values.Values;
 
                         ButtonState(FilterTypes.ContourFreq, States.On, true);
