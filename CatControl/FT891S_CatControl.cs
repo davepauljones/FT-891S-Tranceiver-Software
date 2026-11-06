@@ -73,9 +73,19 @@ namespace FT891S_CatControl
         public NotchPayloadModes NotchFreqPayloadMode { get; set; }
         public int NotchFreq { get; set; } = 0;
 
+        // /add - Last notch frequency reported by the rig, converted to Hz (the rig reports 10 Hz units).
+        //        Held separately from NotchFreq so a rig answer can never overwrite a value the user is dragging.
+        public int NotchFreqFromRig { get; set; } = 0;
+
         public ContourPayloadModes ContourSwitchPayloadMode { get; set; }
         public ContourOnOffModes ContourSwitch { get; set; } = 0;
         public int ContourFreq {  get; set; } = 0;
+
+        // /add - Last contour frequency reported by the rig, in Hz (the rig reports the contour
+        //        frequency in Hz directly, there is no scale factor).
+        //        Held separately from ContourFreq so a rig answer can never overwrite a value the user is dragging.
+        public int ContourFreqFromRig { get; set; } = 0;
+
         public APFOnOffModes APFSwitch { get; set; } = 0;
         public int APFFreq { get; set; } = 0;
 
@@ -594,7 +604,10 @@ namespace FT891S_CatControl
                 else
                 {
                     FT891S_CatManager.currentRadioState.NotchFreqPayloadMode = result.Switch;
-                    FT891S_CatManager.currentRadioState.NotchFreq = result.Values;
+                    // /edit - Rig sends the notch frequency in 10 Hz units (BP P3 = 001-320).
+                    //         Convert to Hz once, here, and keep it in its own field so a late rig
+                    //         answer can never overwrite the value the user is dragging.
+                    FT891S_CatManager.currentRadioState.NotchFreqFromRig = result.Values * 10;
                 }
             }
         );
@@ -622,7 +635,10 @@ namespace FT891S_CatControl
                 else if (result.Switch == ContourPayloadModes.ContourFrequency)
                 {
                     FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode = result.Switch;
-                    FT891S_CatManager.currentRadioState.ContourFreq = result.Values;
+                    // /edit - The rig reports the contour frequency in Hz directly (CO P3 = 0010-3200),
+                    //         there is no scale factor. Keep it in its own field so a late rig answer
+                    //         can never overwrite the value the user is dragging.
+                    FT891S_CatManager.currentRadioState.ContourFreqFromRig = result.Values;
                 }
                 else if (result.Switch == ContourPayloadModes.APFOnOff)
                 {
@@ -1348,7 +1364,9 @@ namespace FT891S_CatControl
                             mainWindow.Dispatcher.Invoke(() =>
                             {
                                 // 4. Update internal frequency state
-                                mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchFreq * 10);
+                                // /edit - NotchFreqFromRig is in Hz (converted in the BP answer parser) and is
+                                //         only applied when it cannot fight the user.
+                                mainWindow.filterWaveControl.ApplyRigNotchFrequency(currentRadioState.NotchFreqFromRig);
                                 mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
                             });
                             //await Task.Delay(50);
@@ -1369,8 +1387,8 @@ namespace FT891S_CatControl
 
                             mainWindow.Dispatcher.Invoke(() =>
                             {
-                                // 4. Update internal frequency state
-                                mainWindow.filterWaveControl.SetContourFrequencyInternal(currentRadioState.ContourFreq);
+                                // /edit - ContourFreqFromRig is in Hz and is only applied when it cannot fight the user.
+                                mainWindow.filterWaveControl.ApplyRigContourFrequency(currentRadioState.ContourFreqFromRig);
                                 mainWindow.filterWaveControl.Update_Contour_Waveform(false);
                             });
                             //await Task.Delay(50);
