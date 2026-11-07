@@ -90,6 +90,8 @@ namespace YAESU_FT_891_Front_End
         Type buttonConsoleType = typeof(StatusBarIndicatorConsole);
         ButtonConsole.ButtonClickCallBackFunction buttonConsoleAction;
 
+        public SelectRadio selectRadio;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -176,6 +178,8 @@ namespace YAESU_FT_891_Front_End
 
             FunctionMenuClass functionMenu = new FunctionMenuClass(this, FunctionMenuGrid, FunctionModeLabel);
 
+            selectRadio = new SelectRadio(this);
+
             FT891S_CatManager.currentRadioState.TXPowerWatts = 5; //default rf power 5 watts for safety
             RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
@@ -240,8 +244,6 @@ namespace YAESU_FT_891_Front_End
             filterWave = new FilterWave(this, filterWaveControl);
 
             filterWaveControl.Background = new SolidColorBrush(Colors.Transparent);
-
-            //filterWave.UpdateFromRadio("NB", object value)
 
             if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
             {
@@ -580,7 +582,8 @@ namespace YAESU_FT_891_Front_End
             int proposedValue = FT891S_CatManager.currentRadioState.RFGain + step;
 
             // 3. Force it to stay strictly between 0 and 255
-            FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), 30);
+            
+            FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), FT891S_CatManager.currentRadioState.RFGainMaxValue);
 
             if (FT891S_CatManager.currentRadioState.RFGain == 0)
                 RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
@@ -1143,7 +1146,7 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < 255)
+                if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < FT891S_CatManager.currentRadioState.RFGainMaxValue)
                 {
                     lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
 

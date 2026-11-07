@@ -83,7 +83,7 @@ namespace YAESU_FT_891_Front_End
                         case ControlGains.RF:
                             mainWindow.gainUserControl.GainTitleTextBlock.Text = "RF GAIN";
                             mainWindow.gainUserControl.Minimum = 0;
-                            mainWindow.gainUserControl.Maximum = 30;
+                            mainWindow.gainUserControl.Maximum = FT891S_CatManager.currentRadioState.RFGainMaxValue;
                             mainWindow.gainUserControl.DefaultGain = 10;
                             mainWindow.gainUserControl.ChangeGain(FT891S_CatManager.currentRadioState.RFGain);
                             break;

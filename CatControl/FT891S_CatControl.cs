@@ -52,7 +52,7 @@ namespace FT891S_CatControl
         public int SQGain { get; set; } = 0;
         public int SQGainDefault { get; set; } = 30;
         public int RFGain { get; set; } = 0;
-        public int RFGainDefault { get; set; } = 30;
+        public int RFGainMaxValue { get; set; } = 30;
         public int AFGain { get; set; } = 0;
         public int AFGainDefault { get; set; } = 30;
         public long RadioID { get; set; }
@@ -1045,20 +1045,33 @@ namespace FT891S_CatControl
             switch (mainWindow.tranceiverDisplayModes.CurrentTranceiverMode.ID)
             {
                 case TranceiverModes.BootUp:
-                    if (currentRadioState.RadioID == 650)
+                    if (currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_891)
                     {
                         mainWindow.RadioIDTextBlock.Text = "FT-891";
                         mainWindow.RadioIDAmberLED.Opacity = 0.5;
+
+                        currentRadioState.RFGainMaxValue = mainWindow.selectRadio.GetRFGainMaxValueByRadioID(SelectRadio.RadioIdentifications.FT_891);
                     }
-                    else if (currentRadioState.RadioID == 800)
+                    else if (currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_710)
                     {
                         mainWindow.RadioIDTextBlock.Text = "FT-710";
                         mainWindow.RadioIDAmberLED.Opacity = 0.5;
+
+                        currentRadioState.RFGainMaxValue = mainWindow.selectRadio.GetRFGainMaxValueByRadioID(SelectRadio.RadioIdentifications.FT_710);
+                    }
+                    else if (currentRadioState.RadioID == SelectRadio.RadioIdentifications.FTX_1)
+                    {
+                        mainWindow.RadioIDTextBlock.Text = "FTX-1";
+                        mainWindow.RadioIDAmberLED.Opacity = 0.5;
+
+                        currentRadioState.RFGainMaxValue = mainWindow.selectRadio.GetRFGainMaxValueByRadioID(SelectRadio.RadioIdentifications.FTX_1);
                     }
                     else if (currentRadioState.RadioID > 0 && currentRadioState.RadioID < 9999)
                     {
                         mainWindow.RadioIDTextBlock.Text = "??????";
                         mainWindow.RadioIDAmberLED.Opacity = 0.2;
+
+                        currentRadioState.RFGainMaxValue = mainWindow.selectRadio.GetRFGainMaxValueByRadioID(SelectRadio.RadioIdentifications.FTX_1);
                     }
                     break;
                 case TranceiverModes.MainWaterfall:

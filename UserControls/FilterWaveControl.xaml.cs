@@ -594,6 +594,7 @@ namespace YAESU_FT_891_Front_End
         public void Update_Width_TrapezoidPostion(WidthValues WidthValue, bool sendCAT)
         {
             int freqInHz = WidthFrequencies_SSB_Wide[(int)WidthValue];
+            int defaultFreqInHz = WidthFrequencies_SSB_Wide[0];
 
             switch (FT891S_CatManager.currentRadioState.OperatingMode)
             {
@@ -602,11 +603,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_SSB_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_SSB_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_SSB_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_SSB_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_SSB_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_SSB_Narrow_MinimumValue;
                     }
                     break;
@@ -615,11 +618,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_CW_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_CW_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_CW_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_CW_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_CW_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_CW_Narrow_MinimumValue;
                     }
                     break;
@@ -636,11 +641,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     break;
@@ -648,11 +655,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     break;
@@ -661,11 +670,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     break;
@@ -674,11 +685,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     break;
@@ -686,11 +699,13 @@ namespace YAESU_FT_891_Front_End
                     if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Wide[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Wide[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Wide_MinimumValue;
                     }
                     else
                     {
                         freqInHz = WidthFrequencies_RTTY_PSK_Narrow[(int)WidthValue];
+                        defaultFreqInHz = WidthFrequencies_RTTY_PSK_Narrow[0];
                         if (freqInHz == -1) freqInHz = WidthFrequencies_RTTY_PSK_Narrow_MinimumValue;
                     }
                     break;
@@ -717,6 +732,16 @@ namespace YAESU_FT_891_Front_End
             if (WidthValueTextBlock != null) WidthValueTextBlock.Text = freqInHz + "Hz";
 
             Update_Width_ThumbPostion();
+
+            if (FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_710
+                || FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FTX_1)
+            {
+                defaultFreqInHz = 3000;//needs removing after create seperate class for look up tables, like you did in UPAS
+                if (freqInHz == defaultFreqInHz)
+                    FT891S_CatManager.currentRadioState.WidthMode = WidthModes.SH_OFF;
+                else
+                    FT891S_CatManager.currentRadioState.WidthMode = WidthModes.SH_ON;
+            }
 
             if (FT891S_CatManager.currentRadioState.WidthMode == WidthModes.SH_OFF)
                 ButtonState(FilterTypes.Width, false, sendCAT);
@@ -784,6 +809,15 @@ namespace YAESU_FT_891_Front_End
             }
 
             Update_Shift_ThumbPostion();
+
+            if (FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_710
+                || FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FTX_1)
+            {
+                if (FT891S_CatManager.currentRadioState.IfShiftHz.IfShiftHz == 0)
+                    FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_OFF;
+                else
+                    FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_ON;
+            }
 
             if (FT891S_CatManager.currentRadioState.IfShiftHz.OnOff == IFMode.IF_OFF)
                 ButtonState(FilterTypes.Shift, false, sendCAT);
@@ -1162,7 +1196,11 @@ namespace YAESU_FT_891_Front_End
 
                         if (sendCAT)
                         {
-                            await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            if (FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_710
+                                || FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FTX_1)
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            else
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 1, (int)FT891S_CatManager.currentRadioState.WidthValue }, mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                     }
                     else
@@ -1175,7 +1213,11 @@ namespace YAESU_FT_891_Front_End
 
                         if (sendCAT)
                         {
-                            await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            if (FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FT_710
+                                || FT891S_CatManager.currentRadioState.RadioID == SelectRadio.RadioIdentifications.FTX_1)
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            else
+                                await mainWindow._catManager.SendCatCommandAsync("SH", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                     }
                     break;

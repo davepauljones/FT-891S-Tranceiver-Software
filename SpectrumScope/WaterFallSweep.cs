@@ -134,7 +134,7 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGainMaxValue }, mainWindow._catManager.OutGoingDataLoopDelay);   
             }
 
             double totalCanvasWidth = canvasFullRightPos - canvasFullLeftPos;
