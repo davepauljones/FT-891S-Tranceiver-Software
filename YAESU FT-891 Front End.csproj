@@ -166,6 +166,9 @@
     <Compile Include="ButtonConsoles\ButtonConsole.cs" />
     <Compile Include="ButtonConsoles\StatusBarIndicatorConsole.cs" />
     <Compile Include="MiscFunctions\Functions.cs" />
+    <Compile Include="UserControls\MorseCode.xaml.cs">
+      <DependentUpon>MorseCode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SelectRadio.cs" />
     <Compile Include="Speech\FT891SpeechRecognition.cs" />
     <Compile Include="Management\GainManagement.cs" />
@@ -236,6 +239,10 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
+    <Page Include="UserControls\MorseCode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\EventHorizonRequesterInformation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

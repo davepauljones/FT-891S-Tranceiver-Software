@@ -199,7 +199,7 @@
     <Style x:Key="TabCanvasStyle" TargetType="{x:Type Canvas}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Width" Value="643"/>
-        <Setter Property="Height" Value="142"/>
+        <Setter Property="Height" Value="128"/>
     </Style>
 
     <Style x:Key="SignalBargraphRectangleStyle" TargetType="{x:Type Rectangle}">

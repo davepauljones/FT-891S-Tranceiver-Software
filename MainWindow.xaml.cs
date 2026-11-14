@@ -59,7 +59,7 @@ namespace YAESU_FT_891_Front_End
 
         public StationSeek stationSeek;
 
-        private CWDecoderEngine decoder;
+        
         public SimulatedWaterfall simulatedWaterfall;
 
         public Sprite sprite;
@@ -73,7 +73,7 @@ namespace YAESU_FT_891_Front_End
 
         public PacketManagement packetManagement;
 
-        public CATCommandLog cATCommandLog;
+        //public CATCommandLog cATCommandLog;
 
         public TranceiverDisplayModes tranceiverDisplayModes;
 
@@ -183,16 +183,13 @@ namespace YAESU_FT_891_Front_End
             FT891S_CatManager.currentRadioState.TXPowerWatts = 5; //default rf power 5 watts for safety
             RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
-            decoder = new CWDecoderEngine();
-
-            decoder.TextDecoded += Decoder_TextDecoded;
-            decoder.SignalPowerUpdated += Decoder_SignalPowerUpdated;
+            
 
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
 
             packetManagement = new PacketManagement(this);
 
-            cATCommandLog = new CATCommandLog(this);
+            //cATCommandLog = new CATCommandLog(this);
 
             // Load the saved state or defaults
             FT891S_CatManager.currentRadioState = RadioStateManager.LoadState();
@@ -266,7 +263,7 @@ namespace YAESU_FT_891_Front_End
                 RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
 
                 //CW Decoder
-                CWDecoderCanvas.Visibility = Visibility.Visible;
+                MorseCodeUserControl.Visibility = Visibility.Visible;
 
                 //Display Switched Un implemented so far
                 TuneTextBlock.Visibility = Visibility.Visible;
@@ -282,7 +279,7 @@ namespace YAESU_FT_891_Front_End
                 RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
 
                 //CW Decoder
-                CWDecoderCanvas.Visibility = Visibility.Collapsed;
+                MorseCodeUserControl.Visibility = Visibility.Collapsed;
 
                 //Display Switched Un implemented so far
                 TuneTextBlock.Visibility = Visibility.Collapsed;
@@ -307,30 +304,14 @@ namespace YAESU_FT_891_Front_End
             HandleBlurTimerTick(ref _lastBlurSpeed4, ref _blurImpulse4, ref _lastMoveTime4, AFGainKnobCanvasBlurEffect, AFGainKnobBrurCanvas, _blurTimer4);
         }
 
-        private void Decoder_TextDecoded(object sender, string text)
-        {
-            // If you don't do this, WPF will intermittently lock up or crash
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                CWDecoderTextBlock.Text += text;
-            }));
-        }
-
-        private void Decoder_SignalPowerUpdated(object sender, double power)
-        {
-            // If you don't do this, WPF will intermittently lock up or crash
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                CWDecoderPowerTextBlock.Text = $"Power: {power:F5}";
-            }));
-        }
+        
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (decoder != null)
+            if (MorseCodeUserControl.decoder != null)
             {
-                decoder.Stop();
-                decoder.Dispose();
+                MorseCodeUserControl.decoder.Stop();
+                MorseCodeUserControl.decoder.Dispose();
             }
 
             _catManager.StopOutgoingDataLoop();
@@ -916,15 +897,7 @@ namespace YAESU_FT_891_Front_End
                 Canvas c = (Canvas)sender;
                 AnimateButtonClick(c, () =>
                 {
-                    if (decoder.IsRunning)
-                    {
-                        decoder.Stop();
-                    }
-                    else
-                    {
-                        CWDecoderTextBlock.Text = string.Empty;
-                        decoder.Start();
-                    }
+                    
                 });
             }
         }

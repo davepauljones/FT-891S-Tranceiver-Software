@@ -414,7 +414,7 @@
                     </Border>
 
                     <Border x:Name="CLARButtonLabelBorder" Canvas.Left="824" Canvas.Top="394" Style="{StaticResource ButtonLabelBorderStyle}">
-                        <Label x:Name="CLARButtonLabelLabel" Content="LISTEN CW" Style="{StaticResource ButtonLabelLabelStyle}"/>
+                        <Label x:Name="CLARButtonLabelLabel" Content="" Style="{StaticResource ButtonLabelLabelStyle}"/>
                     </Border>
 
                     <Canvas x:Name="DefaultCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
@@ -1375,12 +1375,7 @@
                             </TabItem>
                             <TabItem Tag="4">
                                 <Grid>
-                                    <Canvas x:Name="CWDecoderCanvas" Style="{StaticResource TabCanvasStyle}">
-                                        <StackPanel Orientation="Vertical" Canvas.Left="10" Canvas.Top="0" Margin="0,10,0,0">
-                                            <TextBlock x:Name="CWDecoderPowerTextBlock" Text="0.0" Foreground="Orange" TextWrapping="Wrap" Margin="0,6,0,0"/>
-                                            <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="24" TextWrapping="Wrap" Width="610" Margin="0,0,0,0"/>
-                                        </StackPanel>
-                                    </Canvas>
+                                    <local:MorseCode x:Name="MorseCodeUserControl"/>
                                 </Grid>
                             </TabItem>
 
