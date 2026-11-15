@@ -110,6 +110,8 @@ namespace YAESU_FT_891_Front_End
                 FrequencyDisplay.IsDigitEditingProperty, typeof(FrequencyDisplay));
 
             editDescriptor.AddValueChanged(LargeFrequencyDisplay, OnUiEditStateChanged);
+
+            InitializeAsync();
         }
 
         private async void OnFrequencyUiChanged(object sender, EventArgs e)
@@ -256,11 +258,10 @@ namespace YAESU_FT_891_Front_End
 
                 
                 //QRZ
-                QRZGrid.Visibility = Visibility.Collapsed;
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
 
                 //Expand / Collapse MainWindow
-                RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
+                //RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
 
                 //CW Decoder
                 MorseCodeUserControl.Visibility = Visibility.Visible;
@@ -272,11 +273,10 @@ namespace YAESU_FT_891_Front_End
             else
             {
                 //QRZ
-                QRZGrid.Visibility = Visibility.Collapsed;
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
 
                 //Expand / Collapse MainWindow
-                RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
+                //RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
 
                 //CW Decoder
                 MorseCodeUserControl.Visibility = Visibility.Collapsed;
@@ -1685,39 +1685,46 @@ namespace YAESU_FT_891_Front_End
                 QRZGrid.Visibility = Visibility.Collapsed;
         }
 
-        private void QRZSent59Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void InitializeAsync()
         {
-            QRZSentTextBox.Text = "59";
+            // Wait for the Chromium engine to spin up inside the control
+            await QRZWebView.EnsureCoreWebView2Async();
+
+            // Point the control directly to QRZ
+            QRZWebView.Source = new Uri("https://www.qrz.com/");
+            //SdrWebView.Source = new Uri("http://websdr.ewi.utwente.nl:8901/m.html");
+
+            // Once the page finishes loading, inject JavaScript to hide unwanted elements
+            QRZWebView.CoreWebView2.NavigationCompleted += (sender, args) =>
+            {
+                if (args.IsSuccess)
+                {
+                    InjectOpenWebRxCleanupScript();
+                }
+            };
         }
 
-        private void QRZReceived59Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void InjectOpenWebRxCleanupScript()
         {
-            QRZReceivedTextBox.Text = "59";
+            string cleanOpenWebRxScript = @"
+                (function() {
+                    // Hide OpenWebRX header banners or sidebar information blocks if desired
+                    var sidebar = document.querySelector('.sidebar, #sidebar, header');
+                    if (sidebar) {
+                        sidebar.style.display = 'none';
+                    }
+
+                    // Ensure the main spectrum/waterfall container expands to fill available space
+                    var panel = document.querySelector('#waterfall-container, .waterfall-panel');
+                    if (panel) {
+                        panel.style.width = '100%';
+                    }
+                })();
+            ";
+
+            await QRZWebView.CoreWebView2.ExecuteScriptAsync(cleanOpenWebRxScript);
         }
 
-        private async void QRZLogButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var qrzService = new QrzLogbookService();
-
-            string myApiKey = "YOUR-QRZ-LOGBOOK-API-KEY"; // Retrieve this from settings
-
-            // Construct a minimal ADIF string. 
-            // Format: <fieldname:length>value
-            string adifRecord = "<call:5>W1AW<band:3>20m<mode:3>SSB<qso_date:8>20260703<time_on:6>194500<station_callsign:6>ZZ1ZZZ";
-
-            // Disable button to prevent double-clicks
-            QRZLogButton.IsEnabled = false;
-            QRZLogStatus.Content = "Uploading to QRZ...";
-
-            string result = await qrzService.PushLogEntryAsync(myApiKey, adifRecord);
-
-            // Re-enable button and display the raw response
-            QRZLogButton.IsEnabled = true;
-            QRZLogStatus.Content = result;
-
-            // Note: A successful response from QRZ looks something like:
-            // RESULT=OK&logid=12345678 or an XML structure depending on the key version.
-        }
 
         bool ToggleScreen;
         private void RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

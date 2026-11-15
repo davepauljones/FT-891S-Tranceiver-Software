@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
+        xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:meter="clr-namespace:HamRadioControls"
         xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
@@ -15,8 +16,8 @@
         Focusable="True"
         KeyDown="MetroWindow_KeyDown"
         Background="Transparent" Topmost="True" WindowStyle="None" BorderThickness="0" SaveWindowPosition="True"
-        ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False"
-        Title="YAESU FT-891 Front End by David G7UIV" Height="652" Width="1349" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
+        ShowTitleBar="False" ShowMinButton="False" ShowMaxRestoreButton="False" ShowCloseButton="False" SizeToContent="Height"
+        Title="YAESU FT-891 Front End by David G7UIV" Height="852" Width="1349" Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing">
     <Window.Resources>
         <local:HeightToParentConverter x:Key="ListViewConverter"/>
     </Window.Resources>
@@ -203,7 +204,7 @@
                         <TextBlock Text="QRZ" Width="30" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
-                    <Canvas x:Name="RigExpandRetractButtonAreaCanvas" Canvas.Left="180" Canvas.Top="410" Width="30" Height="20" Opacity="0.5" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown">
+                    <Canvas x:Name="RigExpandRetractButtonAreaCanvas" Canvas.Left="180" Canvas.Top="410" Width="30" Height="20" Opacity="0.5" Background="#88666666" Panel.ZIndex="1" MouseLeftButtonDown="RigExpandRetractButtonAreaCanvas_MouseLeftButtonDown" Visibility="Hidden">
                         <TextBlock Text="RIG" Width="30" Height="18" FontSize="14" Foreground="White" Opacity="0.4" TextAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" />
                     </Canvas>
 
@@ -1448,39 +1449,10 @@
                 </Canvas>
             </Canvas>
         </Viewbox>
-        
-        <Grid x:Name="QRZGrid" Grid.Column="1" Grid.Row="1" Width="1349" Height="50" Background="Gray" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
-            <Grid.Effect>
-                <DropShadowEffect Direction="0" ShadowDepth="1.1" BlurRadius="30" Color="Orange" Opacity="0.3"/>
-            </Grid.Effect>
-            <StackPanel Orientation="Horizontal">
-                
-                <TextBox x:Name="QRZCallTextBox" controls:TextBoxHelper.Watermark="CALL" controls:TextBoxHelper.UseFloatingWatermark="false" FontSize="16" Width="140" Height="30" Margin="10,0,0,0"/>
-                
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="QRZSentTextBox" controls:TextBoxHelper.Watermark="SENT" FontSize="16" Width="140" Height="30" Margin="10,0,0,0"/>
-                    <Grid MouseLeftButtonDown="QRZSent59Grid_MouseLeftButtonDown">
-                        <Rectangle Fill="DarkGray" Width="28" Height="28"/>
-                        <Label Content="59" FontSize="16" Width="28" Height="28" Margin="0,-4,0,0"/>
-                    </Grid>
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="QRZReceivedTextBox" controls:TextBoxHelper.Watermark="RECEIVED" FontSize="16" Width="140" Height="30" Margin="10,0,0,0"/>
-                    <Grid MouseLeftButtonDown="QRZReceived59Grid_MouseLeftButtonDown">
-                        <Rectangle Fill="DarkGray" Width="28" Height="28"/>
-                        <Label Content="59" FontSize="16" Width="28" Height="28" Margin="0,-4,0,0"/>
-                    </Grid>
-                </StackPanel>
-
-                <Button x:Name="QRZLogButton" Content="LOG" Width="50" Height="28" Margin="10,0,0,0" MouseLeftButtonDown="QRZLogButton_MouseLeftButtonDown"/>
-
-                <Label x:Name="QRZLogStatus" Content="Status" FontSize="16" Width="758" Height="28" Margin="10,0,0,0"/>
-
-            </StackPanel>
+        <Grid x:Name="QRZGrid" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Background="#01444444" Visibility="Collapsed">
+            <wv:WebView2 x:Name="QRZWebView" Source="https://www.qrz.com/" Width="1339" Height="420"/>
         </Grid>
-
-        <Grid Grid.Column="1" Grid.Row="2" Width="1349" Height="75" Background="LightBlue" Visibility="Collapsed"/>
 
     </Grid>
 </controls:MetroWindow>

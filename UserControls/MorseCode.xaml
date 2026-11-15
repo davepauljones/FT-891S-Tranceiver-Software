@@ -4,13 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="154" d:DesignWidth="643">
     <Canvas>
 
         <Canvas x:Name="FiltersCanvas" Style="{StaticResource TabCanvasStyle}" Background="#ff444444">
             <Canvas Canvas.Left="0" Canvas.Top="0">
-                <StackPanel Orientation="Horizontal" Canvas.Left="2" Canvas.Top="0">
+                
+                <ScrollViewer x:Name="CWDecoderScrollViewer" Canvas.Left="2" Canvas.Top="04" Width="638" Height="84" VerticalScrollBarVisibility="Visible">
+                    <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="14" TextWrapping="Wrap" Width="610" Padding="0,0,0,4" />
+                </ScrollViewer>
+
+                <StackPanel Orientation="Horizontal" Canvas.Left="2" Canvas.Top="90">
+                    <TextBox x:Name="SendMessageATextBox" mah:TextBoxHelper.Watermark="Send Text Box A" Text="G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
+                    <TextBox x:Name="SendMessageBTextBox" mah:TextBoxHelper.Watermark="Send Text Box B" Text="CQ DX G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Canvas.Left="66" Canvas.Top="110">
                     <Grid Margin="0,0,6,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -68,10 +79,7 @@
                         <TextBlock Grid.Column="1" x:Name="StageTextBlock" Text="IDLE" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
                 </StackPanel>
-                <ScrollViewer x:Name="CWDecoderScrollViewer" Canvas.Left="2" Canvas.Top="18" Width="638" Height="108" VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="24" TextWrapping="Wrap" Width="610" Padding="0,0,0,4" />
-                </ScrollViewer>
-                
+
             </Canvas>
 
         </Canvas>
@@ -82,65 +90,65 @@
 
             <Border Tag="0" Canvas.Left="20" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="160M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="1.8Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="EDIT" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="LOCKED" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="1" Canvas.Left="73" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="80M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="3.5Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="START" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="STOPPED" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="2" Canvas.Left="126" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="40M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="7Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="DELAY" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="5s" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="3" Canvas.Left="179" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="30M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="10Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="REPEAT" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="OFF" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="4" Canvas.Left="232" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="20M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="14Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="SEND" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="A" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="5" Canvas.Left="285" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="15M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="21Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="EDIT" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="LOCKED" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="6" Canvas.Left="338" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="12M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="24.5Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="START" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="STOPPED" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="7" Canvas.Left="391" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="11M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="27Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="DELAY" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="5s" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="8" Canvas.Left="444" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="10M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="28Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="REPEAT" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="OFF" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
             <Border Tag="9" Canvas.Left="497" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="6M" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
-                    <TextBlock Text="50Mhz" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="SEND" Style="{StaticResource StationScopeButtonATextBlockStyle}" Foreground="White"/>
+                    <TextBlock Text="B" Style="{StaticResource StationScopeButtonBTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
             </Border>
-            <Border Tag="10" Canvas.Left="550" Canvas.Top="129" Style="{StaticResource StationScopeButtonBorderStyle}" Width="69" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
+            <Border Tag="10" Canvas.Left="550" Canvas.Top="129" ToolTip="START / STOP DECODING" Style="{StaticResource StationScopeButtonBorderStyle}" Width="69" MouseLeftButtonDown="MorseCodeButtons_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="START" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                 </StackPanel>
