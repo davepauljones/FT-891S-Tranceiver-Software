@@ -1300,6 +1300,42 @@ namespace FT891S_CatControl
                     case TranceiverModes.NoiseFilters:
                         //if (packet == 0)
                         //{
+                            await SendCatCommandAsync("NB", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (FT891S_CatManager.currentRadioState.NoiseBlankerMode == NBMode.NB_OFF)
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, false, false);
+                                else
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, true, false);
+                            });
+
+                            if (FT891S_CatManager.currentRadioState.NoiseBlankerMode == NBMode.NB_ON)
+                            {
+                                await SendCatCommandAsync("NL", "0", OutGoingDataLoopDelay);
+                                mainWindow.Dispatcher.Invoke(() =>
+                                {
+                                    mainWindow.filterWaveControl.SetNbValue(FT891S_CatManager.currentRadioState.NoiseBlankerLevel, syncThumbPosition: true, sendCAT: false);
+                                });
+                            }
+
+                            await SendCatCommandAsync("NR", "0", OutGoingDataLoopDelay);
+                            mainWindow.Dispatcher.Invoke(() =>
+                            {
+                                if (FT891S_CatManager.currentRadioState.DNRMode == DNRModes.NR_OFF)
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, false, false);
+                                else
+                                    mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, true, false);
+                            });
+                        
+                            if (FT891S_CatManager.currentRadioState.DNRMode == DNRModes.NR_ON)
+                            {
+                                await SendCatCommandAsync("RL", "0", OutGoingDataLoopDelay);
+                                mainWindow.Dispatcher.Invoke(() =>
+                                {
+                                    mainWindow.filterWaveControl.SetDnrValue((int)FT891S_CatManager.currentRadioState.DNRValue, syncThumbPosition: true, sendCAT: false);
+                                });
+                            }
+
                             await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
                             mainWindow.Dispatcher.Invoke(() =>
                             {

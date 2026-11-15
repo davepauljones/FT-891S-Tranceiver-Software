@@ -307,7 +307,6 @@ namespace YAESU_FT_891_Front_End
 
             Loaded += (s, e) =>
             {
-                UpdateThumbPositions();
                 UpdateWaveform();
             }; 
         }
@@ -824,59 +823,78 @@ namespace YAESU_FT_891_Front_End
             else
                 ButtonState(FilterTypes.Shift, true, sendCAT);
         }
-        public void UpdateThumbPositions()
-        {
-            if (NbThumb == null || DnrThumb == null || ContourThumb == null) return;
+        
+        //public void UpdateThumbPositions()
+        //{
+        //    if (DnrThumb == null) return;
 
-            // 1. Noise Blanker Position
-            double travelSpaceNb = CenterY - 5;
-            double nbTop = CenterY - ((NbValue / 10.0) * travelSpaceNb);
-            Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
+        //    // 1. Noise Blanker Position
+        //    //double travelSpaceNb = CenterY - 5;
+        //    //double nbTop = CenterY - ((NbValue / 10.0) * travelSpaceNb);
+        //    //Canvas.SetTop(NbThumb, Math.Max(5, Math.Min(CenterY, nbTop)));
 
-            //// 4. CONTOUR Position
-            //double contourRatio =
-            //    (ContourFrequency - filters[FilterTypes.ContourFreq].MinValue) /
-            //    (double)(filters[FilterTypes.ContourFreq].MaxValue - filters[FilterTypes.ContourFreq].MinValue);
+        //    //// 4. CONTOUR Position
+        //    //double contourRatio =
+        //    //    (ContourFrequency - filters[FilterTypes.ContourFreq].MinValue) /
+        //    //    (double)(filters[FilterTypes.ContourFreq].MaxValue - filters[FilterTypes.ContourFreq].MinValue);
 
-            //double cX = border1X + (contourRatio * (border2X - border1X));
-            //cX = Math.Max(border1X, Math.Min(border2X, cX));
-            //Canvas.SetLeft(ContourThumb, cX - 8);
+        //    //double cX = border1X + (contourRatio * (border2X - border1X));
+        //    //cX = Math.Max(border1X, Math.Min(border2X, cX));
+        //    //Canvas.SetLeft(ContourThumb, cX - 8);
 
-            //// Use ContourPeakY (51.0) instead of PeakY (25.0) and allow full range up to 105
-            //double contourCenterY = ContourPeakY + _contourVisualOffset;
-            //if (!ContourEnabled) contourCenterY = ContourPeakY;
-            //Canvas.SetTop(ContourThumb, Math.Max(5, Math.Min(105, contourCenterY)) - 8);
+        //    //// Use ContourPeakY (51.0) instead of PeakY (25.0) and allow full range up to 105
+        //    //double contourCenterY = ContourPeakY + _contourVisualOffset;
+        //    //if (!ContourEnabled) contourCenterY = ContourPeakY;
+        //    //Canvas.SetTop(ContourThumb, Math.Max(5, Math.Min(105, contourCenterY)) - 8);
 
-            // 5. DNR Position
-            double travelSpaceDnr = CenterY - 5;
-            double dnrTop = CenterY - (((int)FT891S_CatManager.currentRadioState.DNRValue / 15.0) * travelSpaceDnr);
-            Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
-        }
+        //    // 5. DNR Position
+        //    double travelSpaceDnr = CenterY - 5;
+        //    double dnrTop = CenterY - (((int)FT891S_CatManager.currentRadioState.DNRValue / 15.0) * travelSpaceDnr);
+        //    Canvas.SetTop(DnrThumb, Math.Max(5, Math.Min(CenterY, dnrTop)));
+        //}
+
+        private const double NbTopLimit = 5.0;
+
+        private static double ClampDouble(double value, double min, double max) =>
+            Math.Max(min, Math.Min(max, value));
+
+        private static int ClampInt(int value, int min, int max) =>
+            Math.Max(min, Math.Min(max, value));
 
         private void NbThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            // Clamp newTop between the top limit (5) and bottom limit (CenterY)
-            double newTop = Math.Max(5, Math.Min(CenterY, Canvas.GetTop(NbThumb) + e.VerticalChange));
+            double newTop = ClampDouble(Canvas.GetTop(NbThumb) + e.VerticalChange, NbTopLimit, CenterY);
             Canvas.SetTop(NbThumb, newTop);
 
-            // Calculate normalized travel percentage (0.0 at bottom/CenterY to 1.0 at top/5)
-            double travelSpace = CenterY - 5;
-            double pct = travelSpace > 0 ? (CenterY - newTop) / travelSpace : 0;
+            double travelSpace = CenterY - NbTopLimit;
+            double pct = travelSpace > 0 ? (CenterY - newTop) / travelSpace : 0.0;
 
-            // Map percentage to range [-1, 10] (11 intervals / 12 steps)
-            // pct = 1.0 (top) -> 10
-            // pct = 0.0 (bottom) -> -1
-            int newProposedValue = (int)Math.Round(pct * 11) - 1;
+            int proposedValue = (int)Math.Round(pct * 11.0) - 1;
 
             // Strict boundary enforcement
-            if (newTop <= 5) newProposedValue = 10;
-            else if (newTop >= CenterY) newProposedValue = -1;
+            if (newTop <= NbTopLimit) proposedValue = 10;
+            else if (newTop >= CenterY) proposedValue = -1;
 
-            NbValue = newProposedValue;
+            SetNbValue(proposedValue, syncThumbPosition: false, sendCAT: true);
+        }
+
+        public void SetNbValue(int value, bool syncThumbPosition, bool sendCAT)
+        {
+            int clampedValue = ClampInt(value, -1, 10);
+            NbValue = clampedValue;
+
+            if (syncThumbPosition)
+            {
+                double travelSpace = CenterY - NbTopLimit;
+                double pct = (clampedValue + 1) / 11.0; // -1 -> 0.0, 10 -> 1.0
+                double newTop = CenterY - (pct * travelSpace);
+
+                Canvas.SetTop(NbThumb, ClampDouble(newTop, NbTopLimit, CenterY));
+            }
 
             bool buttonState = States.Off;
 
-            if (newProposedValue < 0)
+            if (clampedValue < 0)
             {
                 // -1 state: Noise Blanker OFF
                 FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_OFF;
@@ -887,48 +905,63 @@ namespace YAESU_FT_891_Front_End
             {
                 // 0 to 10 state: Noise Blanker ON
                 FT891S_CatManager.currentRadioState.NoiseBlankerMode = NBMode.NB_ON;
-                FT891S_CatManager.currentRadioState.NoiseBlankerLevel = newProposedValue;
+                FT891S_CatManager.currentRadioState.NoiseBlankerLevel = clampedValue;
                 buttonState = States.On;
             }
 
             ButtonState(FilterTypes.NB, buttonState, true);
-
             UpdateWaveform();
         }
 
+        private const double DnrTopLimit = 5.0;
+
         private void DnrThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            double newTop = Math.Max(5, Math.Min(CenterY, Canvas.GetTop(DnrThumb) + e.VerticalChange));
+            double newTop = ClampDouble(Canvas.GetTop(DnrThumb) + e.VerticalChange, DnrTopLimit, CenterY);
             Canvas.SetTop(DnrThumb, newTop);
 
-            double travelSpace = CenterY - 5;
-            double pct = (CenterY - newTop) / travelSpace;
+            double travelSpace = CenterY - DnrTopLimit;
+            double pct = travelSpace > 0 ? (CenterY - newTop) / travelSpace : 0.0;
 
-            int newProposedValue = (int)Math.Round(pct * 15);
+            int proposedValue = ClampInt((int)Math.Round(pct * 15.0), 0, 15);
+
+            // Strict boundary enforcement
+            if (newTop <= DnrTopLimit) proposedValue = 15;
+            else if (newTop >= CenterY) proposedValue = 0;
+
+            SetDnrValue(proposedValue, syncThumbPosition: false, sendCAT: true);
+        }
+
+        public void SetDnrValue(int value, bool syncThumbPosition, bool sendCAT)
+        {
+            int clampedValue = ClampInt(value, 0, 15);
+            //DnrValue = clampedValue;
+
+            if (syncThumbPosition)
+            {
+                double travelSpace = CenterY - DnrTopLimit;
+                double pct = clampedValue / 15.0; // 0 -> 0.0 (bottom), 15 -> 1.0 (top)
+                double newTop = CenterY - (pct * travelSpace);
+
+                Canvas.SetTop(DnrThumb, ClampDouble(newTop, DnrTopLimit, CenterY));
+            }
 
             bool buttonState = States.Off;
 
-            if (newTop <= 5) FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)15;
-
-            if (newTop >= CenterY)
+            if (clampedValue <= 0)
             {
-                if (newProposedValue == 0)
-                {
-                    FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_OFF;
-                    FT891S_CatManager.currentRadioState.DNRValue = DNRValues.DNR_01;
-                    buttonState = States.Off;
-                }
+                FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_OFF;
+                FT891S_CatManager.currentRadioState.DNRValue = DNRValues.DNR_01;
+                buttonState = States.Off;
             }
-
-            if (newProposedValue >= 1 && newProposedValue <= 15)
+            else
             {
                 FT891S_CatManager.currentRadioState.DNRMode = DNRModes.NR_ON;
-                FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)newProposedValue;
+                FT891S_CatManager.currentRadioState.DNRValue = (DNRValues)clampedValue;
                 buttonState = States.On;
             }
 
-            ButtonState(FilterTypes.DNR, buttonState, true);
-
+            ButtonState(FilterTypes.DNR, buttonState, sendCAT);
             UpdateWaveform();
         }
 

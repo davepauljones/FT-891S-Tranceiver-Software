@@ -11,18 +11,15 @@
 
         <Canvas x:Name="FiltersCanvas" Style="{StaticResource TabCanvasStyle}" Background="#ff444444">
             <Canvas Canvas.Left="0" Canvas.Top="0">
-                
-                <ScrollViewer x:Name="CWDecoderScrollViewer" Canvas.Left="2" Canvas.Top="04" Width="638" Height="84" VerticalScrollBarVisibility="Visible">
-                    <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="14" TextWrapping="Wrap" Width="610" Padding="0,0,0,4" />
-                </ScrollViewer>
 
-                <StackPanel Orientation="Horizontal" Canvas.Left="2" Canvas.Top="90">
-                    <TextBox x:Name="SendMessageATextBox" mah:TextBoxHelper.Watermark="Send Text Box A" Text="G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
-                    <TextBox x:Name="SendMessageBTextBox" mah:TextBoxHelper.Watermark="Send Text Box B" Text="CQ DX G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
-                </StackPanel>
+                <Border BorderThickness="1" BorderBrush="White" Margin="2,0,2,0">
+                    <ScrollViewer x:Name="CWDecoderScrollViewer" Canvas.Left="2" Canvas.Top="04" Width="638" Height="84" VerticalScrollBarVisibility="Visible">
+                        <TextBlock x:Name="CWDecoderTextBlock" Text="CQ DX" Foreground="White" FontSize="14" TextWrapping="Wrap" Width="610" Padding="0,0,0,4" />
+                    </ScrollViewer>
+                </Border>
 
-                <StackPanel Orientation="Horizontal" Canvas.Left="66" Canvas.Top="110">
-                    <Grid Margin="0,0,6,0">
+                <StackPanel Orientation="Horizontal" Canvas.Left="4" Canvas.Top="89">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="46"/>
@@ -30,7 +27,7 @@
                         <TextBlock Grid.Column="0" Text="Power:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="CWDecoderPowerTextBlock" Text="0.0" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="16"/>
@@ -38,7 +35,7 @@
                         <TextBlock Grid.Column="0" Text="Tone:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="ToneStateTextBlock" Text="0" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="32"/>
@@ -46,7 +43,7 @@
                         <TextBlock Grid.Column="0" Text="Dot:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="DotLengthTextBlock" Text="0" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="38"/>
@@ -54,7 +51,7 @@
                         <TextBlock Grid.Column="0" Text="Dur:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="DurationTextBlock" Text="0" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="38"/>
@@ -62,7 +59,7 @@
                         <TextBlock Grid.Column="0" Text="Sym:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="SymbolTextBlock" Text="-" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="26"/>
@@ -70,7 +67,7 @@
                         <TextBlock Grid.Column="0" Text="Out:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="LastDecodedTextBlock" Text="-" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="0,0,6,0">
+                    <Grid Margin="0,0,26,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="78"/>
@@ -78,6 +75,11 @@
                         <TextBlock Grid.Column="0" Text="Stage:" Foreground="Orange"/>
                         <TextBlock Grid.Column="1" x:Name="StageTextBlock" Text="IDLE" Foreground="Gray" TextAlignment="Center"/>
                     </Grid>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Canvas.Left="0" Canvas.Top="108">
+                    <TextBox x:Name="SendMessageATextBox" mah:TextBoxHelper.Watermark="Send Text Box A" Text="G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
+                    <TextBox x:Name="SendMessageBTextBox" mah:TextBoxHelper.Watermark="Send Text Box B" Text="CQ DX G7UIV TEST" Style="{StaticResource InputTextBoxStyle}"/>
                 </StackPanel>
 
             </Canvas>
