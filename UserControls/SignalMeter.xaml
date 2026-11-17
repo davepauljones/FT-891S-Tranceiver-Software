@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="HamRadioControls.SignalPowerMeter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HamRadioControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="106" d:DesignWidth="308">
+    <Canvas>
+
+        <Canvas Name="SignalMeterTemplate" Canvas.Left="0" Canvas.Top="0" Width="308" Height="106" Opacity="1.0" Panel.ZIndex="1">
+            <Canvas.Effect>
+                <DropShadowEffect ShadowDepth="0.5" Direction="20" BlurRadius="2" Color="White"/>
+            </Canvas.Effect>
+            <Image Source="pack://application:,,,/Images/signalmeterclearcase.png" Stretch="Fill" Width="308" Height="106">
+                <Image.Effect>
+                    <DropShadowEffect ShadowDepth="1" Direction="310" BlurRadius="3" Color="White"/>
+                </Image.Effect>
+            </Image>
+        </Canvas>
+
+        <Canvas Name="SignalMeterBackground" Canvas.Left="10" Canvas.Top="16" Width="290" Height="80" Opacity="1.0" Background="Black">
+            <TextBlock Canvas.Left="74" Canvas.Top="0" Text="1" Foreground="ForestGreen" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Canvas.Left="128" Canvas.Top="0" Text="2" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="155" Canvas.Top="0" Text="3" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="175" Canvas.Top="0" Text="4" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="200" Canvas.Top="0" Text="TX" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="232" Canvas.Top="0" Text="PWR" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+
+            <Rectangle Fill="ForestGreen" Canvas.Left="30" Canvas.Top="26" Width="50" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="86" Canvas.Top="26" Width="45" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="137" Canvas.Top="26" Width="18" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="162" Canvas.Top="26" Width="17" Height="8"/>
+            <Rectangle Fill="Red" Canvas.Left="186" Canvas.Top="26" Width="70" Height="8"/>
+
+            <Rectangle Fill="ForestGreen" Canvas.Left="30" Canvas.Top="44" Width="30" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="66" Canvas.Top="44" Width="48" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="120" Canvas.Top="44" Width="34" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="160" Canvas.Top="44" Width="16" Height="8"/>
+            <Rectangle Fill="ForestGreen" Canvas.Left="183" Canvas.Top="44" Width="10" Height="8"/>
+            <Rectangle Fill="Red" Canvas.Left="199" Canvas.Top="44" Width="10" Height="8"/>
+            <Rectangle Fill="Red" Canvas.Left="216" Canvas.Top="44" Width="40" Height="8"/>
+
+            <TextBlock Canvas.Left="18" Canvas.Top="52" Text="SIG" Foreground="ForestGreen" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Canvas.Left="58" Canvas.Top="52" Text="1" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="112" Canvas.Top="52" Text="3" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="152" Canvas.Top="52" Text="5" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="174" Canvas.Top="52" Text="7" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="192" Canvas.Top="52" Text="9" Foreground="ForestGreen" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="204" Canvas.Top="50" Text="+" Foreground="Red" FontSize="20" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="222" Canvas.Top="52" Text="30" Foreground="Red" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+            <TextBlock Canvas.Left="248" Canvas.Top="52" Text="dB" Foreground="Red" FontSize="18" FontWeight="Bold" Opacity="0.7"/>
+        </Canvas>
+
+        <Canvas Name="SignalMeterNeedle" Canvas.Left="10" Canvas.Top="16" Width="290" Height="80" Opacity="1.0">
+            <Canvas.RenderTransform>
+                <TranslateTransform x:Name="NeedleTranslation" X="0" />
+            </Canvas.RenderTransform>
+            <Polygon x:Name="NeedleCarrierPolygon" Points="201,2 201,4 202,4 202,2" Fill="white" Opacity="1.0"/>
+            <Polygon x:Name="NeedlePolygon" Points="200,5 200,78 203,78 203,5" Fill="GhostWhite" Opacity="1.0"/>
+        </Canvas>
+
+        <Canvas Name="SignalMeterSunburstBackground" Canvas.Left="10" Canvas.Top="16" Width="290" Height="80" Opacity="0.2" Background="LightGreen">
+            <Rectangle Width="290" Height="80">
+                <Rectangle.Fill>
+                    <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                        <GradientStop Color="#001E1E24" Offset="0.2"/>
+                        <GradientStop Color="#CC1E1E24" Offset="0.7"/>
+                        <GradientStop Color="#FF1E1E24" Offset="1."/>
+                    </RadialGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Canvas>
+
+        <Canvas Name="SignalMeterClearRectangleBackground" Canvas.Left="10" Canvas.Top="16" Width="290" Height="80" Opacity="0.1" Background="WhiteSmoke"/>
+
+    </Canvas>
+</UserControl>

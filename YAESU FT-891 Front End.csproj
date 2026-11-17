@@ -236,6 +236,9 @@
     <Compile Include="StationSeek\QMBRigStates.cs" />
     <Compile Include="SpectrumScope\SimulatedWaterfall.cs" />
     <Compile Include="SpectrumScope\Sprite.cs" />
+    <Compile Include="UserControls\SignalMeter.xaml.cs">
+      <DependentUpon>SignalMeter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\StationScope.xaml.cs">
       <DependentUpon>StationScope.xaml</DependentUpon>
     </Compile>
@@ -305,6 +308,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resources\ResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SignalMeter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -392,6 +399,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\signalmeterclearcase.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

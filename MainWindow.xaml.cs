@@ -24,6 +24,7 @@ using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.SevenSegmentDisplay;
 using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
+using static HamRadioControls.SignalPowerMeter;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -244,6 +245,8 @@ namespace YAESU_FT_891_Front_End
 
             filterWaveControl.Background = new SolidColorBrush(Colors.Transparent);
 
+            SelectMeter(FT891S_CatManager.currentRadioState.SelectedMeter);
+
             if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
             {
                 //Speech Recognition   
@@ -287,6 +290,22 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
+        private void SelectMeter(int meter)
+        {
+            switch (meter)
+            {
+                case Meters.Analogue:
+                    FT891S_CatManager.currentRadioState.SelectedMeter = Meters.Analogue;
+                    SignalMeterViewbox.Visibility = Visibility.Collapsed;
+                    AnalogueSignalMeterViewbox.Visibility = Visibility.Visible;
+                    break;
+                case Meters.CB:
+                    FT891S_CatManager.currentRadioState.SelectedMeter = Meters.CB;
+                    SignalMeterViewbox.Visibility = Visibility.Visible;
+                    AnalogueSignalMeterViewbox.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
         private void BlurTimer_Tick(object sender, EventArgs e)
         {
             HandleBlurTimerTick(ref _lastBlurSpeed, ref _blurImpulse, ref _lastMoveTime, RigBlurVFOCanvasBlurEffect, RigBlurVFOCanvas, _blurTimer);
@@ -419,7 +438,11 @@ namespace YAESU_FT_891_Front_End
                 TXMetersCanvas.Visibility = Visibility.Visible;
 
                 BarGraphSignalMetersCanvas.Visibility = Visibility.Visible;
-                AnalogueSignalMeterViewbox.Visibility = Visibility.Hidden;
+                
+                if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                    AnalogueSignalMeterViewbox.Visibility = Visibility.Hidden;
+                else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                    SignalMeterViewbox.Visibility = Visibility.Hidden;
 
                 SetRigLEDColor(this, RigLEDColors.Red);
             }
@@ -431,7 +454,11 @@ namespace YAESU_FT_891_Front_End
                 TXMetersCanvas.Visibility = Visibility.Hidden;
 
                 BarGraphSignalMetersCanvas.Visibility =  Visibility.Hidden;
-                AnalogueSignalMeterViewbox.Visibility = Visibility.Visible;
+
+                if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                    AnalogueSignalMeterViewbox.Visibility = Visibility.Visible;
+                else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                    SignalMeterViewbox.Visibility = Visibility.Visible;
 
 
                 SetRigLEDColor(this, RigLEDColors.LightGray);
@@ -444,7 +471,11 @@ namespace YAESU_FT_891_Front_End
                 TXMetersCanvas.Visibility = Visibility.Hidden;
 
                 BarGraphSignalMetersCanvas.Visibility = Visibility.Hidden;
-                AnalogueSignalMeterViewbox.Visibility = Visibility.Visible;
+
+                if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                    AnalogueSignalMeterViewbox.Visibility = Visibility.Visible;
+                else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                    SignalMeterViewbox.Visibility = Visibility.Visible;
             }
         }
 
@@ -2014,6 +2045,14 @@ namespace YAESU_FT_891_Front_End
             {
                 FadoutUserControl(modeUserControl, 0);
             }
+        }
+
+        private void SIG_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                SelectMeter(Meters.CB);
+            else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                SelectMeter(Meters.Analogue);
         }
     }
 }

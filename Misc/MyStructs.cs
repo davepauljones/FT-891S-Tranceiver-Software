@@ -10,6 +10,11 @@ namespace YAESU_FT_891_Front_End
 {
     public class MyStructs
     {
+        public struct Meters
+        {
+            public const int Analogue = 0;
+            public const int CB = 1;
+        }
         public struct Development
         {
             public const byte InProgress = 0;

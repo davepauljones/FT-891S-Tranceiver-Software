@@ -90,6 +90,8 @@ namespace FT891S_CatControl
         public String CallSign { get; set; }
 
         public PowerSwitchModes PowerSwitch { get; set; } = (int)PowerSwitchModes.PowerSwitchMode_OFF;
+
+        public int SelectedMeter { get; set; }
     }
 
     // =========================================================================
@@ -932,7 +934,10 @@ namespace FT891S_CatControl
                     mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
                     mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
 
-                    mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+                    if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                        mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+                    else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                        mainWindow.MyMeter.SignalStrength = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
                     byte signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
                     //mainWindow.sprite.GenerateBandScopeSprite(Convert.ToByte(currentRadioState.CurrentMeterReading), 299, 2);
@@ -951,7 +956,10 @@ namespace FT891S_CatControl
                     mainWindow.stationSeek.LastSMeterRawReading = currentRadioState.CurrentMeterReading;
                     mainWindow.stationSeek.LastSMeterReading = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
 
-                    mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+                    if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                        mainWindow.SignalMeter.Value = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
+                    else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                        mainWindow.MyMeter.SignalStrength = AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading));
 
                     signalStrength = Convert.ToByte(AnalogMeter.ConvertDoubleToPercentage(Convert.ToDouble(currentRadioState.CurrentMeterReading)));
                     //mainWindow.sprite.GenerateBandScopeSprite(signalStrength, 295, 2);
@@ -976,11 +984,18 @@ namespace FT891S_CatControl
                     else
                         mainWindow.UpdateTranceiverTXRXState(TranceiverStates.RadioTXOff);
 
-                    mainWindow.SignalMeter.Value = currentRadioState.CurrentMeterReading;
+                    if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                        mainWindow.SignalMeter.Value = currentRadioState.CurrentMeterReading;
+                    else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                        mainWindow.MyMeter.SignalStrength = currentRadioState.CurrentMeterReading;
                     break;
                 case MeterTypes.SWR:
                     mainWindow.UpdateMeter(mainWindow.SWRBarGraphRectangle, currentRadioState.CurrentMeterReading);
-                    mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
+
+                    if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.Analogue)
+                        mainWindow.SignalMeter.Value = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
+                    else if (FT891S_CatManager.currentRadioState.SelectedMeter == Meters.CB)
+                        mainWindow.MyMeter.SignalStrength = MainWindow.GetSMeterInteger(currentRadioState.CurrentMeterReading);
                     break;
                 case MeterTypes.ID:
                     mainWindow.UpdateMeter(mainWindow.IDDBarGraphRectangle, currentRadioState.CurrentMeterReading);

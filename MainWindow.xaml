@@ -420,8 +420,12 @@
 
                     <Canvas x:Name="DefaultCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
                         
-                        <Viewbox x:Name="AnalogueSignalMeterViewbox" Visibility="Visible" Stretch="Uniform" Canvas.Left="-160" Canvas.Top="-45" Width="500" Height="110">
+                        <Viewbox x:Name="AnalogueSignalMeterViewbox" Visibility="Collapsed" Stretch="Uniform" Canvas.Left="-160" Canvas.Top="-45" Width="500" Height="110">
                             <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
+                        </Viewbox>
+
+                        <Viewbox x:Name="SignalMeterViewbox" Visibility="Collapsed" Stretch="Uniform" Canvas.Left="12" Canvas.Top="8" Height="58">
+                            <meter:SignalPowerMeter x:Name="MyMeter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="308" Height="106"/>
                         </Viewbox>
 
                         <Border Canvas.Left="275" Canvas.Top="71" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
@@ -446,6 +450,10 @@
 
                         <Border Canvas.Left="570" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="13">
                             <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
+                        </Border>
+
+                        <Border Canvas.Left="226" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="54" Background="DarkGoldenrod" MouseLeftButtonDown="SIG_MouseLeftButtonDown" IsHitTestVisible="True">
+                            <Label Content="SIG" Style="{StaticResource DisplayThreeCharLabelStyle}" />
                         </Border>
 
                         <Border x:Name="MainVFOABLabelBorder" Canvas.Left="282" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
@@ -1442,8 +1450,6 @@
                         <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Hidden"/>
 
                         <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Hidden"/>
-
-                        
 
                     </Canvas>
                 </Canvas>
