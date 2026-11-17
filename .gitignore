@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Private keys - never commit these
+github_priv_rsa
+*.pem
+*.key
+id_rsa*
+id_ed25519*
