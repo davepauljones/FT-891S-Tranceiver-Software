@@ -1026,13 +1026,13 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NB].Enabled = true;
                         NBTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.NBLabelBorder.Opacity = 1;
                     }
                     else
                     {
                         filters[FilterTypes.NB].Enabled = false;
                         NBTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.NBLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        mainWindow.NBLabelBorder.Opacity = 0.2;
                     }
 
                     NBValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.NoiseBlankerLevel).ToString();
@@ -1056,7 +1056,7 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.NotchSwitch].Enabled = true;
 
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.NotchLabelBorder.Opacity = 1;
 
                         if (sendCAT)
                         {
@@ -1070,7 +1070,7 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.NotchSwitch].Enabled = false;
 
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.NotchLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+                        mainWindow.NotchLabelBorder.Opacity = 0.2;
 
                         if (sendCAT)
                         {
@@ -1107,7 +1107,7 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.ContourSwitch].Enabled = true;
 
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.ContourLabelBorder.Opacity = 1;
 
                         if (sendCAT)
                         {
@@ -1119,7 +1119,7 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.ContourSwitch].Enabled = false;
 
                         ContourTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+                        mainWindow.ContourLabelBorder.Opacity = 0.2;
 
                         if (sendCAT)
                         {
@@ -1189,7 +1189,7 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Shift].Enabled = true;
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.ShiftLabelBorder.Opacity = 1;
 
                         FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_ON;
 
@@ -1207,7 +1207,7 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Shift].Enabled = false;
                         ShiftTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.ShiftLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+                        mainWindow.ShiftLabelBorder.Opacity = 0.2;
 
                         FT891S_CatManager.currentRadioState.IfShiftHz.OnOff = IFMode.IF_OFF;
 
@@ -1223,7 +1223,7 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Width].Enabled = true;
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.WidthLabelBorder.Opacity = 1;
 
                         FT891S_CatManager.currentRadioState.WidthMode = WidthModes.SH_ON;
 
@@ -1240,7 +1240,7 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.Width].Enabled = false;
                         WidthTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.WidthLabelBorder.Visibility = System.Windows.Visibility.Collapsed;
+                        mainWindow.WidthLabelBorder.Opacity = 0.2;
 
                         FT891S_CatManager.currentRadioState.WidthMode = WidthModes.SH_OFF;
 
@@ -1259,13 +1259,13 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.DNR].Enabled = true;
                         DNRTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
-                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.DNRLabelBorder.Opacity = 1;
                     }
                     else
                     {
                         filters[FilterTypes.DNR].Enabled = false;
                         DNRTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                        mainWindow.DNRLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        mainWindow.DNRLabelBorder.Opacity = 0.2;
                     }
                     
                     DNRValueTextBlock.Text = ((int)FT891S_CatManager.currentRadioState.DNRValue).ToString();
@@ -1290,8 +1290,8 @@ namespace YAESU_FT_891_Front_End
 
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                         NarrowValueTextBlock.Text = "ON";
-                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                        
+                        mainWindow.NarrowLabelBorder.Opacity = 1;
+
                         if (sendCAT)
                         {
                             await mainWindow._catManager.SendCatCommandAsync("NA", new object[] { 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
@@ -1303,7 +1303,7 @@ namespace YAESU_FT_891_Front_End
 
                         NarrowTextBlock.Foreground = new SolidColorBrush(Colors.White);
                         NarrowValueTextBlock.Text = "OFF";
-                        mainWindow.NarrowLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        mainWindow.NarrowLabelBorder.Opacity = 0.2;
 
                         if (sendCAT)
                         {
@@ -1318,7 +1318,7 @@ namespace YAESU_FT_891_Front_End
 
                         DNFTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                         DNFValueTextBlock.Text = "ON";
-                        mainWindow.DNFLabelBorder.Visibility = System.Windows.Visibility.Visible;
+                        mainWindow.DNFLabelBorder.Opacity = 1;
 
                         if (sendCAT)
                         {
@@ -1331,7 +1331,7 @@ namespace YAESU_FT_891_Front_End
 
                         DNFTextBlock.Foreground = new SolidColorBrush(Colors.White);
                         DNFValueTextBlock.Text = "OFF";
-                        mainWindow.DNFLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+                        mainWindow.DNFLabelBorder.Opacity = 0.2;
 
                         if (sendCAT)
                         {

@@ -280,27 +280,28 @@
                 </Border>
                 <Border Canvas.Left="245" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="ShiftValueTextBlock" Text="SHIFT" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Yellow"/>
+                        <TextBlock x:Name="WidthValueTextBlock" Text="WIDTH" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Red"/>
                     </StackPanel>
                 </Border>
                 <Border Canvas.Left="320" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="WidthValueTextBlock" Text="WIDTH" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Red"/>
+                        <TextBlock x:Name="ShiftValueTextBlock" Text="SHIFT" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Yellow"/>
                     </StackPanel>
                 </Border>
+                
                 <Border Canvas.Left="395" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="DNRValueTextBlock" Text="DNR" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Violet"/>
-                    </StackPanel>
-                </Border>
-                <Border Canvas.Left="470" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="NarrowValueTextBlock" Text="OFF" Style="{StaticResource FilterValueTextBlockStyle}"/>
                     </StackPanel>
                 </Border>
-                <Border Canvas.Left="545" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
+                <Border Canvas.Left="470" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="DNFValueTextBlock" Text="OFF" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="CadetBlue"/>
+                    </StackPanel>
+                </Border>
+                <Border Canvas.Left="545" Canvas.Top="0" Style="{StaticResource FilterValuesBorderStyle}">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="DNRValueTextBlock" Text="DNR" Style="{StaticResource FilterValueTextBlockStyle}" Foreground="Violet"/>
                     </StackPanel>
                 </Border>
 
@@ -324,29 +325,30 @@
                         <TextBlock x:Name="ContourTextBlock" Text="CONTOUR" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
-                <Border Tag="7" Canvas.Left="245" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="ShiftTextBlock" Text="SHIFT" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
-                    </StackPanel>
-                </Border>
-                <Border Tag="8" Canvas.Left="320" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
+                <Border Tag="8" Canvas.Left="245" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="WidthTextBlock" Text="WIDTH" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
-                <Border Tag="9" Canvas.Left="395" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
+                <Border Tag="7" Canvas.Left="320" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock x:Name="DNRTextBlock" Text="DNR" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                        <TextBlock x:Name="ShiftTextBlock" Text="SHIFT" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
-                <Border Tag="10" Canvas.Left="470" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
+                
+                <Border Tag="10" Canvas.Left="395" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="NarrowTextBlock" Text="NARROW" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
-                <Border Tag="11" Canvas.Left="545" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
+                <Border Tag="11" Canvas.Left="470" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
                     <StackPanel Orientation="Vertical">
                         <TextBlock x:Name="DNFTextBlock" Text="DNF" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="9" Canvas.Left="545" Canvas.Top="0" Style="{StaticResource SimulatedWaterfallBorderStyle}" MouseLeftButtonDown="FilterWaveButtons_MouseLeftButtonDown">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="DNRTextBlock" Text="DNR" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="White"/>
                     </StackPanel>
                 </Border>
 

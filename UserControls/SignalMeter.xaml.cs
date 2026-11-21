@@ -3,31 +3,26 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 
 namespace HamRadioControls
 {
     public partial class SignalPowerMeter : UserControl
     {
-        // Needle X-offset travel range matching your meter scale (-170 left to +54 right)[cite: 2]
+        // Needle X-offset travel range matching your meter scale (-170 left to +54 right)
         private const double MinNeedleX = -170.0;
         private const double MaxNeedleX = 54.0;
-
-        private DispatcherTimer _signalSimTimer;
-        private DateTime _simEndTime;
-        private readonly Random _rng = new Random();
-        private double _simulatedBaseSignal;
+        private static readonly TimeSpan NeedleAnimationDuration = TimeSpan.FromMilliseconds(250);
 
         public SignalPowerMeter()
         {
             InitializeComponent();
-            MoveNeedleToNormalized(0.0);
+            SetNeedleImmediate(0.0);
             UpdateBacklightVisual(IsBacklightOn);
         }
 
         #region Dependency Properties
 
-        // 1. Signal Strength (e.g., 0 to SignalMax)
+        // 1. Signal Strength
         public static readonly DependencyProperty SignalStrengthProperty =
             DependencyProperty.Register(
                 nameof(SignalStrength),
@@ -44,7 +39,7 @@ namespace HamRadioControls
             set => SetValue(SignalStrengthProperty, value);
         }
 
-        // 2. Signal Max Scale (Default 100.0; e.g., set to 255.0 for byte-range S-meter data)
+        // 2. Signal Max Scale
         public static readonly DependencyProperty SignalMaxProperty =
             DependencyProperty.Register(
                 nameof(SignalMax),
@@ -61,7 +56,24 @@ namespace HamRadioControls
             set => SetValue(SignalMaxProperty, value);
         }
 
-        // 3. Power Value (e.g., 0 to PowerMax)
+        // 3. Calibration Multiplier (1.0 = default; increase e.g. 1.2 to lift readings to match AnalogMeter while keeping 0 at zero)
+        public static readonly DependencyProperty CalibrationFactorProperty =
+            DependencyProperty.Register(
+                nameof(CalibrationFactor),
+                typeof(double),
+                typeof(SignalPowerMeter),
+                new FrameworkPropertyMetadata(
+                    1.0,
+                    OnSignalValueChanged,
+                    CoerceCalibrationFactor));
+
+        public double CalibrationFactor
+        {
+            get => (double)GetValue(CalibrationFactorProperty);
+            set => SetValue(CalibrationFactorProperty, value);
+        }
+
+        // 4. Power Value
         public static readonly DependencyProperty PowerValueProperty =
             DependencyProperty.Register(
                 nameof(PowerValue),
@@ -78,7 +90,7 @@ namespace HamRadioControls
             set => SetValue(PowerValueProperty, value);
         }
 
-        // 4. Power Max Scale (Default 100.0; e.g., set to 30.0 or 10.0 for watt ranges)
+        // 5. Power Max Scale
         public static readonly DependencyProperty PowerMaxProperty =
             DependencyProperty.Register(
                 nameof(PowerMax),
@@ -95,7 +107,7 @@ namespace HamRadioControls
             set => SetValue(PowerMaxProperty, value);
         }
 
-        // 5. Backlight On/Off
+        // 6. Backlight On/Off
         public static readonly DependencyProperty IsBacklightOnProperty =
             DependencyProperty.Register(
                 nameof(IsBacklightOn),
@@ -114,128 +126,122 @@ namespace HamRadioControls
 
         #endregion
 
-        #region Property Callbacks & Scaling Logic
+        #region Property Callbacks & Movement Logic
 
         private static object CoerceMaxValue(DependencyObject d, object baseValue)
         {
-            double max = (double)baseValue;
+            double max = Convert.ToDouble(baseValue);
             return max <= 0.0 ? 1.0 : max;
+        }
+
+        private static object CoerceCalibrationFactor(DependencyObject d, object baseValue)
+        {
+            double factor = Convert.ToDouble(baseValue);
+            return factor <= 0.0 ? 1.0 : factor;
+        }
+
+        private double NormalizeSignal(double rawValue)
+        {
+            double max = SignalMax <= 0.0 ? 1.0 : SignalMax;
+            double calibrated = Math.Max(0.0, rawValue) * CalibrationFactor;
+            return Math.Max(0.0, Math.Min(1.0, calibrated / max));
+        }
+
+        private double NormalizePower(double rawValue)
+        {
+            double max = PowerMax <= 0.0 ? 1.0 : PowerMax;
+            return Math.Max(0.0, Math.Min(1.0, rawValue / max));
         }
 
         private static void OnSignalValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is SignalPowerMeter meter)
+            if (d is SignalPowerMeter meter && meter.NeedleTranslation != null)
             {
-                double normalized = Math.Max(0.0, Math.Min(1.0, meter.SignalStrength / meter.SignalMax));
-                meter.MoveNeedleToNormalized(normalized);
+                double targetValue = Convert.ToDouble(e.NewValue);
+                if (targetValue == 0.0 && e.OldValue != null && Convert.ToDouble(e.OldValue) > 0.0)
+                {
+                    return;
+                }
+
+                double normalized = meter.NormalizeSignal(targetValue);
+                meter.AnimateNeedleToNormalized(normalized);
             }
         }
 
         private static void OnPowerValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is SignalPowerMeter meter)
+            if (d is SignalPowerMeter meter && meter.NeedleTranslation != null)
             {
-                meter.StopSlidingAnimation();
-                double normalized = Math.Max(0.0, Math.Min(1.0, meter.PowerValue / meter.PowerMax));
-                meter.MoveNeedleToNormalized(normalized);
+                double targetValue = Convert.ToDouble(e.NewValue);
+                if (targetValue == 0.0 && e.OldValue != null && Convert.ToDouble(e.OldValue) > 0.0)
+                {
+                    return;
+                }
+
+                double normalized = meter.NormalizePower(targetValue);
+                meter.AnimateNeedleToNormalized(normalized);
             }
         }
 
         private static void OnIsBacklightOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is SignalPowerMeter meter)
+            if (d is SignalPowerMeter meter && meter.SignalMeterSunburstBackground != null)
             {
                 meter.UpdateBacklightVisual((bool)e.NewValue);
             }
         }
 
-        private void MoveNeedleToNormalized(double normalized, double transitionMs = 0)
+        private void AnimateNeedleToNormalized(double normalized)
         {
             double targetX = MinNeedleX + (normalized * (MaxNeedleX - MinNeedleX));
+            double currentXMidFlight = NeedleTranslation.X;
 
-            if (transitionMs <= 0)
+            NeedleTranslation.BeginAnimation(TranslateTransform.XProperty, null);
+            NeedleTranslation.X = currentXMidFlight;
+
+            DoubleAnimation smoothAnim = new DoubleAnimation
             {
-                NeedleTranslation.BeginAnimation(TranslateTransform.XProperty, null);
-                NeedleTranslation.X = targetX;
-            }
-            else
-            {
-                // Smooth ballistic needle sweep between random signal fluctuations
-                DoubleAnimation sweep = new DoubleAnimation
+                From = currentXMidFlight,
+                To = targetX,
+                Duration = NeedleAnimationDuration,
+                EasingFunction = new QuadraticEase
                 {
-                    To = targetX,
-                    Duration = TimeSpan.FromMilliseconds(transitionMs),
-                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-                };
-                NeedleTranslation.BeginAnimation(TranslateTransform.XProperty, sweep);
-            }
+                    EasingMode = EasingMode.EaseOut
+                }
+            };
+
+            NeedleTranslation.BeginAnimation(
+                TranslateTransform.XProperty,
+                smoothAnim,
+                HandoffBehavior.SnapshotAndReplace
+            );
+        }
+
+        private void SetNeedleImmediate(double normalized)
+        {
+            if (NeedleTranslation == null) return;
+            double targetX = MinNeedleX + (normalized * (MaxNeedleX - MinNeedleX));
+            NeedleTranslation.BeginAnimation(TranslateTransform.XProperty, null);
+            NeedleTranslation.X = targetX;
         }
 
         private void UpdateBacklightVisual(bool isOn)
         {
-            SignalMeterSunburstBackground.Visibility = isOn ? Visibility.Visible : Visibility.Collapsed;
+            if (SignalMeterSunburstBackground != null)
+            {
+                SignalMeterSunburstBackground.Visibility = isOn ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         #endregion
 
-        #region Animation & Helper Methods
+        #region Helper Methods
 
         public void SetNeedlePosition(double xOffset)
         {
-            StopSlidingAnimation();
+            if (NeedleTranslation == null) return;
             NeedleTranslation.BeginAnimation(TranslateTransform.XProperty, null);
             NeedleTranslation.X = xOffset;
-        }
-
-        //public void StartSlidingAnimation()
-        //{
-        //    StopSlidingAnimation();
-
-        //    // Pick a random carrier base strength (e.g. S5 to S9+ area: 35% to 75% of SignalMax)
-        //    _simulatedBaseSignal = SignalMax * (0.35 + (_rng.NextDouble() * 0.40));
-        //    _simEndTime = DateTime.Now.AddSeconds(10);
-
-        //    _signalSimTimer = new DispatcherTimer
-        //    {
-        //        Interval = TimeSpan.FromMilliseconds(120)
-        //    };
-
-        //    _signalSimTimer.Tick += (s, e) =>
-        //    {
-        //        if (DateTime.Now >= _simEndTime)
-        //        {
-        //            StopSlidingAnimation();
-        //            // Drop needle smoothly back to noise floor when transmission ends
-        //            SetValue(SignalStrengthProperty, 0.0);
-        //            MoveNeedleToNormalized(0.0, 350);
-        //            return;
-        //        }
-
-        //        // Occasionally drift the carrier strength up or down like fading propagation
-        //        if (_rng.NextDouble() < 0.25)
-        //        {
-        //            _simulatedBaseSignal = SignalMax * (0.25 + (_rng.NextDouble() * 0.55));
-        //        }
-
-        //        // Add rapid voice/modulation jitter (+/- 18% of SignalMax)
-        //        double jitter = (_rng.NextDouble() - 0.5) * 0.36 * SignalMax;
-        //        double nextSignal = Math.Max(0.0, Math.Min(SignalMax, _simulatedBaseSignal + jitter));
-
-        //        // Update property and smoothly animate needle to the new reading
-        //        SetValue(SignalStrengthProperty, nextSignal);
-        //        MoveNeedleToNormalized(nextSignal / SignalMax, 110);
-        //    };
-
-        //    _signalSimTimer.Start();
-        //}
-
-        public void StopSlidingAnimation()
-        {
-            if (_signalSimTimer != null)
-            {
-                _signalSimTimer.Stop();
-                _signalSimTimer = null;
-            }
         }
 
         #endregion

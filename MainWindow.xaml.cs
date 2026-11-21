@@ -157,8 +157,6 @@ namespace YAESU_FT_891_Front_End
             centerX = Canvas.GetLeft(FingerIndentImage);
             centerY = Canvas.GetTop(FingerIndentImage);
 
-            FastNormalBorder.Visibility = Visibility.Hidden;
-
             _blurTimer = new DispatcherTimer();
             _blurTimer.Interval = TimeSpan.FromMilliseconds(16); // ~60 FPS
             _blurTimer.Tick += BlurTimer_Tick;
@@ -224,26 +222,23 @@ namespace YAESU_FT_891_Front_End
             _modeMapper = new FT891ModeMapper();
             modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
 
-            _catManager.StartOutgoingDataLoop();
-
-            //Ask rig for Power Switch Status
-            await _catManager.SendCatCommandAsync("PS", _catManager.OutGoingDataLoopDelay);
-
-            //ApplyKnobInput3(0);
-            //ApplyKnobInput4(0);
-
-            // 1. Initialize your new class (Targeting 800x600 canvas)
-            psudo3DWaterfall = new Psudo3DWaterfall(this, WaterfallImage);
-
-            // 2. Assign the generated bitmap to the XAML Image control
-            WaterfallImage.Source = psudo3DWaterfall.Bitmap;
-
             filterWaveControl = new FilterWaveControl(this);
             FiltersCanvas.Children.Add(filterWaveControl);
 
             filterWave = new FilterWave(this, filterWaveControl);
 
             filterWaveControl.Background = new SolidColorBrush(Colors.Transparent);
+
+            _catManager.StartOutgoingDataLoop();
+
+            //Ask rig for Power Switch Status
+            await _catManager.SendCatCommandAsync("PS", _catManager.OutGoingDataLoopDelay);
+
+            // 1. Initialize your new class (Targeting 800x600 canvas)
+            psudo3DWaterfall = new Psudo3DWaterfall(this, WaterfallImage);
+
+            // 2. Assign the generated bitmap to the XAML Image control
+            WaterfallImage.Source = psudo3DWaterfall.Bitmap;
 
             SelectMeter(FT891S_CatManager.currentRadioState.SelectedMeter);
 
@@ -778,13 +773,13 @@ namespace YAESU_FT_891_Front_End
                 if (tuningStep == 10)
                 {
                     tuningStep = 100;
-                    FastNormalBorder.Visibility = Visibility.Visible;
+                    FastNormalBorder.Opacity = 1;
                     await _catManager.SendCatCommandAsync("FS", new object[] { (int)FastStep.FastStep_ON }, _catManager.OutGoingDataLoopDelay);
                 }
                 else
                 {
                     tuningStep = 10;
-                    FastNormalBorder.Visibility = Visibility.Hidden;
+                    FastNormalBorder.Opacity = 0.2;
                     await _catManager.SendCatCommandAsync("FS", new object[] { (int)FastStep.FastStep_OFF }, _catManager.OutGoingDataLoopDelay);
                 }
             });

@@ -419,111 +419,112 @@
                     </Border>
 
                     <Canvas x:Name="DefaultCanvas" Canvas.Left="274" Canvas.Top="97" Style="{StaticResource DisplayCanvasStyle}">
-                        
-                        <Viewbox x:Name="AnalogueSignalMeterViewbox" Visibility="Collapsed" Stretch="Uniform" Canvas.Left="-160" Canvas.Top="-45" Width="500" Height="110">
-                            <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
-                        </Viewbox>
+                        <Canvas>
+                            <Viewbox x:Name="AnalogueSignalMeterViewbox" Stretch="Uniform" Canvas.Left="-122" Canvas.Top="-45" Width="500" Height="110" Visibility="Visible">
+                                <meter:AnalogMeter x:Name="SignalMeter" Mode="SignalS" Width="500" Height="190"/>
+                            </Viewbox>
 
-                        <Viewbox x:Name="SignalMeterViewbox" Visibility="Collapsed" Stretch="Uniform" Canvas.Left="12" Canvas.Top="8" Height="58">
-                            <meter:SignalPowerMeter x:Name="MyMeter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="308" Height="106"/>
-                        </Viewbox>
+                            <Viewbox x:Name="SignalMeterViewbox" Stretch="Uniform" Canvas.Left="26" Canvas.Top="2" Height="68" Visibility="Visible">
+                                <meter:SignalPowerMeter x:Name="MyMeter" CalibrationFactor="1.45" HorizontalAlignment="Left" VerticalAlignment="Top" Width="308" Height="106"/>
+                            </Viewbox>
 
-                        <Border Canvas.Left="275" Canvas.Top="71" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
-                            <Label x:Name="TabControlDescriptionLabel" Content="SPECTRUM SCOPE" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
-                        </Border>
+                            <Border Canvas.Left="231" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
+                                <Label x:Name="TabControlDescriptionLabel" Content="SPECTRUM SCOPE" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
+                            </Border>
 
-                        <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
-                            <TextBlock.Effect>
-                                <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
+                            <TextBlock x:Name="MainFrequencyTextBlock" Canvas.Left="232" Canvas.Top="-2" Text="14.252.000" Width="400" Foreground="White" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="48" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
 
-                        <local:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="2" Frequency="14252000" Height="40"/>
+                            <local:FrequencyDisplay x:Name="LargeFrequencyDisplay" Canvas.Left="344" Canvas.Top="2" Frequency="14252000" Height="40"/>
 
-                        <frequencyDisplay:FrequencyDisplay x:Name="SubLargeFrequencyDisplay" Canvas.Left="390" Canvas.Top="44" Frequency="7150000" Width="180"/>
-                        
-                        <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
-                            <TextBlock.Effect>
-                                <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
+                            <frequencyDisplay:FrequencyDisplay x:Name="SubLargeFrequencyDisplay" Canvas.Left="394" Canvas.Top="44" Frequency="7150000" Width="180"/>
 
-                        <Border Canvas.Left="570" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="13">
-                            <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
-                        </Border>
+                            <TextBlock x:Name="SubFrequencyTextBlock" Canvas.Left="408" Canvas.Top="41" Text="29.600.000" Width="160" Foreground="SlateGray" FontStyle="Italic" FontWeight="Bold" FontFamily="pack://application:,,,/Fonts/#ShareTechMono-Regular" FontSize="28" HorizontalAlignment="Right" TextAlignment="Right" Visibility="Hidden">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="Black" Opacity="0.85" BlurRadius="6" ShadowDepth="0"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
 
-                        <Border Canvas.Left="226" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Width="54" Background="DarkGoldenrod" MouseLeftButtonDown="SIG_MouseLeftButtonDown" IsHitTestVisible="True">
-                            <Label Content="SIG" Style="{StaticResource DisplayThreeCharLabelStyle}" />
-                        </Border>
+                            <Border Canvas.Left="570" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="70" Height="13">
+                                <Label x:Name="FunctionModeLabel" Content="LEVEL" FontFamily="Consolas" Foreground="Orange" Padding="0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Top" Margin="0,-1,0,0"/>
+                            </Border>
 
-                        <Border x:Name="MainVFOABLabelBorder" Canvas.Left="282" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
-                            <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
-                        </Border>
+                            <Border Canvas.Left="230" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DarkGoldenrod" MouseLeftButtonDown="SIG_MouseLeftButtonDown" IsHitTestVisible="True">
+                                <Label Content="SIG" Style="{StaticResource DisplayThreeCharLabelStyle}" />
+                            </Border>
 
-                        <Border x:Name="MainRigModeLabelBorder" Canvas.Left="282" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
-                            <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
-                        </Border>
+                            <Border x:Name="MainVFOABLabelBorder" Canvas.Left="286" Canvas.Top="2" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="Gray">
+                                <Label x:Name="MainVFOABLabel" Content="VFO-A" Style="{StaticResource DisplayThreeCharLabelStyle}" FontStyle="Italic"/>
+                            </Border>
 
-                        <Border x:Name="SubVFOABLabelBorder" Canvas.Left="348" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
-                            <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
-                        </Border>
+                            <Border x:Name="MainRigModeLabelBorder" Canvas.Left="286" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="DodgerBlue" IsHitTestVisible="True" MouseLeftButtonDown="MainRigModeLabelBorder_MouseLeftButtonDown">
+                                <Label x:Name="MainRigModeLabel" Content="USB" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
+                            </Border>
 
-                        <Border x:Name="SubPowerControlLabelBorder" Canvas.Left="306" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="ForestGreen">
-                            <Label x:Name="SubPowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharSmallLabelStyle}"/>
-                        </Border>
-                        
-                        <Border x:Name="SubRigModeLabelBorder" Canvas.Left="348" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
-                            <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="SubVFOABLabelBorder" Canvas.Left="352" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="Gray">
+                                <Label x:Name="SubVFOABLabel" Content="VFO-B" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" FontStyle="Italic"/>
+                            </Border>
 
-                        <Border x:Name="PowerControlLabelBorder" Canvas.Left="226" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
-                            <Label x:Name="PowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
-                        </Border>
+                            <Border x:Name="SubPowerControlLabelBorder" Canvas.Left="320" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="ForestGreen">
+                                <Label x:Name="SubPowerControlLabel" Content="5W" Style="{StaticResource DisplayThreeCharSmallLabelStyle}"/>
+                            </Border>
 
-                        <Border x:Name="ShiftLabelBorder" Canvas.Left="210" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="SFT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="SubRigModeLabelBorder" Canvas.Left="352" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Background="White">
+                                <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="WidthLabelBorder" Canvas.Left="242" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="WDT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="PowerControlLabelBorder" Canvas.Left="230" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                                <Label x:Name="PowerControlLabel" Content="100W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
+                            </Border>
 
-                        <Border x:Name="ContourLabelBorder" Canvas.Left="210" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="CNT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="ShiftLabelBorder" Canvas.Left="288" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="SFT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="NotchLabelBorder" Canvas.Left="210" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="NCH" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="WidthLabelBorder" Canvas.Left="256" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="WDT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="NBLabelBorder" Canvas.Left="242" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="NB" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="ContourLabelBorder" Canvas.Left="224" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="CNT" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="DNRLabelBorder" Canvas.Left="274" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="DNR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="NotchLabelBorder" Canvas.Left="192" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="NCH" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="NarrowLabelBorder" Canvas.Left="242" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="NAR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="NBLabelBorder" Canvas.Left="160" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="NB" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="FastNormalBorder" Canvas.Left="306" Canvas.Top="43" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
-                            <Label Content="FAST" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="DNRLabelBorder" Canvas.Left="384" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="DNR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Border x:Name="DNFLabelBorder" Canvas.Left="274" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
-                            <Label Content="DNF" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
-                        </Border>
+                            <Border x:Name="NarrowLabelBorder" Canvas.Left="320" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="NAR" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <TextBlock x:Name="TuneTextBlock" Canvas.Left="90" Canvas.Top="68" Text="TUNE" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="IndianRed" Width="60"/>
-                        
-                        <TextBlock x:Name="CenterCursorFixTextBlock" Canvas.Left="420" Canvas.Top="68" Text="CENTER" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
-                        <TextBlock x:Name="SpeedTextBlock" Canvas.Left="470" Canvas.Top="68" Text="FAST1" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
-                        <TextBlock Canvas.Left="538" Canvas.Top="68" Text="SPAN" Style="{StaticResource StatusBarTextBlockStyle}"/>
-                        <TextBlock x:Name="FrequencySpanTextBlock" Canvas.Left="580" Canvas.Top="68" Text="50kHz" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+                            <Border x:Name="FastNormalBorder" Canvas.Left="288" Canvas.Top="57" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige">
+                                <Label Content="FAST" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
 
-                        <Canvas x:Name="BarGraphSignalMetersCanvas" Canvas.Left="-370" Canvas.Top="-50" Visibility="Hidden">
+                            <Border x:Name="DNFLabelBorder" Canvas.Left="352" Canvas.Top="71" Style="{StaticResource DisplayThreeCharSmallBorderStyle}" Width="30" Background="Beige" Visibility="Visible">
+                                <Label Content="DNF" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
+                            </Border>
+
+                            <TextBlock x:Name="TuneTextBlock" Canvas.Left="90" Canvas.Top="68" Text="TUNE" Style="{StaticResource StatusBarTextBlockStyle}" Foreground="IndianRed" Width="60"/>
+
+                            <TextBlock x:Name="CenterCursorFixTextBlock" Canvas.Left="420" Canvas.Top="68" Text="CENTER" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+                            <TextBlock x:Name="SpeedTextBlock" Canvas.Left="470" Canvas.Top="68" Text="FAST1" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+                            <TextBlock Canvas.Left="538" Canvas.Top="68" Text="SPAN" Style="{StaticResource StatusBarTextBlockStyle}"/>
+                            <TextBlock x:Name="FrequencySpanTextBlock" Canvas.Left="580" Canvas.Top="68" Text="50kHz" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
+                        </Canvas>
+
+                        <Canvas x:Name="BarGraphSignalMetersCanvas" Canvas.Left="-370" Canvas.Top="-50" Visibility="Collapsed">
 
                             <Label Canvas.Left="396" Canvas.Top="52" Content="1   3   5   7  9  20 40 60 dB" Opacity="0.6" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Right"/>
 

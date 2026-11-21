@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using YAESU_FT_891_Front_End; // NOTE: Ensure "WindowsBase" is in your Project References!
 using YAESU_FT_891_Front_End.Models;
 using static FT891S_CatControl.CatStructure;
+using static System.Windows.Forms.AxHost;
 using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MainWindow;
@@ -1018,25 +1019,23 @@ namespace FT891S_CatControl
             mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.TXPowerWatts.ToString() + "W";
             //PC POWER CONTROL
 
-            //mainWindow.lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
-            //mainWindow.lastAFGain = FT891S_CatManager.currentRadioState.AFGain;
             mainWindow.UpdateKnobInput3();
             mainWindow.UpdateKnobInput4();
 
             if (currentRadioState.NoiseBlankerMode == NBMode.NB_OFF)
-                mainWindow.NBLabelBorder.Visibility = Visibility.Hidden;
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, false, false);
             else
-                mainWindow.NBLabelBorder.Visibility = Visibility.Visible;
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, true, false);
 
             if (currentRadioState.DNRMode == DNRModes.NR_OFF)
-                mainWindow.DNRLabelBorder.Visibility = Visibility.Hidden;
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, false, false);
             else
-                mainWindow.DNRLabelBorder.Visibility = Visibility.Visible;
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, true, false);
 
             if (currentRadioState.FastStep == FastStep.FastStep_OFF)
-                mainWindow.FastNormalBorder.Visibility = Visibility.Hidden;
+                mainWindow.FastNormalBorder.Opacity = 0.2;
             else
-                mainWindow.FastNormalBorder.Visibility = Visibility.Visible;
+                mainWindow.FastNormalBorder.Opacity = 1;
         }
 
         /// <summary>
