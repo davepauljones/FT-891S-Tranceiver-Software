@@ -85,9 +85,9 @@ namespace YAESU_FT_891_Front_End
 
     public static class Ft891FilterRanges
     {
-        public const int NotchFrequencyMinHz = 10;
-        public const int NotchFrequencyMaxHz = 3200;
-        public const int NotchFrequencyStepHz = 10;
+        public const int NotchFrequencyMinHz = 1;
+        public const int NotchFrequencyMaxHz = 320;
+        public const int NotchFrequencyStepHz = 1;
 
         public const int ContourFrequencyMinHz = 10;
         public const int ContourFrequencyMaxHz = 3200;
@@ -136,13 +136,6 @@ namespace YAESU_FT_891_Front_End
 
         public int NbValue { get; private set; }
         public bool WidthEnabled { get; private set; } = true;
-
-        //public int NotchFrequency { get; private set; } = Ft891FilterRanges.NotchFrequencyMinHz;
-        //public Ft891OnOff NotchState { get; private set; } = Ft891OnOff.Off;
-        //public bool NotchEnabled { get { return NotchState == Ft891OnOff.On; } }
-
-        //public int ContourFrequency { get; private set; } = 1600;
-        public bool ContourEnabled { get; private set; }
 
         public Ft891IfShiftState ShiftState { get; private set; } = Ft891IfShiftState.On;
         public Ft891IfShiftDirection ShiftDirection
@@ -357,11 +350,8 @@ namespace YAESU_FT_891_Front_End
                 Ft891FilterRanges.NotchFrequencyMinHz +
                 (newRatio * (Ft891FilterRanges.NotchFrequencyMaxHz - Ft891FilterRanges.NotchFrequencyMinHz)));
 
-            int frequency = SnapToStep(targetFreq, Ft891FilterRanges.NotchFrequencyMinHz,
-                Ft891FilterRanges.NotchFrequencyMaxHz, Ft891FilterRanges.NotchFrequencyStepHz);
-
             // 4. Update internal frequency state
-            SetNotchFrequencyInternal(frequency);
+            SetNotchFrequencyInternal(targetFreq);
 
             if (!(filters[FilterTypes.NotchSwitch].Enabled))
                 ButtonState(FilterTypes.NotchSwitch, true, true);
@@ -456,9 +446,6 @@ namespace YAESU_FT_891_Front_End
 
             _contourVisualOffset = clampedY - ContourYPos;
             _contourVisualOffset = Math.Max(-24.0, Math.Min(24.0, _contourVisualOffset));
-
-            ContourEnabled = true;
-            //OnPropertyChanged(nameof(ContourEnabled));
 
             if (!(filters[FilterTypes.ContourSwitch].Enabled))
                 ButtonState(FilterTypes.ContourSwitch, true, true);
@@ -1055,6 +1042,8 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NotchSwitch].Enabled = true;
 
+                        FT891S_CatManager.currentRadioState.NotchSwitch = NotchOnOffModes.BP_ON;
+
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.Orange);
                         mainWindow.NotchLabelBorder.Opacity = 1;
 
@@ -1069,6 +1058,8 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NotchSwitch].Enabled = false;
 
+                        FT891S_CatManager.currentRadioState.NotchSwitch = NotchOnOffModes.BP_OFF;
+
                         NotchTextBlock.Foreground = new SolidColorBrush(Colors.White);
                         mainWindow.NotchLabelBorder.Opacity = 0.2;
 
@@ -1076,7 +1067,7 @@ namespace YAESU_FT_891_Front_End
                         {
                             //SRRSManager.SRRSCriteria NotchSwitchReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterSwitch, 0, Origins.Software, sendCAT);
                             //if (NotchSwitchReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
-                               await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                     }
                     break;
@@ -1089,7 +1080,7 @@ namespace YAESU_FT_891_Front_End
                         {
                             //SRRSManager.SRRSCriteria NotchValueReturn_SRRSCriteria = mainWindow._SRRSManager.SetSRRSManagedItem(SRRSManagedItems.NotchFilterValue, NotchFrequency, Origins.Software, sendCAT);
                             //if (NotchValueReturn_SRRSCriteria.RequiredAction == RequiredActions.UpdateUI_SendCAT)
-                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 1, FT891S_CatManager.currentRadioState.NotchFreq / 10 }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            await mainWindow._catManager.SendCatCommandAsync("BP", new object[] { 0, 1, FT891S_CatManager.currentRadioState.NotchFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                     }
                     else
@@ -1097,9 +1088,7 @@ namespace YAESU_FT_891_Front_End
                         filters[FilterTypes.NotchFreq].Enabled = false;
                     }
 
-                    NotchValueTextBlock.Text = FT891S_CatManager.currentRadioState.NotchFreq.ToString() + "Hz";
-                    //if (FT891S_CatManager.currentRadioState.NotchFreq < 1600)
-                    //    Console.WriteLine("******** GLITCH HAPPENED HERE");
+                    NotchValueTextBlock.Text = (FT891S_CatManager.currentRadioState.NotchFreq * 10).ToString() + "Hz";
                     break;
                 case FilterTypes.ContourSwitch:
                     if (state)
@@ -1364,11 +1353,15 @@ namespace YAESU_FT_891_Front_End
                     {
                         filters[FilterTypes.NotchSwitch].Enabled = true;
 
+                        FT891S_CatManager.currentRadioState.NotchSwitch = NotchOnOffModes.BP_ON;
+
                         ButtonState(FilterTypes.NotchSwitch, States.On, true);
                     }
                     else
                     {
                         filters[FilterTypes.NotchSwitch].Enabled = false;
+
+                        FT891S_CatManager.currentRadioState.NotchSwitch = NotchOnOffModes.BP_OFF;
 
                         ButtonState(FilterTypes.NotchSwitch, States.Off, true);
                     }
