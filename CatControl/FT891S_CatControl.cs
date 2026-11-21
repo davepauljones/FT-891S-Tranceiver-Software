@@ -1412,6 +1412,7 @@ namespace FT891S_CatControl
                             {
                                 // 4. Update internal frequency state
                                 mainWindow.filterWaveControl.SetNotchFrequencyInternal(currentRadioState.NotchFreq);
+                                mainWindow.filterWaveControl.Update_Notch_PointPostion(false);
                             });
                             //await Task.Delay(50);
                         }
