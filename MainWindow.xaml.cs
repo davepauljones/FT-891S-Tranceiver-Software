@@ -242,9 +242,6 @@ namespace YAESU_FT_891_Front_End
                 //QRZ
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
 
-                //CW Decoder
-                MorseCodeUserControl.Visibility = Visibility.Visible;
-
                 //Display Switched Un implemented so far
                 TuneTextBlock.Visibility = Visibility.Visible;
                 CenterCursorFixTextBlock.Visibility = Visibility.Visible;
@@ -253,9 +250,6 @@ namespace YAESU_FT_891_Front_End
             {
                 //QRZ
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
-
-                //CW Decoder
-                MorseCodeUserControl.Visibility = Visibility.Collapsed;
 
                 //Display Switched Un implemented so far
                 TuneTextBlock.Visibility = Visibility.Collapsed;
@@ -536,14 +530,6 @@ namespace YAESU_FT_891_Front_End
             {
                 QMBListView.SelectedIndex++;
             }
-
-            /*StationScope item = (StationScope)QMBListView.Items[QMBListView.SelectedIndex];
-
-            UpdateFrequency(item.station.Frequency);
-
-            SetFrequency(item.station.Frequency);
-
-            SetRfGain(_port, 20);*/
 
             _lastMoveTime2 = now;
         }
@@ -857,7 +843,6 @@ namespace YAESU_FT_891_Front_End
 
             frequencyManagement.SetFrequency(MemorySlot.MemorySlots.VFO_A, item.station.Frequency, MainFrequencyTextBlock);
 
-            //yAESU_FT_891_CAT_Dictionary.SetRfGain(fT891S_SerialPort._port, 20);
             await _catManager.SendCatCommandAsync("RG", new object[] { 0, 30 }, _catManager.OutGoingDataLoopDelay);
         }
         private async void QMBListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -907,15 +892,6 @@ namespace YAESU_FT_891_Front_End
         }
 
         public DateTime LastTimeThresholdChangedDateTime = DateTime.Now;
-        //private void StationScopeSignalStrengthThresholdNumericUpDown_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    LastTimeThresholdChangedDateTime = DateTime.Now;
-        //    var value = StationScopeSignalStrengthThresholdNumericUpDown.Value;
-        //    if (ConsoleDebugLevel == ConsoleDebugLevels.All)
-        //    {
-        //        Console.WriteLine(value);
-        //    }
-        //}
 
         private void OMBButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -935,7 +911,6 @@ namespace YAESU_FT_891_Front_End
             });
         }
 
-        int ScanningState = 0;
         private async void VMButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Canvas c = (Canvas)sender;
@@ -943,25 +918,6 @@ namespace YAESU_FT_891_Front_End
             {
 
             });
-
-            //if (ScanningState == 0)
-            //{
-            //    waterFallSweep.SweepActive = true;
-            //    ScanningState = 1;
-            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            //}
-            //else if (ScanningState == 1)
-            //{
-            //    waterFallSweep.SweepActive = true;
-            //    ScanningState = 2;
-            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            //}
-            //else if (ScanningState == 2)
-            //{
-            //    waterFallSweep.SweepActive = false;
-            //    ScanningState = 0;
-            //    await _catManager.SendCatCommandAsync("SC", new object[] { ScanningState }, _catManager.OutGoingDataLoopDelay);
-            //}
         }
 
         private void VMToggleButtonCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1587,13 +1543,9 @@ namespace YAESU_FT_891_Front_End
 
                 // Optional feedback: Update a text block or variable to show the current state
                 if (waterFallSweep.UseTimeSlicing)
-                {
                     TimeSliceOnOffTextBlock.Text = "ON";
-                }
                 else
-                {
                     TimeSliceOnOffTextBlock.Text = "OFF";
-                }
             }
         }
 
@@ -1613,9 +1565,9 @@ namespace YAESU_FT_891_Front_End
                 SendRedLEDRectangle.Opacity = 0.2;
         }
 
-        private void ScopeOnOffCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void ScopeOnOffCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            waterFallSweep.ToggleSweepOnOff();
+            await waterFallSweep.ToggleSweepOnOff();
         }
 
         private async void BandUserControl_BandChanged(object sender, YAESU_FT_891_Front_End.BandChangedEventArgs e)
