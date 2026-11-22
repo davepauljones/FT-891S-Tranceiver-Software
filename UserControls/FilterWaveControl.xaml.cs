@@ -466,6 +466,16 @@ namespace YAESU_FT_891_Front_End
             Canvas.SetLeft(ContourThumb, cXcY.X - 8);
             Canvas.SetTop(ContourThumb, cXcY.Y - 8);
         }
+        public void Update_Contour_OnOffState(bool sendCAT)
+        {
+            if (FT891S_CatManager.currentRadioState.ContourSwitchPayloadMode == ContourPayloadModes.ContourOnOff)
+            {
+                if (FT891S_CatManager.currentRadioState.ContourSwitch == ContourOnOffModes.CO_OFF)
+                    ButtonState(FilterTypes.ContourSwitch, false, sendCAT);
+                else
+                    ButtonState(FilterTypes.ContourSwitch, true, sendCAT);
+            }
+        }
         public double ContourYPos = 51;
         private const double TotalArcWidth = 30.0;
         public void Update_Contour_Waveform(bool sendCAT)

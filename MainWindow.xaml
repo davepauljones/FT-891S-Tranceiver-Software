@@ -524,7 +524,7 @@
                             <TextBlock x:Name="FrequencySpanTextBlock" Canvas.Left="580" Canvas.Top="68" Text="50kHz" Style="{StaticResource StatusBarTextBlockStyle}" Width="60"/>
                         </Canvas>
 
-                        <Canvas x:Name="BarGraphSignalMetersCanvas" Canvas.Left="-370" Canvas.Top="-50" Visibility="Collapsed">
+                        <Canvas x:Name="BarGraphSignalMetersCanvas" Canvas.Left="-346" Canvas.Top="-48" Visibility="Collapsed">
 
                             <Label Canvas.Left="396" Canvas.Top="52" Content="1   3   5   7  9  20 40 60 dB" Opacity="0.6" Foreground="White" FontWeight="Light" FontFamily="Consolas" FontSize="10" HorizontalAlignment="Right"/>
 

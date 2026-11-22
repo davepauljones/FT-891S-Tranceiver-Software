@@ -1,18 +1,10 @@
-﻿using MahApps.Metro.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 using static YAESU_FT_891_Front_End.Animations;
 
 namespace YAESU_FT_891_Front_End
@@ -186,7 +178,7 @@ namespace YAESU_FT_891_Front_End
                 default: return 50000;
             }
         }
-        public void ButtonSelection(byte buttonClicked)
+        public async void ButtonSelection(byte buttonClicked)
         {
             switch (buttonClicked)
             {
@@ -360,11 +352,11 @@ namespace YAESU_FT_891_Front_End
                     break;
                 case SimulatedWaterfallButtons.START:
                     mainWindow.waterFallSweep.ScopeOnOff = false;
-                    mainWindow.waterFallSweep.ToggleSweepOnOff();
+                    await mainWindow.waterFallSweep.ToggleSweepOnOff();
                     break;
                 case SimulatedWaterfallButtons.STOP:
                     mainWindow.waterFallSweep.ScopeOnOff = true;
-                    mainWindow.waterFallSweep.ToggleSweepOnOff();
+                    await mainWindow.waterFallSweep.ToggleSweepOnOff();
                     break;
                 default:
 

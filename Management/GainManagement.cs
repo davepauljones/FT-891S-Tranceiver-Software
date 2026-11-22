@@ -47,8 +47,7 @@ namespace YAESU_FT_891_Front_End
                             break;
                         case ControlGains.SQ:
                             value = FT891S_CatManager.currentRadioState.SQGain;
-                            //to create squelch cat command
-                            //await mainWindow._catManager.SendCatCommandAsync("SQ", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+                            await mainWindow._catManager.SendCatCommandAsync("SQ", "0", mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                     }
                     break;
@@ -65,8 +64,7 @@ namespace YAESU_FT_891_Front_End
                             break;
                         case ControlGains.SQ:
                             FT891S_CatManager.currentRadioState.SQGain = value;
-                            //to do
-                            //await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, FT891S_CatManager.currentRadioState.SQGain }, mainWindow._catManager.OutGoingDataLoopDelay);
+                            await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, FT891S_CatManager.currentRadioState.SQGain }, mainWindow._catManager.OutGoingDataLoopDelay);
                             break;
                     }
                     break;
@@ -90,8 +88,8 @@ namespace YAESU_FT_891_Front_End
                         case ControlGains.SQ:
                             mainWindow.gainUserControl.GainTitleTextBlock.Text = "SQ GAIN";
                             mainWindow.gainUserControl.Minimum = 0;
-                            mainWindow.gainUserControl.Maximum = 255;
-                            mainWindow.gainUserControl.DefaultGain = 70;
+                            mainWindow.gainUserControl.Maximum = FT891S_CatManager.currentRadioState.SQGainMaxValue;
+                            mainWindow.gainUserControl.DefaultGain = 20;
                             mainWindow.gainUserControl.ChangeGain(FT891S_CatManager.currentRadioState.SQGain);
                             break;
                     }

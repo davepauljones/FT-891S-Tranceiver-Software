@@ -1,18 +1,14 @@
-﻿using CWDecoder;
-using Event_Horizon;
+﻿using Event_Horizon;
 using FT891S_CatControl;
 using MahApps.Metro.Controls;
-using NAudio.Gui;
 using System;
 using System.ComponentModel;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -22,9 +18,6 @@ using static YAESU_FT_891_Front_End.Animations;
 using static YAESU_FT_891_Front_End.HelperFunctions;
 using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
-using static YAESU_FT_891_Front_End.SevenSegmentDisplay;
-using static YAESU_FT_891_Front_End.TranceiverDisplayModes;
-using static HamRadioControls.SignalPowerMeter;
 
 namespace YAESU_FT_891_Front_End
 {
@@ -73,8 +66,6 @@ namespace YAESU_FT_891_Front_End
         public GainManagement gainManagement;
 
         public PacketManagement packetManagement;
-
-        //public CATCommandLog cATCommandLog;
 
         public TranceiverDisplayModes tranceiverDisplayModes;
 
@@ -184,18 +175,12 @@ namespace YAESU_FT_891_Front_End
             FT891S_CatManager.currentRadioState.TXPowerWatts = 5; //default rf power 5 watts for safety
             RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
 
-            
-
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
 
             packetManagement = new PacketManagement(this);
 
-            //cATCommandLog = new CATCommandLog(this);
-
             // Load the saved state or defaults
             FT891S_CatManager.currentRadioState = RadioStateManager.LoadState();
-            // Apply values to your UI elements / radio binding here
-            //FT891S_CatManager.currentRadioState.ComPort = "COM8";
 
             fT891S_SerialPort.OpenPort(FT891S_CatManager.currentRadioState.ComPort);
 
@@ -225,7 +210,7 @@ namespace YAESU_FT_891_Front_End
             filterWaveControl = new FilterWaveControl(this);
             FiltersCanvas.Children.Add(filterWaveControl);
 
-            filterWave = new FilterWave(this, filterWaveControl);
+            //filterWave = new FilterWave(this, filterWaveControl);
 
             filterWaveControl.Background = new SolidColorBrush(Colors.Transparent);
 
@@ -254,12 +239,8 @@ namespace YAESU_FT_891_Front_End
 
                 buttonConsole.UpdateButton(StatusBarIndicatorConsole.Console.Recognition, true, true, false, false, false);
 
-                
                 //QRZ
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
-
-                //Expand / Collapse MainWindow
-                //RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Visible;
 
                 //CW Decoder
                 MorseCodeUserControl.Visibility = Visibility.Visible;
@@ -272,9 +253,6 @@ namespace YAESU_FT_891_Front_End
             {
                 //QRZ
                 QRZExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
-
-                //Expand / Collapse MainWindow
-                //RigExpandRetractButtonAreaCanvas.Visibility = Visibility.Collapsed;
 
                 //CW Decoder
                 MorseCodeUserControl.Visibility = Visibility.Collapsed;

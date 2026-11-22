@@ -28,90 +28,90 @@ namespace YAESU_FT_891_Front_End
             this.uiControl = uiControl ?? throw new ArgumentNullException("uiControl");
             this.uiDispatcher = uiControl.Dispatcher;
 
-            if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
-            {
-                mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Visible;
-                mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Visible;
-                //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Visible;
-            }
-            else
-            {
-                mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Collapsed;
-                mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Collapsed;
-                //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Collapsed;
-            }
+            //if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
+            //{
+            //    mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Visible;
+            //    mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Visible;
+            //    mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Visible;
+            //    mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Visible;
+            //    mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Visible;
+            //    mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Visible;
+            //    //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Visible;
+            //}
+            //else
+            //{
+            //    mainWindow.filterWaveControl.WidthThumb.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.WidthBadge.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.NotchBadge.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.ContourBadge.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.ShiftBadge.Visibility = System.Windows.Visibility.Collapsed;
+            //    mainWindow.filterWaveControl.WidthNotchTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.MaxCutTextBlock.Visibility = System.Windows.Visibility.Collapsed;
+            //    mainWindow.filterWaveControl.NotchThumb.Visibility = System.Windows.Visibility.Collapsed;
+            //    mainWindow.filterWaveControl.ContourThumb.Visibility = System.Windows.Visibility.Collapsed;
+            //    mainWindow.filterWaveControl.ShiftThumb.Visibility = System.Windows.Visibility.Collapsed;
+            //    mainWindow.filterWaveControl.WidthMainSectionPath.Visibility = System.Windows.Visibility.Collapsed;
+            //    //mainWindow.MyFilterWave.ControlPanelOptionsGrid.Visibility = System.Windows.Visibility.Collapsed;
+            //}
 
-            uiControl.UIValueChanged += OnUIValueChanged;
+            //uiControl.UIValueChanged += OnUIValueChanged;
         }
 
-        private void OnUIValueChanged(string parameter, object value)
-        {
-            Console.WriteLine(parameter);
+        //private void OnUIValueChanged(string parameter, object value)
+        //{
+        //    Console.WriteLine(parameter);
 
-            Task.Run(async () =>
-            {
-                try
-                {
-                    if (mainWindow == null || mainWindow._catManager == null) return;
+        //    Task.Run(async () =>
+        //    {
+        //        try
+        //        {
+        //            if (mainWindow == null || mainWindow._catManager == null) return;
 
-                    switch (parameter)
-                    {
+        //            switch (parameter)
+        //            {
                        
-                        case "CONTOUR_FREQ":
-                            //_contourFreq = (int)value;
+        //                case "CONTOUR_FREQ":
+        //                    //_contourFreq = (int)value;
 
-                            //await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 1, _contourFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
+        //                    //await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 1, _contourFreq }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            ////remove once added to outgoing data loop
-                            //await mainWindow._catManager.SendCatCommandAsync("CO", "01", mainWindow._catManager.OutGoingDataLoopDelay);
-                            //break;
-                        case "CONTOUR_ENABLED":
-                            //_contourEnabled = (bool)value;
+        //                    ////remove once added to outgoing data loop
+        //                    //await mainWindow._catManager.SendCatCommandAsync("CO", "01", mainWindow._catManager.OutGoingDataLoopDelay);
+        //                    //break;
+        //                case "CONTOUR_ENABLED":
+        //                    //_contourEnabled = (bool)value;
 
-                            //mainWindow.Dispatcher.Invoke(() =>
-                            //{
-                            //    if (!(_contourEnabled))
-                            //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Hidden;
-                            //    else
-                            //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
-                            //});
+        //                    //mainWindow.Dispatcher.Invoke(() =>
+        //                    //{
+        //                    //    if (!(_contourEnabled))
+        //                    //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Hidden;
+        //                    //    else
+        //                    //        mainWindow.ContourLabelBorder.Visibility = System.Windows.Visibility.Visible;
+        //                    //});
 
-                            ////Note to actually switch on and off the CNT COntour on the radio, has to be done in P3, not P2
-                            //if (!(_contourEnabled))
-                            //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
-                            //else
-                            //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
+        //                    ////Note to actually switch on and off the CNT COntour on the radio, has to be done in P3, not P2
+        //                    //if (!(_contourEnabled))
+        //                    //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 0 }, mainWindow._catManager.OutGoingDataLoopDelay);
+        //                    //else
+        //                    //    await mainWindow._catManager.SendCatCommandAsync("CO", new object[] { 0, 0, 1 }, mainWindow._catManager.OutGoingDataLoopDelay);
 
-                            ////remove once added to outgoing data loop
-                            //await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
-                            break;
+        //                    ////remove once added to outgoing data loop
+        //                    //await mainWindow._catManager.SendCatCommandAsync("CO", "00", mainWindow._catManager.OutGoingDataLoopDelay);
+        //                    break;
                        
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("CAT Error sending " + parameter + ": " + ex.Message);
-                }
-            });
-        }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine("CAT Error sending " + parameter + ": " + ex.Message);
+        //        }
+        //    });
+        //}
 
         //public void UpdateFromRadio(string parameter, object value)
         //{

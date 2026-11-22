@@ -24,7 +24,7 @@ namespace YAESU_FT_891_Front_End
             remove => RemoveHandler(ModeChangedEvent, value);
         }
 
-        private RadioMode _currentMode = RadioMode.USB;
+        public RadioMode _currentMode = RadioMode.USB;
 
         private readonly Dictionary<RadioMode, (Border border, TextBlock text)> _ui;
 

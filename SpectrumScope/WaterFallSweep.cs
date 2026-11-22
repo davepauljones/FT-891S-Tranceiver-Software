@@ -1,18 +1,13 @@
 ﻿using FT891S_CatControl;
 using System;
 using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using YAESU_FT_891_Front_End.Models;
-using static YAESU_FT_891_Front_End.MyStructs;
 using static YAESU_FT_891_Front_End.RigStateChanges;
 using static YAESU_FT_891_Front_End.SimulatedWaterfall;
 
@@ -40,6 +35,7 @@ namespace YAESU_FT_891_Front_End
 
         private CancellationTokenSource _cts;
         private int _rfGainBeforeBandScopeScan;
+        private int _sqGainBeforeBandScopeScan;
 
         public WaterFallSweep(MainWindow mainWindow, Canvas bandScopeCanvas, Canvas canvas)
         {
@@ -128,13 +124,18 @@ namespace YAESU_FT_891_Front_End
             await mainWindow._catManager.SendCatCommandAsync("RG", "0", mainWindow._catManager.OutGoingDataLoopDelay);
             _rfGainBeforeBandScopeScan = FT891S_CatManager.currentRadioState.RFGain;
 
+            await mainWindow._catManager.SendCatCommandAsync("SQ", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+            _sqGainBeforeBandScopeScan = FT891S_CatManager.currentRadioState.SQGain;
+
             if (UseTimeSlicing)
             {
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, _rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, _sqGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
             }
             else
             {
-                await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGainMaxValue }, mainWindow._catManager.OutGoingDataLoopDelay);   
+                await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGainMaxValue }, mainWindow._catManager.OutGoingDataLoopDelay);
+                await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, FT891S_CatManager.currentRadioState.SQGainMaxValue }, mainWindow._catManager.OutGoingDataLoopDelay);
             }
 
             double totalCanvasWidth = canvasFullRightPos - canvasFullLeftPos;
@@ -307,16 +308,17 @@ namespace YAESU_FT_891_Front_End
                 mainWindow.LargeFrequencyDisplay.Frequency = currentQsoCenterFrequency;
 
                 await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, _rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
-                mainWindow._catManager.StartOutgoingDataLoop();
 
-                if (RigMode != RadioMode.FM)
-                {
+                await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, _sqGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+                if (mainWindow.modeUserControl._currentMode != RadioMode.FM_N || mainWindow.modeUserControl._currentMode != RadioMode.FM
+                 || mainWindow.modeUserControl._currentMode != RadioMode.AM_N || mainWindow.modeUserControl._currentMode != RadioMode.AM)
+                    //if (RigMode != RadioMode.FM_N || RigMode != RadioMode.FM || RigMode != RadioMode.AM_N || RigMode != RadioMode.AM_N)
                     await mainWindow._catManager.SendCatCommandAsync("RG", new object[] { 0, _rfGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
-                }
                 else
-                {
-                    mainWindow.fT891S_SerialPort.SendCAT(mainWindow.fT891S_SerialPort._port, "SQ015");
-                }
+                    await mainWindow._catManager.SendCatCommandAsync("SQ", new object[] { 0, _sqGainBeforeBandScopeScan }, mainWindow._catManager.OutGoingDataLoopDelay);
+
+                mainWindow._catManager.StartOutgoingDataLoop();
 
                 _cts?.Dispose();
                 _cts = null;
