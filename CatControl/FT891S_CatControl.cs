@@ -1020,6 +1020,28 @@ namespace FT891S_CatControl
             else
                 mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, true, false);
 
+            mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
+
+            mainWindow.filterWaveControl.Update_Contour_OnOffState(false);
+
+
+            mainWindow.filterWaveControl.Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
+
+            mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
+
+            
+            if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false, false);
+            else
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true, false);
+
+            if (FT891S_CatManager.currentRadioState.DNFMode == BCMode.BC_OFF)
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false, false);
+            else
+                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true, false);
+
+
+
             if (currentRadioState.DNRMode == DNRModes.NR_OFF)
                 mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, false, false);
             else
@@ -1249,6 +1271,46 @@ namespace FT891S_CatControl
                             await SendCatCommandAsync("FS", mainWindow._catManager.OutGoingDataLoopDelay);
                         }
                         break;
+                    case 11:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            if (FT891S_CatManager.currentRadioState.OperatingMode != RadioMode.FM && FT891S_CatManager.currentRadioState.OperatingMode != RadioMode.FM_N)
+                            //BP = Notch On Off State
+                            await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 12:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("CO", "00", OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 13:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("NA", "0", OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 14:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            //BC = DNF
+                            await SendCatCommandAsync("BC", "0", OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 15:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            //width
+                            await SendCatCommandAsync("IS", "0", OutGoingDataLoopDelay);
+                        }
+                        break;
+                    case 16:
+                        if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+                        {
+                            await SendCatCommandAsync("SH", "0", OutGoingDataLoopDelay);
+                        }
+                        break;
                 }
             }
         }
@@ -1262,7 +1324,7 @@ namespace FT891S_CatControl
 
             while (!token.IsCancellationRequested)
             {
-                if (packet == 6)
+                if (packet == 17)
                     packet = 0;
 
                 await MainWaterfallOutGoingData(packet);
@@ -1277,15 +1339,6 @@ namespace FT891S_CatControl
                     case TranceiverModes.StationScope:
                         break;
                     case TranceiverModes.NoiseFilters:
-                        await SendCatCommandAsync("NB", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.NoiseBlankerMode == NBMode.NB_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.NB, true, false);
-                        });
-
                         if (FT891S_CatManager.currentRadioState.NoiseBlankerMode == NBMode.NB_ON)
                         {
                             await SendCatCommandAsync("NL", "0", OutGoingDataLoopDelay);
@@ -1294,15 +1347,6 @@ namespace FT891S_CatControl
                                 mainWindow.filterWaveControl.SetNbValue(FT891S_CatManager.currentRadioState.NoiseBlankerLevel, syncThumbPosition: true, sendCAT: false);
                             });
                         }
-
-                        await SendCatCommandAsync("NR", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.DNRMode == DNRModes.NR_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNR, true, false);
-                        });
                         
                         if (FT891S_CatManager.currentRadioState.DNRMode == DNRModes.NR_ON)
                         {
@@ -1325,35 +1369,8 @@ namespace FT891S_CatControl
                             mainWindow.filterWaveControl.Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
                         });
 
-                        await SendCatCommandAsync("NA", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.NarrowMode == NAMode.NA_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.Narrow, true, false);
-                        });
-
-                        //BC = DNF
-                        await SendCatCommandAsync("BC", "0", OutGoingDataLoopDelay);
-                        mainWindow.Dispatcher.Invoke(() =>
-                        {
-                            if (FT891S_CatManager.currentRadioState.DNFMode == BCMode.BC_OFF)
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, false, false);
-                            else
-                                mainWindow.filterWaveControl.ButtonState(FilterTypes.DNF, true, false);
-                        });
-
                         if (!(mainWindow.filterWaveControl.NotchIsBeingDragged))
-                        {
-                            //BP = Notch On Off State
-                            await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
-
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                mainWindow.filterWaveControl.Update_Notch_OnOffState(false);
-                            });
-
+                        { 
                             //BP = Notch Value
                             await SendCatCommandAsync("BP", "01", OutGoingDataLoopDelay);
 
@@ -1367,14 +1384,6 @@ namespace FT891S_CatControl
 
                         if (!(mainWindow.filterWaveControl.ContourIsBeingDragged))
                         {
-                            //CO =Contour On Off State
-                            await SendCatCommandAsync("CO", "00", OutGoingDataLoopDelay);
-
-                            mainWindow.Dispatcher.Invoke(() =>
-                            {
-                                mainWindow.filterWaveControl.Update_Contour_OnOffState(false);
-                            });
-
                             //CO = Contour Freq
                             await SendCatCommandAsync("CO", "01", OutGoingDataLoopDelay);
 

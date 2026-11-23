@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using YAESU_FT_891_Front_End.Models;
+using static System.Windows.Forms.AxHost;
 using static YAESU_FT_891_Front_End.SRRSManager;
 
 namespace YAESU_FT_891_Front_End
@@ -319,10 +320,24 @@ namespace YAESU_FT_891_Front_End
             filters.Add(new FilterClass { ID = FilterTypes.Narrow, Name = "NARROW", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
             filters.Add(new FilterClass { ID = FilterTypes.DNF, Name = "DNF", Value = 0, MinValue = 0, MaxValue = 1, StepValue = 1, DefaultValue = 0, Enabled = false });
 
+            FilterIndicatorsOff();
+
             Update_Notch_PointPostion(false);
             Update_Contour_Waveform(false);
             Update_Shift_TrapezoidPostion(FT891S_CatManager.currentRadioState.IfShiftHz, false);
             Update_Width_TrapezoidPostion(FT891S_CatManager.currentRadioState.WidthValue, false);
+        }
+
+        private void FilterIndicatorsOff()
+        {
+            ButtonState(FilterTypes.NB, false, false);
+            ButtonState(FilterTypes.NotchSwitch, false, false);
+            ButtonState(FilterTypes.ContourSwitch, false, false);
+            ButtonState(FilterTypes.Width, false, false);
+            ButtonState(FilterTypes.Shift, false, false);
+            ButtonState(FilterTypes.Narrow, false, false);
+            ButtonState(FilterTypes.DNF, false, false);
+            ButtonState(FilterTypes.DNR, false, false);
         }
 
         public bool NotchIsBeingDragged;
