@@ -133,7 +133,6 @@ namespace YAESU_FT_891_Front_End
         private const double FixedSlopeWidth = 8.0;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event Action<string, object> UIValueChanged;
 
         public int NbValue { get; private set; }
         public bool WidthEnabled { get; private set; } = true;
@@ -177,7 +176,7 @@ namespace YAESU_FT_891_Front_End
             var state = FT891S_CatManager.currentRadioState;
             bool isNarrow = state.NarrowMode != NAMode.NA_OFF;
 
-            switch (state.OperatingMode)
+            switch (state.ModeA)
             {
                 case RadioMode.LSB:
                 case RadioMode.USB:
@@ -607,7 +606,7 @@ namespace YAESU_FT_891_Front_End
             int freqInHz = WidthFrequencies_SSB_Wide[(int)WidthValue];
             int defaultFreqInHz = WidthFrequencies_SSB_Wide[0];
 
-            switch (FT891S_CatManager.currentRadioState.OperatingMode)
+            switch (FT891S_CatManager.currentRadioState.ModeA)
             {
                 case RadioMode.LSB:
                 case RadioMode.USB:

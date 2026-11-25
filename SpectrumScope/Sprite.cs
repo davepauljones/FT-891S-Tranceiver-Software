@@ -13,7 +13,6 @@ namespace YAESU_FT_891_Front_End
         private MainWindow mainWindow;
         private Canvas historyCanvas;
         private Canvas bandScopeCanvas;
-        private double ypos = 0;
         private const double LineHeight = 1; // Height of each waterfall step
         private double MaxHeight = 54; // Wrap-around point
 

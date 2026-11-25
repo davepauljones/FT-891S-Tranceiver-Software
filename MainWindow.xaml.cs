@@ -172,8 +172,8 @@ namespace YAESU_FT_891_Front_End
 
             selectRadio = new SelectRadio(this);
 
-            FT891S_CatManager.currentRadioState.TXPowerWatts = 5; //default rf power 5 watts for safety
-            RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
+            FT891S_CatManager.currentRadioState.WattsA = 5; //default rf power 5 watts for safety
+            RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.WattsA.ToString() + "W";
 
             simulatedWaterfall = new SimulatedWaterfall(this, frequencyManagement);
 
@@ -226,6 +226,8 @@ namespace YAESU_FT_891_Front_End
             WaterfallImage.Source = psudo3DWaterfall.Bitmap;
 
             SelectMeter(FT891S_CatManager.currentRadioState.SelectedMeter);
+
+            //await memorySlot.GetVFOs();
 
             if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
             {
@@ -934,10 +936,7 @@ namespace YAESU_FT_891_Front_End
             Canvas c = (Canvas)sender;
             AnimateButtonClick(c, () =>
             {
-                if (FT891S_CatManager.currentRadioState.DeveloperMode == (int)DeveloperModes.DeveloperMode_ON)
-                {
-                    memorySlot.SwapVFOs(this);
-                }
+                memorySlot.SwapVFOs(this);
             });
         }
 
@@ -1424,7 +1423,7 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        private void FunctionMenu_MouseWheel(object sender, MouseWheelEventArgs e)
+        private async void FunctionMenu_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var border = sender as Border;
             var code = border.Tag.ToString();
@@ -1453,25 +1452,25 @@ namespace YAESU_FT_891_Front_End
                 case FunctionMenu.RfPower:
                     if (RigMode == RadioMode.AM || RigMode == RadioMode.AM_N)
                     {
-                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.TXPowerWatts <= (FT891S_CatManager.currentRadioState.TXPowerWattsAMMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
-                            FT891S_CatManager.currentRadioState.TXPowerWatts += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
-                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.TXPowerWatts >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
-                            FT891S_CatManager.currentRadioState.TXPowerWatts -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.WattsA <= (FT891S_CatManager.currentRadioState.TXPowerWattsAMMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.WattsA += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.WattsA >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.WattsA -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
 
-                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
+                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.WattsA.ToString() + "W";
 
-                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + FT891S_CatManager.currentRadioState.TXPowerWatts.ToString("D3"));
+                        await _catManager.SendCatCommandAsync("PC", new object[] { FT891S_CatManager.currentRadioState.WattsA }, _catManager.OutGoingDataLoopDelay);
                     }
                     else
                     { 
-                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.TXPowerWatts <= (FT891S_CatManager.currentRadioState.TXPowerWattsMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
-                            FT891S_CatManager.currentRadioState.TXPowerWatts += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
-                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.TXPowerWatts >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
-                            FT891S_CatManager.currentRadioState.TXPowerWatts -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        if (mouseWheelScrollDirection == MenuDirections.GoUp && FT891S_CatManager.currentRadioState.WattsA <= (FT891S_CatManager.currentRadioState.TXPowerWattsMaximum - FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.WattsA += FT891S_CatManager.currentRadioState.TXPowerWattsStep;
+                        else if (mouseWheelScrollDirection == MenuDirections.GoDown && FT891S_CatManager.currentRadioState.WattsA >= (FT891S_CatManager.currentRadioState.TXPowerWattsMinimum + FT891S_CatManager.currentRadioState.TXPowerWattsStep))
+                            FT891S_CatManager.currentRadioState.WattsA -= FT891S_CatManager.currentRadioState.TXPowerWattsStep;
 
-                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.TXPowerWatts.ToString() + "W";
+                        RfPowerFunctionTextBlock.Text = FT891S_CatManager.currentRadioState.WattsA.ToString() + "W";
 
-                        fT891S_SerialPort.SendCAT(fT891S_SerialPort._port, "PC" + FT891S_CatManager.currentRadioState.TXPowerWatts.ToString("D3"));
+                        await _catManager.SendCatCommandAsync("PC", new object[] { FT891S_CatManager.currentRadioState.WattsA }, _catManager.OutGoingDataLoopDelay);
                     }
  
                     if (ConsoleDebugLevel == ConsoleDebugLevels.All)
@@ -1623,7 +1622,7 @@ namespace YAESU_FT_891_Front_End
             if (modeUserControl.Visibility != Visibility.Visible)
             {
                 // 1. Instant Show: Make it visible and reset opacity to full
-                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.OperatingMode);
+                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.ModeA);
                 modeUserControl.Visibility = Visibility.Visible;
                 modeUserControl.Opacity = 1.0;
             }
@@ -1962,7 +1961,7 @@ namespace YAESU_FT_891_Front_End
             if (modeUserControl.Visibility != Visibility.Visible)
             {
                 // 1. Instant Show: Make it visible and reset opacity to full
-                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.OperatingMode);
+                modeUserControl.ChangeMode(FT891S_CatManager.currentRadioState.ModeA);
                 modeUserControl.Visibility = Visibility.Visible;
                 modeUserControl.Opacity = 1.0;
             }

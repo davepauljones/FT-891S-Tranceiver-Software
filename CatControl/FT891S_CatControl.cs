@@ -28,14 +28,16 @@ namespace FT891S_CatControl
         public long VfoBFrequency { get; set; }
         public int MainRX { get; set; }
         public int currentBand { get; set; }
-        public RadioMode OperatingMode { get; set; }
+        public RadioMode ModeA { get; set; }
+        public RadioMode ModeB { get; set; }
         public int AgcBandSelection { get; set; }
         public AgcMode CurrentAgcMode { get; set; }
         public IfShiftResult IfShiftHz { get; set; }
         public MeterTypes ActiveMeterType { get; set; }
         public int CurrentMeterReading { get; set; }
         public int BusyMode { get; set; }
-        public int TXPowerWatts { get; set; } = 5;
+        public int WattsA { get; set; } = 5;
+        public int WattsB { get; set; } = 5;
         public int TXPowerWattsMinimum { get; } = 5;
         public int TXPowerWattsMaximum { get; } = 100;
         public int TXPowerWattsAMMaximum { get; } = 40;
@@ -354,6 +356,13 @@ namespace FT891S_CatControl
             dict => long.Parse(dict["P1"]),
             result => FT891S_CatManager.currentRadioState.VfoAFrequency = result
         );
+        public static readonly FT891S_CatCommand<long> FB = new FT891S_CatCommand<long>(
+            "FB",
+            new CatStructure().Expect("P1", 9),
+            new CatStructure().Expect("P1", 9),
+            dict => long.Parse(dict["P1"]),
+            result => FT891S_CatManager.currentRadioState.VfoBFrequency = result
+        );
 
         public static readonly FT891S_CatCommand<ModeResult> MD = new FT891S_CatCommand<ModeResult>(
             "MD",
@@ -367,7 +376,7 @@ namespace FT891S_CatControl
             result =>
             {
                 FT891S_CatManager.currentRadioState.MainRX = result.MainRX;
-                FT891S_CatManager.currentRadioState.OperatingMode = result.Mode;
+                FT891S_CatManager.currentRadioState.ModeA = result.Mode;
             }
         );
 
@@ -408,7 +417,7 @@ namespace FT891S_CatControl
             new CatStructure().Expect("P1", 3),
             new CatStructure().Expect("P1", 3),
             dict => int.Parse(dict["P1"]),
-            result => FT891S_CatManager.currentRadioState.TXPowerWatts = result
+            result => FT891S_CatManager.currentRadioState.WattsA = result
         );
 
         public static readonly FT891S_CatCommand<long> ID = new FT891S_CatCommand<long>(
@@ -668,11 +677,18 @@ namespace FT891S_CatControl
             dict => int.Parse(dict["P1"] + dict["P2"]),
             result => FT891S_CatManager.currentRadioState.SQGain = result
         );
-
+        public static readonly FT891S_CatCommand<int> SV = new FT891S_CatCommand<int>(
+            "SV",
+            new CatStructure(),
+            new CatStructure(),
+            dict => 0,
+            result => { }
+        );
         public static readonly Dictionary<string, ICatCommand> ParsersByOpCode = new Dictionary<string, ICatCommand>()
         {
             { "BY", BY },
             { "FA", FA },
+            { "FB", FB },
             { "MD", MD },
             { "GT", GT },
             { "RM", RM },
@@ -699,7 +715,8 @@ namespace FT891S_CatControl
             { "QR", QR },
             { "NA", NA },
             { "BC", BC },
-            { "SQ", SQ }
+            { "SQ", SQ },
+            { "SV", SV }
         };
 
         // Example method to build the transmission string for the radio
@@ -923,7 +940,7 @@ namespace FT891S_CatControl
 
             mainWindow.LargeFrequencyDisplay.Frequency = currentRadioState.VfoAFrequency;
 
-            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.OperatingMode);
+            UpdateUIRigMode(mainWindow.MainRigModeLabelBorder, mainWindow.MainRigModeLabel, currentRadioState.ModeA);
 
             //RM READ METER
             switch (currentRadioState.ActiveMeterType)
@@ -998,7 +1015,7 @@ namespace FT891S_CatControl
             //RM READ METER
 
             //BY BUSY
-            if (currentRadioState.OperatingMode == RadioMode.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
+            if (currentRadioState.ModeA == RadioMode.FM && mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
             {
                 if (currentRadioState.BusyMode == 0)
                     SetRigLEDColor(mainWindow, RigLEDColors.LightGray);
@@ -1008,8 +1025,8 @@ namespace FT891S_CatControl
             //BY BUSY
 
             //PC POWER CONTROL
-            mainWindow.PowerControlLabel.Content = currentRadioState.TXPowerWatts.ToString() + "W";
-            mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.TXPowerWatts.ToString() + "W";
+            mainWindow.PowerControlLabel.Content = currentRadioState.WattsA.ToString() + "W";
+            mainWindow.RfPowerFunctionTextBlock.Text = currentRadioState.WattsA.ToString() + "W";
             //PC POWER CONTROL
 
             mainWindow.UpdateKnobInput3();
@@ -1122,7 +1139,7 @@ namespace FT891S_CatControl
                 Console.Write("currentRadioState.VfoAFrequency = ");
                 Console.WriteLine(currentRadioState.VfoAFrequency);
                 Console.Write("currentRadioState.OperatingMode = ");
-                Console.WriteLine(currentRadioState.OperatingMode);
+                Console.WriteLine(currentRadioState.ModeA);
                 Console.Write("currentRadioState.ActiveMeterType = ");
                 Console.WriteLine(currentRadioState.ActiveMeterType);
                 Console.Write("currentRadioState.CurrentMeterReading = ");
@@ -1130,7 +1147,7 @@ namespace FT891S_CatControl
                 Console.Write("currentRadioState.BusyMode = ");
                 Console.WriteLine(currentRadioState.BusyMode);
                 Console.Write("currentRadioState.TXPowerWatts = ");
-                Console.WriteLine(currentRadioState.TXPowerWatts);
+                Console.WriteLine(currentRadioState.WattsA);
             }
 
             Application.Current.Dispatcher.Invoke(() =>
@@ -1274,7 +1291,7 @@ namespace FT891S_CatControl
                     case 11:
                         if (mainWindow.TranceiverTXRXState == TranceiverStates.RadioTXOff)
                         {
-                            if (FT891S_CatManager.currentRadioState.OperatingMode != RadioMode.FM && FT891S_CatManager.currentRadioState.OperatingMode != RadioMode.FM_N)
+                            if (FT891S_CatManager.currentRadioState.ModeA != RadioMode.FM && FT891S_CatManager.currentRadioState.ModeA != RadioMode.FM_N)
                             //BP = Notch On Off State
                             await SendCatCommandAsync("BP", "00", OutGoingDataLoopDelay);
                         }

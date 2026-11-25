@@ -110,9 +110,9 @@ namespace YAESU_FT_891_Front_End
                 {
                     Console.Write(rs.VfoAFrequency.ToString());
                     Console.Write(", ");
-                    Console.Write(rs.TXPowerWatts.ToString());
+                    Console.Write(rs.WattsA.ToString());
                     Console.Write(", ");
-                    Console.Write(rs.OperatingMode.ToString());
+                    Console.Write(rs.ModeA.ToString());
                     Console.Write(", ");
                     Console.WriteLine(rs.RFGain.ToString());
                 }

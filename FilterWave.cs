@@ -11,17 +11,6 @@ namespace YAESU_FT_891_Front_End
         private readonly FilterWaveControl uiControl;
         private readonly Dispatcher uiDispatcher;
 
-        private int _nbValue;
-        private int _widthValue;
-        private int _notchFreq;
-        private bool _notchEnabled;
-        private int _notchDepth;
-        private int _contourFreq;
-        private bool _contourEnabled;
-        private int _isValue;
-        private bool _dnfEnabled;
-        private bool _apfEnabled;
-
         public FilterWave(MainWindow mainWindow, FilterWaveControl uiControl)
         {
             this.mainWindow = mainWindow;

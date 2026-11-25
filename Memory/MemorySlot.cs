@@ -54,14 +54,16 @@ namespace YAESU_FT_891_Front_End
             RadioState rs = new RadioState();
             rs.VfoAFrequency = 14200000;
             rs.VfoBFrequency = 7150000;
-            rs.OperatingMode = RadioMode.USB;
+            rs.ModeA = RadioMode.USB;
+            rs.WattsA = 5;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_A, rs);//main is the contents of VFO A
 
             rs = new RadioState();
             rs.VfoAFrequency = 7150000;
             rs.VfoBFrequency = 14200000;
-            rs.OperatingMode = RadioMode.AM;
+            rs.ModeB = RadioMode.AM;
+            rs.WattsB = 10;
 
             MemorySlotDictionary.Add(MemorySlots.VFO_B, rs);//sub is the contents of VFO B
 
@@ -71,7 +73,7 @@ namespace YAESU_FT_891_Front_End
                 RadioState value = item.Value;
 
                 Console.Write($"{key} -> {value.VfoAFrequency}");
-                Console.WriteLine($"{key} -> {value.OperatingMode}");
+                Console.WriteLine($"{key} -> {value.ModeA}");
             }
 
             RadioState main;
@@ -89,72 +91,91 @@ namespace YAESU_FT_891_Front_End
             }
         }
 
-        public void InitVFOs()
-        {
-            RadioState main;
+        //public void InitVFOs()
+        //{
+        //    RadioState main;
 
-            if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
-            {
-                MainRigState = main;
-                CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
-            }
+        //    if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out main))
+        //    {
+        //        MainRigState = main;
+        //        CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
+        //    }
 
-            RadioState sub;
+        //    RadioState sub;
 
-            if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
-            {
-                SubRigState = sub;
-                CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
-            }
+        //    if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out sub))
+        //    {
+        //        SubRigState = sub;
+        //        CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
+        //    }
 
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, mainWindow.MainFrequencyTextBlock);
-            mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, mainWindow.SubFrequencyTextBlock);
+        //    mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, mainWindow.MainFrequencyTextBlock);
+        //    mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, mainWindow.SubFrequencyTextBlock);
 
-            //mainWindow.MainVFOABLabel.Content = SubRigState.Mode;
+        //    //mainWindow.MainVFOABLabel.Content = SubRigState.Mode;
 
-            RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
+        //    RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.ModeA);
 
-            mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
-            mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
-            mainWindow.MainRigModeLabel.Content = rmcm.Name;
+        //    mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
+        //    mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
+        //    mainWindow.MainRigModeLabel.Content = rmcm.Name;
 
-            RigModeDisplay rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
+        //    RigModeDisplay rmcs = RigStateChanges.ChangeMode(SubRigState.ModeA);
 
-            mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
-            mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
-            mainWindow.SubRigModeLabel.Content = rmcs.Name;
+        //    mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
+        //    mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
+        //    mainWindow.SubRigModeLabel.Content = rmcs.Name;
 
-        }
+        //}
         // 1. Changed from 'async void' to 'async Task' for proper async handling and error tracking
-        public async Task SwapVFOs(MainWindow mainWindow)
+        public async Task GetVFOs()
         {
-            mainWindow._catManager.StopOutgoingDataLoop();
+            //mainWindow._catManager.StopOutgoingDataLoop();
 
             // 1. Declare out variables explicitly before using them (Required in older C#)
-            RadioState vfoAState = null;
-            RadioState vfoBState = null;
+            RadioState vfoAState = new RadioState();
+            RadioState vfoBState = new RadioState();
+
+            //retreive VFO A & B Frequency
+            await mainWindow._catManager.SendCatCommandAsync("FA", mainWindow._catManager.OutGoingDataLoopDelay);
+            vfoAState.VfoAFrequency = FT891S_CatManager.currentRadioState.VfoAFrequency;
+
+            //Note Rig Mode is the mode of VFO-A Main
+            //retreive Rig Mode
+            await mainWindow._catManager.SendCatCommandAsync("MD", "0", mainWindow._catManager.OutGoingDataLoopDelay);
+            vfoAState.ModeA = FT891S_CatManager.currentRadioState.ModeA;
+
+            //Note Rig Power is the Power of VFO-A Main
+            //retreive Rig Power
+            await mainWindow._catManager.SendCatCommandAsync("PC", mainWindow._catManager.OutGoingDataLoopDelay);
+            vfoAState.WattsA = FT891S_CatManager.currentRadioState.WattsA;
+
+            //SV = Swap VFO
+            await mainWindow._catManager.SendCatCommandAsync("SV", mainWindow._catManager.OutGoingDataLoopDelay);
+
+            await mainWindow._catManager.SendCatCommandAsync("FA", mainWindow._catManager.OutGoingDataLoopDelay);
+            vfoBState.VfoBFrequency = FT891S_CatManager.currentRadioState.VfoBFrequency;
+
+            mainWindow.Mode_ModeChange(FT891S_CatManager.currentRadioState.ModeA);
+            vfoBState.ModeB = FT891S_CatManager.currentRadioState.ModeA;
+
+            await mainWindow._catManager.SendCatCommandAsync("PC", new object[] { FT891S_CatManager.currentRadioState.WattsA }, mainWindow._catManager.OutGoingDataLoopDelay);
+            vfoBState.WattsB = FT891S_CatManager.currentRadioState.WattsA;
+
+            RadioState retreivedVfoAState;
+            RadioState retreivedVfoBState;
 
             // 2. Fetch both states safely
-            if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out vfoAState) &&
-                MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out vfoBState))
+            if (MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_A, out retreivedVfoAState) &&
+                MemorySlotDictionary.TryGetValue((int)MemorySlots.VFO_B, out retreivedVfoBState))
             {
-                // 3. Swap the data payloads in the dictionary
-                MemorySlotDictionary[(int)MemorySlots.VFO_A] = vfoBState;
-                MemorySlotDictionary[(int)MemorySlots.VFO_B] = vfoAState;
+                retreivedVfoAState.VfoAFrequency = vfoAState.VfoAFrequency;
+                retreivedVfoAState.ModeA = vfoAState.ModeA;
+                retreivedVfoAState.WattsA = vfoAState.WattsA;
+                
+                retreivedVfoBState.VfoBFrequency = vfoBState.VfoBFrequency;
 
-                // 4. Toggle the tracking state using standard if/else statements
-                if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
-                {
-                    CurrentOccupierOfMainRigState = MemorySlots.VFO_B;
-                    CurrentOccupierOfSubRigState = MemorySlots.VFO_A;
-                }
-                else
-                {
-                    CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
-                    CurrentOccupierOfSubRigState = MemorySlots.VFO_B;
-                }
-
-                // 5. Update local state references based on the new positions
+                //5.Update local state references based on the new positions
                 MainRigState = MemorySlotDictionary[(int)MemorySlots.VFO_A];
                 SubRigState = MemorySlotDictionary[(int)MemorySlots.VFO_B];
             }
@@ -174,57 +195,39 @@ namespace YAESU_FT_891_Front_End
             // 7. Refresh UI Frequencies
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_A, mainWindow.MainFrequencyTextBlock);
             mainWindow.frequencyManagement.GetFrequency(MemorySlots.VFO_B, mainWindow.SubFrequencyTextBlock);
-
-            // 8. Update UI Mode Visuals
-            RigModeDisplay rmcm = RigStateChanges.ChangeMode(MainRigState.OperatingMode);
-            mainWindow.MainRigModeLabelBorder.Background = new SolidColorBrush(rmcm.BackgroundColor);
-            mainWindow.MainRigModeLabel.Foreground = new SolidColorBrush(rmcm.ForegroundColor);
-            mainWindow.MainRigModeLabel.Content = rmcm.Name;
-
-            RigModeDisplay rmcs = RigStateChanges.ChangeMode(SubRigState.OperatingMode);
-            mainWindow.SubRigModeLabelBorder.Background = new SolidColorBrush(rmcs.BackgroundColor);
-            mainWindow.SubRigModeLabel.Foreground = new SolidColorBrush(rmcs.ForegroundColor);
-            mainWindow.SubRigModeLabel.Content = rmcs.Name;
-
-            // 9. Send CAT Hardware Commands
-            // 9. Send CAT Hardware Commands
-            try
-            {
-                // --- STEP A: Update the CURRENT Main VFO before swapping ---
-                // Because the physical rig hasn't flipped yet, the "current active VFO" 
-                // on the radio actually needs the data we just put into SubRigState!
-                await mainWindow._catManager.SendCatCommandAsync("BA", mainWindow._catManager.OutGoingDataLoopDelay);
-
-                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { SubRigState.VfoAFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
-                await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(SubRigState.OperatingMode)).ToString("X") }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
-
-                // --- STEP B: Swap the radio's active VFO ---
-                // This makes the radio flip its context to the other VFO slot.
-                if (IsVFO_AB)
-                {
-                    IsVFO_AB = false;
-                    await mainWindow._catManager.SendCatCommandAsync("BA", mainWindow._catManager.OutGoingDataLoopDelay);
-                }
-                else
-                {
-                    IsVFO_AB = true;
-                    //await mainWindow._catManager.SendCatCommandAsync("AB", mainWindow._catManager.OutGoingDataLoopDelay);
-                }
-
-                // --- STEP C: Update the NEW active VFO (which used to be Sub) ---
-                // Now that the rig has flipped, the primary VFO register on the radio 
-                // is ready to receive our target MainRigState data.
-                await mainWindow._catManager.SendCatCommandAsync("FA", new object[] { MainRigState.VfoAFrequency }, mainWindow._catManager.OutGoingDataLoopDelay);
-                await mainWindow._catManager.SendCatCommandAsync("MD", new object[] { 0, ((int)Convert.ToInt16(MainRigState.OperatingMode)).ToString("X") }, mainWindow._catManager.OutGoingDataLoopDelay);
-
-                mainWindow._catManager.StartOutgoingDataLoop();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("CAT VFO Swap Failed: " + ex.Message);
-            }
         }
+        public async Task SwapVFOs(MainWindow mainWindow)
+        {
+            mainWindow._catManager.StopOutgoingDataLoop();
+
+            mainWindow.SubLargeFrequencyDisplay.Frequency = mainWindow.LargeFrequencyDisplay.Frequency;
+
+            mainWindow.SubRigModeLabelBorder.Background = mainWindow.MainRigModeLabelBorder.Background;
+            mainWindow.SubRigModeLabel.Foreground = mainWindow.MainRigModeLabel.Foreground;
+            mainWindow.SubRigModeLabel.Content = mainWindow.MainRigModeLabel.Content;
+
+            mainWindow.SubPowerControlLabel.Content = mainWindow.PowerControlLabel.Content;
+
+            // 6. Update the UI Labels
+            if (CurrentOccupierOfMainRigState == MemorySlots.VFO_A)
+            {
+                mainWindow.MainVFOABLabel.Content = "VFO-B";
+                mainWindow.SubVFOABLabel.Content = "VFO-A";
+               
+                CurrentOccupierOfMainRigState = MemorySlots.VFO_B;
+            }
+            else
+            {
+                mainWindow.MainVFOABLabel.Content = "VFO-A";
+                mainWindow.SubVFOABLabel.Content = "VFO-B";
+                
+                CurrentOccupierOfMainRigState = MemorySlots.VFO_A;
+            }
+            //SV = Swap VFO
+            await mainWindow._catManager.SendCatCommandAsync("SV", mainWindow._catManager.OutGoingDataLoopDelay);
+
+            mainWindow._catManager.StartOutgoingDataLoop();
+        }
+
     }
 }
