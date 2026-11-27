@@ -9,6 +9,7 @@
         xmlns:local="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:meter="clr-namespace:HamRadioControls"
         xmlns:bandUserControl="clr-namespace:YAESU_FT_891_Front_End"
+        xmlns:wattUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:modeUserControl="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:frequencyDisplay="clr-namespace:YAESU_FT_891_Front_End"
         xmlns:gainUserControl="clr-namespace:YAESU_FT_891_Front_End"
@@ -425,7 +426,7 @@
                             </Viewbox>
 
                             <Viewbox x:Name="SignalMeterViewbox" Stretch="Uniform" Canvas.Left="26" Canvas.Top="2" Height="68" Visibility="Visible">
-                                <meter:SignalPowerMeter x:Name="MyMeter" CalibrationFactor="1.45" HorizontalAlignment="Left" VerticalAlignment="Top" Width="308" Height="106"/>
+                                <meter:SignalPowerMeter x:Name="MyMeter" CalibrationFactor="2.65" HorizontalAlignment="Left" VerticalAlignment="Top" Width="308" Height="106"/>
                             </Viewbox>
 
                             <Border Canvas.Left="231" Canvas.Top="44" CornerRadius="3" BorderBrush="White" BorderThickness="1" Width="120" Height="13">
@@ -476,7 +477,7 @@
                                 <Label x:Name="SubRigModeLabel" Content="FM" Style="{StaticResource DisplayThreeCharSmallLabelStyle}" Foreground="Black"/>
                             </Border>
 
-                            <Border x:Name="PowerControlLabelBorder" Canvas.Left="230" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen">
+                            <Border x:Name="PowerControlLabelBorder" Canvas.Left="230" Canvas.Top="22" Style="{StaticResource DisplayThreeCharBorderStyle}" Background="ForestGreen" IsHitTestVisible="True" MouseLeftButtonDown="WattLabelBorder_MouseLeftButtonDown">
                                 <Label x:Name="PowerControlLabel" Content="100W" Style="{StaticResource DisplayThreeCharLabelStyle}"/>
                             </Border>
 
@@ -1449,6 +1450,9 @@
                         </TabControl>
 
                         <bandUserControl:BandUserControl x:Name="bandUserControl" Canvas.Left="170" Canvas.Top="-10" Panel.ZIndex="1" Width="300" Height="126" BandChanged="BandUserControl_BandChanged" Visibility="Hidden"/>
+
+                        <wattUserControl:WattUserControl x:Name="wattUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166"
+                               Minimum="5" Maximum="100" DefaultWatt="5" WattChanged="WattUserControl_WattChanged" Visibility="Hidden"/>
 
                         <modeUserControl:ModeUserControl x:Name="modeUserControl" Canvas.Left="170" Canvas.Top="-12" Panel.ZIndex="1" Width="300" Height="166" ModeChanged="ModeUserControl_ModeChanged" Visibility="Hidden"/>
 

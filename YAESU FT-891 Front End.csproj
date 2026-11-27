@@ -175,6 +175,10 @@
     <Compile Include="ButtonConsoles\ButtonConsole.cs" />
     <Compile Include="ButtonConsoles\StatusBarIndicatorConsole.cs" />
     <Compile Include="MiscFunctions\Functions.cs" />
+    <Compile Include="UserControls\WattChangedEventArgs.cs" />
+    <Compile Include="UserControls\WattUserControl.xaml.cs">
+      <DependentUpon>WattUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MorseCode.xaml.cs">
       <DependentUpon>MorseCode.xaml</DependentUpon>
     </Compile>
@@ -251,6 +255,10 @@
     <Compile Include="UserControls\YaesuListView.xaml.cs">
       <DependentUpon>YaesuListView.xaml</DependentUpon>
     </Compile>
+    <Page Include="UserControls\WattUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\MorseCode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

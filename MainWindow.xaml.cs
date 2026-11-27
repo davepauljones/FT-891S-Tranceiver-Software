@@ -1581,6 +1581,31 @@ namespace YAESU_FT_891_Front_End
             await _catManager.SendCatCommandAsync("BS", new object[] { Convert.ToInt16(selectedBandCode) }, _catManager.OutGoingDataLoopDelay);
         }
 
+        private async void WattUserControl_WattChanged(object sender, WattChangedEventArgs e)
+        {
+            Watt_WattChange(e.Watt);
+        }
+        public async void Watt_WattChange(int radioWatt)
+        {
+            int maxPower = (RigMode == RadioMode.AM || RigMode == RadioMode.AM_N)
+                ? FT891S_CatManager.currentRadioState.TXPowerWattsAMMaximum
+                : FT891S_CatManager.currentRadioState.TXPowerWattsMaximum;
+
+            int clampedWatts = Math.Max(
+                FT891S_CatManager.currentRadioState.TXPowerWattsMinimum,
+                Math.Min(radioWatt, maxPower));
+
+            FT891S_CatManager.currentRadioState.WattsA = clampedWatts;
+            RfPowerFunctionTextBlock.Text = clampedWatts + "W";
+            PowerControlLabel.Content = clampedWatts + "W";
+
+            if (_catManager != null)
+            {
+                await _catManager.SendCatCommandAsync("PC", new object[] { clampedWatts.ToString("D3") }, _catManager.OutGoingDataLoopDelay);
+
+                await _catManager.SendCatCommandAsync("PC", _catManager.OutGoingDataLoopDelay);
+            }
+        }
         private async void ModeUserControl_ModeChanged(object sender, ModeChangedEventArgs e)
         {
             Mode_ModeChange(e.Mode);
@@ -1617,6 +1642,20 @@ namespace YAESU_FT_891_Front_End
             UpdateUIRigMode(ScanBandModeTextBlock, radioMode);
         }
 
+        private void WattLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (wattUserControl.Visibility != Visibility.Visible)
+            {
+                // 1. Instant Show: Make it visible and reset opacity to full
+                wattUserControl.ChangeWatt(FT891S_CatManager.currentRadioState.WattsA);
+                wattUserControl.Visibility = Visibility.Visible;
+                wattUserControl.Opacity = 1.0;
+            }
+            else
+            {
+                FadoutUserControl(wattUserControl, 0);
+            }
+        }
         private void MainRigModeLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {          
             if (modeUserControl.Visibility != Visibility.Visible)
