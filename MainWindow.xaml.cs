@@ -207,6 +207,8 @@ namespace YAESU_FT_891_Front_End
             _modeMapper = new FT891ModeMapper();
             modeUserControl.SetSupportedModes(_modeMapper.SupportedModes);
 
+            SetRFDialFunctionMode(RFDialFunctionModes.RFDial_RF);
+
             filterWaveControl = new FilterWaveControl(this);
             FiltersCanvas.Children.Add(filterWaveControl);
 
@@ -551,33 +553,70 @@ namespace YAESU_FT_891_Front_End
 
             if (deltaY == 0) step = 0;
 
-            // 2. Add the step to the current value
-            int proposedValue = FT891S_CatManager.currentRadioState.RFGain + step;
+            int proposedValue;
 
-            // 3. Force it to stay strictly between 0 and 255
-            
-            FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), FT891S_CatManager.currentRadioState.RFGainMaxValue);
+            switch (FT891S_CatManager.currentRadioState.CurrentRFDialFunction)
+            {
+                case RFDialFunctionModes.RFDial_RF:
+                    // 2. Add the step to the current value
+                    proposedValue = FT891S_CatManager.currentRadioState.RFGain + step;
 
-            if (FT891S_CatManager.currentRadioState.RFGain == 0)
-                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
-            else
-                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                    // 3. Force it to stay strictly between 0 and 255
 
-            RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+                    FT891S_CatManager.currentRadioState.RFGain = Math.Min(Math.Max(proposedValue, 0), FT891S_CatManager.currentRadioState.RFGainMaxValue);
 
-            await _catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGain }, _catManager.OutGoingDataLoopDelay);
+                    if (FT891S_CatManager.currentRadioState.RFGain == 0)
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    else
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+                    RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+
+                    await _catManager.SendCatCommandAsync("RG", new object[] { 0, FT891S_CatManager.currentRadioState.RFGain }, _catManager.OutGoingDataLoopDelay);
+                    break;
+                case RFDialFunctionModes.RFDial_SQL:
+                    // 2. Add the step to the current value
+                    proposedValue = FT891S_CatManager.currentRadioState.SQGain + step;
+
+                    // 3. Force it to stay strictly between 0 and 255
+
+                    FT891S_CatManager.currentRadioState.SQGain = Math.Min(Math.Max(proposedValue, 0), FT891S_CatManager.currentRadioState.SQGainMaxValue);
+
+                    if (FT891S_CatManager.currentRadioState.SQGain == 0)
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    else
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+                    RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.SQGain.ToString() + " SQ";
+
+                    await _catManager.SendCatCommandAsync("SQ", new object[] { 0, FT891S_CatManager.currentRadioState.SQGain }, _catManager.OutGoingDataLoopDelay);
+                    break;
+            }
 
             _lastMoveTime3 = now;
         }
 
         public async void UpdateKnobInput3()
         {
-            if (FT891S_CatManager.currentRadioState.RFGain == 0)
-                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
-            else
-                RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+            switch (FT891S_CatManager.currentRadioState.CurrentRFDialFunction)
+            {
+                case RFDialFunctionModes.RFDial_RF:
+                    if (FT891S_CatManager.currentRadioState.RFGain == 0)
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    else
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
 
-            RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+                    RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.RFGain.ToString() + " RF";
+                    break;
+                case RFDialFunctionModes.RFDial_SQL:
+                    if (FT891S_CatManager.currentRadioState.SQGain == 0)
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                    else
+                        RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+                    RFGainTextBlock.Text = FT891S_CatManager.currentRadioState.SQGain.ToString() + " SQ";
+                    break;
+            }
         }
 
         private async void ApplyKnobInput4(double deltaY)
@@ -994,7 +1033,17 @@ namespace YAESU_FT_891_Front_End
             if (e.ClickCount == 1)
             {
                 if (gainUserControl.Visibility == Visibility.Hidden)
-                    await gainManagement.ManageGain(ControlGains.RF, ControlModes.OpenUserControl, FT891S_CatManager.currentRadioState.RFGain);
+                {
+                    switch (FT891S_CatManager.currentRadioState.CurrentRFDialFunction)
+                    {
+                        case RFDialFunctionModes.RFDial_RF:
+                            await gainManagement.ManageGain(ControlGains.RF, ControlModes.OpenUserControl, FT891S_CatManager.currentRadioState.RFGain);
+                            break;
+                        case RFDialFunctionModes.RFDial_SQL:
+                            await gainManagement.ManageGain(ControlGains.SQ, ControlModes.OpenUserControl, FT891S_CatManager.currentRadioState.SQGain);
+                            break;
+                    }
+                }
                 else
                 {
                     //gainUserControl.Visibility = Visibility.Hidden;
@@ -1055,6 +1104,7 @@ namespace YAESU_FT_891_Front_End
             _lastMousePos3 = pos;
         }
         public int lastRFGain = 100;
+        public int lastSQGain = 100;
         private async void RFGainKnobAreaCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             // CRITICAL FIX: These MUST happen every time the mouse is released, 
@@ -1078,26 +1128,54 @@ namespace YAESU_FT_891_Front_End
             }
             else
             {
-                if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < FT891S_CatManager.currentRadioState.RFGainMaxValue)
+                switch (FT891S_CatManager.currentRadioState.CurrentRFDialFunction)
                 {
-                    lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
+                    case RFDialFunctionModes.RFDial_RF:
+                        if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < FT891S_CatManager.currentRadioState.RFGainMaxValue)
+                        {
+                            lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
 
-                    FT891S_CatManager.currentRadioState.RFGain = 0;
-                    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
-                    await _catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
-                }
-                else
-                {
-                    FT891S_CatManager.currentRadioState.RFGain = lastRFGain;
-                    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
-                    await _catManager.SendCatCommandAsync("RG", new object[] { 0, lastRFGain }, _catManager.OutGoingDataLoopDelay);
-                }
+                            FT891S_CatManager.currentRadioState.RFGain = 0;
+                            RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                            await _catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
+                        }
+                        else
+                        {
+                            FT891S_CatManager.currentRadioState.RFGain = lastRFGain;
+                            RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                            await _catManager.SendCatCommandAsync("RG", new object[] { 0, lastRFGain }, _catManager.OutGoingDataLoopDelay);
+                        }
 
-                // --- WE CLICKED ---
-                if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
-                {
-                    Console.WriteLine("RFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastRFGain);
-                    Console.WriteLine(FT891S_CatManager.currentRadioState.RFGain);
+                        // --- WE CLICKED ---
+                        if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+                        {
+                            Console.WriteLine("RFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastRFGain);
+                            Console.WriteLine(FT891S_CatManager.currentRadioState.RFGain);
+                        }
+                        break;
+                    case RFDialFunctionModes.RFDial_SQL:
+                        //if (FT891S_CatManager.currentRadioState.RFGain > 0 && FT891S_CatManager.currentRadioState.RFGain < FT891S_CatManager.currentRadioState.RFGainMaxValue)
+                        //{
+                        //    lastRFGain = FT891S_CatManager.currentRadioState.RFGain;
+
+                        //    FT891S_CatManager.currentRadioState.RFGain = 0;
+                        //    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.Red);
+                        //    await _catManager.SendCatCommandAsync("RG", new object[] { 0, 0 }, _catManager.OutGoingDataLoopDelay);
+                        //}
+                        //else
+                        //{
+                        //    FT891S_CatManager.currentRadioState.RFGain = lastRFGain;
+                        //    RFGainTextBlock.Foreground = new SolidColorBrush(Colors.White);
+                        //    await _catManager.SendCatCommandAsync("RG", new object[] { 0, lastRFGain }, _catManager.OutGoingDataLoopDelay);
+                        //}
+
+                        //// --- WE CLICKED ---
+                        //if (ConsoleDebugLevel == ConsoleDebugLevels.CurrentDebug)
+                        //{
+                        //    Console.WriteLine("RFGainKnobAreaCanvas_MouseLeftButtonDown (Triggered via fast-click threshold) = " + lastRFGain);
+                        //    Console.WriteLine(FT891S_CatManager.currentRadioState.RFGain);
+                        //}
+                        break;
                 }
 
                 // Hide the blur canvas since we didn't actually spin the knob
@@ -1642,6 +1720,39 @@ namespace YAESU_FT_891_Front_End
             UpdateUIRigMode(ScanBandModeTextBlock, radioMode);
         }
 
+        private void ToggleRFDialFunctionBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            if (border == null || !border.IsEnabled)
+                return;
+
+            if (RFDialFunctionModes.TryParse(border.Tag?.ToString(), out RFDialFunctionModes tagValue))
+            {
+                SetRFDialFunctionMode(tagValue);
+            }
+        }
+        public void SetRFDialFunctionMode(RFDialFunctionModes dialFunctionMode)
+        {
+            RFLabelBorder.Opacity = 0.3;
+            SQLLabelBorder.Opacity = 0.3;
+            SPRLabelBorder.Opacity = 0.3;
+
+            switch (dialFunctionMode)
+            {
+                case RFDialFunctionModes.RFDial_RF:
+                    FT891S_CatManager.currentRadioState.CurrentRFDialFunction = RFDialFunctionModes.RFDial_RF;
+                    RFLabelBorder.Opacity = 1;
+                    break;
+                case RFDialFunctionModes.RFDial_SQL:
+                    FT891S_CatManager.currentRadioState.CurrentRFDialFunction = RFDialFunctionModes.RFDial_SQL;
+                    SQLLabelBorder.Opacity = 1;
+                    break;
+                case RFDialFunctionModes.RFDial_SPR:
+                    FT891S_CatManager.currentRadioState.CurrentRFDialFunction = RFDialFunctionModes.RFDial_SPR;
+                    SPRLabelBorder.Opacity = 1;
+                    break;
+            }
+        }
         private void WattLabelBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (wattUserControl.Visibility != Visibility.Visible)

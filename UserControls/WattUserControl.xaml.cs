@@ -65,7 +65,7 @@ namespace YAESU_FT_891_Front_End
 
         #endregion
 
-        private int _currentWatt = 0;
+        private int _currentWatt = 5;
         private bool _isUpdatingSlider = false;
         private readonly Dictionary<int, (Border border, TextBlock text)> _ui;
 
@@ -75,6 +75,7 @@ namespace YAESU_FT_891_Front_End
 
             _ui = new Dictionary<int, (Border border, TextBlock text)>
             {
+                { 5, (Watt5Border, Watt5TextBlock) },
                 { 10, (Watt10Border, Watt10TextBlock) },
                 { 20, (Watt20Border, Watt20TextBlock) },
                 { 30, (Watt30Border, Watt30TextBlock) },
@@ -85,8 +86,7 @@ namespace YAESU_FT_891_Front_End
                 { 80, (Watt80Border, Watt80TextBlock) },
                 { 90, (Watt90Border, Watt90TextBlock) },
                 { 100, (Watt100Border, Watt100TextBlock) },
-                { 254, (WattDefaultBorder, WattDefaultTextBlock) },
-                { 0, (WattMuteBorder, WattMuteTextBlock) }
+                { 254, (WattDefaultBorder, WattDefaultTextBlock) }
             };
 
             Loaded += WattUserControl_Loaded;
@@ -198,7 +198,7 @@ namespace YAESU_FT_891_Front_End
                 int nearestPreset = -1;
                 double smallestDiff = double.MaxValue;
 
-                for (int targetPercent = 10; targetPercent <= 100; targetPercent += 10)
+                for (int targetPercent = 5; targetPercent <= 100; targetPercent += 5)
                 {
                     if (_ui.ContainsKey(targetPercent) && _ui[targetPercent].border.IsEnabled)
                     {
@@ -221,7 +221,7 @@ namespace YAESU_FT_891_Front_End
             {
                 const double tolerance = 5.0;
 
-                for (int targetPercent = 10; targetPercent <= 100; targetPercent += 10)
+                for (int targetPercent = 5; targetPercent <= 100; targetPercent += 5)
                 {
                     if (Math.Abs(currentPercent - targetPercent) <= tolerance)
                     {
@@ -271,7 +271,7 @@ namespace YAESU_FT_891_Front_End
 
             if (wattValue == (int)Minimum)
             {
-                WattLabel.Content = "MUTE";
+                WattLabel.Content = "MIN";
             }
             else if (wattValue == DefaultWatt)
             {

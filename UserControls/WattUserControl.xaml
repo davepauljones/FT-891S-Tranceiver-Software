@@ -13,66 +13,66 @@
 
             <TextBlock x:Name="WattTitleTextBlock" Text="WATT" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Width="290" Height="20" VerticalAlignment="Top" Margin="5,6,0,0" Foreground="White" Background="#666666"/>
 
-            <Border x:Name="Watt10Border" Tag="10" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt5Border" Tag="0" Canvas.Left="2" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock x:Name="Watt5TextBlock" Text="5W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                </StackPanel>
+            </Border>
+            <Border x:Name="Watt10Border" Tag="10" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt10TextBlock" Text="10W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt20Border" Tag="20" Canvas.Left="75" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt20Border" Tag="20" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt20TextBlock" Text="20W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt30Border" Tag="30" Canvas.Left="148" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt30Border" Tag="30" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt30TextBlock" Text="30W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt40Border" Tag="40" Canvas.Left="221" Canvas.Top="34" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+
+            <Border x:Name="Watt40Border" Tag="40" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt40TextBlock" Text="40W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-
-            <Border x:Name="Watt50Border" Tag="50" Canvas.Left="2" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt50Border" Tag="50" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt50TextBlock" Text="50W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt60Border" Tag="60" Canvas.Left="75" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt60Border" Tag="60" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt60TextBlock" Text="60W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt70Border" Tag="70" Canvas.Left="148" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt70Border" Tag="70" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt70TextBlock" Text="70W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt80Border" Tag="80" Canvas.Left="221" Canvas.Top="67" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+
+            <Border x:Name="Watt80Border" Tag="80" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt80TextBlock" Text="80W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-
-            <Border x:Name="Watt90Border" Tag="90" Canvas.Left="2" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt90Border" Tag="90" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="Watt90TextBlock" Text="90W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="Watt100Border" Tag="100" Canvas.Left="75" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="Watt100Border" Tag="100" Canvas.Left="148" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock x:Name="Watt100TextBlock" Text="100" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
+                    <TextBlock x:Name="Watt100TextBlock" Text="100W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
-            <Border x:Name="WattDefaultBorder" Tag="254" Canvas.Left="148" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
+            <Border x:Name="WattDefaultBorder" Tag="254" Canvas.Left="221" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="WattDefaultTextBlock" Text="DEFAULT" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
-                </StackPanel>
-            </Border>
-            <Border x:Name="WattMuteBorder" Tag="0" Canvas.Left="221" Canvas.Top="100" Style="{StaticResource SimulatedWaterfallBorderStyle}" CornerRadius="3" Background="LightGray" MouseLeftButtonDown="WattWindowCanvas_MouseLeftButtonDown">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock x:Name="WattMuteTextBlock" Text="MIN 5W" Style="{StaticResource SimulatedWaterfallTextBlockStyle}" Foreground="Black"/>
                 </StackPanel>
             </Border>
 

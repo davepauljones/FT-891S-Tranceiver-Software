@@ -42,6 +42,7 @@ namespace FT891S_CatControl
         public int TXPowerWattsMaximum { get; } = 100;
         public int TXPowerWattsAMMaximum { get; } = 40;
         public int TXPowerWattsStep { get; } = 5;
+        public RFDialFunctionModes CurrentRFDialFunction { get; set; } = RFDialFunctionModes.RFDial_RF;
         public int SQGain { get; set; } = 0;
         public int SQGainDefault { get; set; } = 50;
         public int SQGainMinValue { get; set; } = 0;
@@ -269,6 +270,7 @@ namespace FT891S_CatControl
     public enum ContourOnOffModes { CO_OFF = 0, CO_ON = 1 }
     public enum APFOnOffModes { APF_OFF = 0, APF_ON = 1 }
 
+    public enum RFDialFunctionModes { RFDial_RF = 0, RFDial_SQL = 1, RFDial_SPR = 2 }
     public enum DNRModes { NR_OFF = 0, NR_ON = 1 }
     public enum DNRValues { DNR_01 = 1, DNR_02 = 2, DNR_03 = 3, DNR_04 = 4, DNR_05 = 5,
                             DNR_06 = 6, DNR_07 = 7, DNR_08 = 8, DNR_09 = 9, DNR_10 = 10,
